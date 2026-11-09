@@ -94,7 +94,7 @@ export function render(root, ctx) {
         <button class="btn ghost wide" id="install">홈 화면에 추가하는 방법</button>
       </section>
       <p class="ver center">사나다 일본어 ${esc(ctx.version)} · <a class="lic-link" href="licenses.txt" target="_blank" rel="noopener">오픈 소스</a></p>
-      <p class="muted center credit">진도 참고: NHK WORLD-JAPAN 『일본말 첫걸음』 1~12과 순서(교재 내용은 옮기지 않았어요)<br>읽기 대조: <a class="lic-link" href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noopener">JMdict</a>(EDRDG, CC BY-SA 4.0) · 단어 표 CC BY-SA 4.0<br>이 앱은 NHK와 관련이 없어요.</p>
+      <p class="muted center credit">진도 참고: NHK WORLD-JAPAN 『일본말 첫걸음』 1~24과 순서(교재 내용은 옮기지 않았어요)<br>읽기 대조: <a class="lic-link" href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noopener">JMdict</a>(EDRDG, CC BY-SA 4.0) · 단어 표 CC BY-SA 4.0<br>이 앱은 NHK와 관련이 없어요.</p>
     </main>
     ${tabBar("settings")}
   </div>`;

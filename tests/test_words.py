@@ -26,11 +26,28 @@ def test_kana_chapters():
 
 def test_chapters_and_titles():
     chs = sorted({w["chapter"] for w in WORDS})
-    assert chs == list(range(1, 15)) and set(CHAPTER_TITLES) == set(chs)
-    for ch in range(3, 15):
+    assert chs == list(range(1, 27)) and set(CHAPTER_TITLES) == set(chs)
+    for ch in range(3, 27):
         n = len([w for w in WORDS if w["chapter"] == ch])
         assert 10 <= n <= 15, (ch, n)
 
 
 def test_no_romaji():
     assert not [w for w in WORDS if any("a" <= c.lower() <= "z" for c in w["jp"] + w["ko"] + w["note"])]
+
+
+def test_no_duplicate_words_across_chapters():
+    """같은 단어(표기)를 두 장에 두지 않음 — 복습·취약 단어 이름표가 겹치지 않게"""
+    seen = {}
+    for w in WORDS:
+        if w["pos"] == "kana":
+            continue
+        assert w["jp"] not in seen, (w["jp"], seen.get(w["jp"]), w["id"])
+        seen[w["jp"]] = w["id"]
+
+
+def test_candidates_cover_polite_verb_forms():
+    assert ("行く", "いく") in candidates("行{い}きましょう")
+    assert ("食べる", "たべる") in candidates("食{た}べましょう")
+    assert ("できる", "できる") in candidates("できません")
+    assert ("疲れる", "つかれる") in candidates("疲{つか}れました")

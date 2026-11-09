@@ -26,7 +26,7 @@ def candidates(jp):
     """(표기, 읽기) 후보: 그대로, ます꼴이면 사전형들"""
     p, r = plain(jp), kana(jp)
     out = [(p, r)]
-    for end in ("ました", "ません", "ます"):
+    for end in ("ましょう", "ました", "ません", "ます"):
         if p.endswith(end) and r.endswith(end):
             sp, sr = p[:-len(end)], r[:-len(end)]
             if (sp, sr) in IRREGULAR:
