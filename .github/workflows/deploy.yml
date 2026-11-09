@@ -33,7 +33,7 @@ jobs:
       - run: pip install playwright && python -m playwright install --with-deps chromium
       - run: npm test
       - run: python build.py
-      - run: pip install pytest
+      - run: pip install pytest pillow
       - run: python -m pytest tests -q
       - run: python tests/content.py
       - uses: actions/upload-pages-artifact@v3

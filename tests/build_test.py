@@ -837,6 +837,7 @@ def test_ci_runs_all_checks():
     assert "opencc" not in ci
     for cmd in ("npm test", "python build.py", "python -m pytest tests -q", "python tests/content.py"):
         assert cmd in ci, cmd
+    assert "pip install pytest pillow" in ci, "그림 시험(tests/test_outfit_pictures.py)은 Pillow가 필요"
 
 
 def main():
