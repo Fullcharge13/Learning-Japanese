@@ -263,12 +263,12 @@ test("M7_again: 끊긴 뒤 다시 7일 (best ≥ 7) → 보상 없음", () => {
   assert.equal(r.save.bytes, 0);
 });
 
-test("M30: 30일 → 가도마츠(kadomatsu), 중복 없음", () => {
+test("M30: 30일 → 아오모리 네부타 의상(nebuta), 중복 없음", () => {
   const r = earnXp(at(29, 29), 20, "2026-10-29");
   assert.equal(r.milestone, 30);
-  assert.deepEqual(r.save.items, ["none", "kadomatsu"]);
-  const r2 = applyMilestones(at(29, 29, { items: ["none", "kadomatsu"] }), { ...r.save });
-  assert.deepEqual(r2.save.items, ["none", "kadomatsu"]);
+  assert.deepEqual(r.save.items, ["none", "nebuta"]);
+  const r2 = applyMilestones(at(29, 29, { items: ["none", "nebuta"] }), { ...r.save });
+  assert.deepEqual(r2.save.items, ["none", "nebuta"]);
 });
 
 test("M100: 100일 → streak100 배지, 중복 없음", () => {
@@ -326,4 +326,12 @@ test("F2 bad_goal: dailyGoal이 10/20/30이 아니면 20으로", () => {
   // 정상 값은 그대로
   const s10 = addDailyXp(fixture({ settings: { sound: true, dailyGoal: 10, name: "" } }), 10, "2026-10-29");
   assert.equal(s10.streak.days, 1);
+});
+
+import { MILESTONE_REWARD } from "../../src/ui/dom.js";
+import { ITEMS } from "../../data/items.js";
+test("30-day celebration names the outfit that rules.js actually gives", () => {
+  const nebuta = ITEMS.find((o) => o.id === "nebuta");
+  assert.ok(MILESTONE_REWARD[30].includes(nebuta.ko), MILESTONE_REWARD[30]);
+  assert.ok(!MILESTONE_REWARD[30].includes("가도마츠"));
 });

@@ -808,6 +808,17 @@ def test_shop_images_precached():
         assert '"img/shop/%s.png"' % n in sw, n
 
 
+
+def test_outfit_images_precached():
+    """의상 그림 15장이 미리 받기 목록에 있고(오프라인), 옛 물건 그림은 하나도 없음"""
+    _build()
+    sw = _read(os.path.join(DIST, "sw.js"))
+    for n in ("nebuta", "hanagasa", "awaodori", "yosakoi", "kanto", "tanabata", "gion", "tenjin", "yamakasa", "eisa",
+              "hyakumangoku", "owara", "nishimonai", "yassa", "ohara"):
+        assert '"img/outfits/%s.png"' % n in sw, n
+    assert "img/items/" not in sw
+
+
 def test_attribution():
     """출처: 앱 설정 줄·licenses.txt·데이터 라이선스에 JMdict(CC BY-SA 4.0)와 NHK 진도 참고(내용 안 옮김)"""
     _build()

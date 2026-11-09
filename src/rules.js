@@ -112,7 +112,7 @@ export function addDailyXp(save, xp, today) {
   return s;
 }
 
-// ---- 연속 기록 이정표 (설계 5-2): 7일 50바이트, 30일 졸업 가운·학사모 의상, 100일 배지 ----
+// ---- 연속 기록 이정표 (설계 5-2): 7일 50바이트, 30일 아오모리 네부타 의상, 100일 배지 ----
 // 각 보상은 평생 한 번 — 이전 저장의 best가 그 숫자보다 작을 때만 준다.
 export function applyMilestones(prevSave, nextSave) {
   const prevBest = prevSave.streak.best || 0;
@@ -122,7 +122,7 @@ export function applyMilestones(prevSave, nextSave) {
   for (const n of MILESTONES) {
     if (days < n || prevBest >= n) continue;
     if (n === 7) out.bytes += 50;
-    if (n === 30 && !out.items.includes("kadomatsu")) out.items.push("kadomatsu");
+    if (n === 30 && !out.items.includes("nebuta")) out.items.push("nebuta");
     if (n === 100 && !out.badges.includes("streak100")) out.badges.push("streak100");
     milestone = n;
   }

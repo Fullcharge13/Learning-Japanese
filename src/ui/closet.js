@@ -1,4 +1,4 @@
-// 보관함: 전통 물건 10개 미리보기, 바이트로 사기, 해치 옆에 두기(한 번에 1개), 기록 보호권
+// 보관함: 축제 의상 15벌 미리보기, 엔으로 사기, 입기·벗기(한 번에 1벌), 기록 보호권
 import { ruby, plain } from "../ruby.js";
 import { ITEMS } from "../../data/items.js";
 import { buy, place } from "../shop.js";
@@ -20,8 +20,9 @@ export function render(root, ctx, params = {}) {
     const own = s.items.includes(o.id);
     const placed = s.item === o.id;
     let action;
-    if (placed) action = `<button class="btn ghost wide" disabled>옆에 두었어요</button>`;
-    else if (own) action = `<button class="btn primary wide" id="place">유키 옆에 두기</button>`;
+    if (placed && o.id === "none") action = `<button class="btn ghost wide" disabled>평소 옷을 입고 있어요</button>`;
+    else if (placed) action = `<button class="btn ghost wide" id="unwear">벗기</button>`;
+    else if (own) action = `<button class="btn primary wide" id="place">입기</button>`;
     else if (o.price == null) action = `<p class="lock-note">${icon("lock")}30일 연속 보상</p>`;
     else action = `<button class="btn sun wide" id="buy"${s.bytes < o.price ? " disabled" : ""}>${icon("byte")}<span>${o.price}엔으로 사기</span></button>
       ${s.bytes < o.price ? `<p class="muted center">${o.price - Math.max(0, s.bytes)}엔 더 모으면 살 수 있어요</p>` : ""}`;
@@ -37,11 +38,11 @@ export function render(root, ctx, params = {}) {
             ${action}
           </div>
         </section>
-        <ul class="outfit-grid" aria-label="물건 목록">${ITEMS.map((x) => {
+        <ul class="outfit-grid" aria-label="의상 목록">${ITEMS.map((x) => {
           const owned = s.items.includes(x.id);
-          const tag = s.item === x.id ? "옆에" : owned ? "가짐" : x.price == null ? "30일 보상" : `${x.price}엔`;
+          const tag = s.item === x.id ? "입는 중" : owned ? "가짐" : x.price == null ? "30일 보상" : `${x.price}엔`;
           return `<li><button class="outfit${x.id === sel ? " sel" : ""}${owned ? " owned" : ""}" data-o="${x.id}" aria-pressed="${x.id === sel}" aria-label="${esc(`${plain(nameOf(x))}, ${tag}`)}">
-            ${x.id === "none" ? yukiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/items/${x.id}.png" width="74" height="74" alt="">`}
+            ${x.id === "none" ? yukiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/outfits/${x.id}.png" width="74" height="74" alt="">`}
             <span class="o-name">${esc(x.ko)}<br><span lang="ja">${ruby(x.jp)}</span></span>
             <span class="o-tag${owned ? " own" : ""}">${!owned && x.price == null ? icon("lock") : ""}${esc(tag)}</span>
           </button></li>`;
@@ -66,13 +67,21 @@ export function render(root, ctx, params = {}) {
       line = o.id === "none" ? null : ctx.say("item_bought", { item: nameOf(o) }).text;
       paint();
     });
+    const unwearBtn = root.querySelector("#unwear");
+    if (unwearBtn) unwearBtn.addEventListener("click", () => {
+      const r = place(ctx.save, "none");
+      if (r instanceof Error) { toast(r.message); return; }
+      ctx.commit(r);
+      line = null;
+      paint();
+    });
     const buyBtn = root.querySelector("#buy");
     if (buyBtn) buyBtn.addEventListener("click", () => {
       const r = buy(ctx.save, o.id);
       if (r instanceof Error) { toast(r.message); return; }
       let next = { ...r, item: o.id };
       const got = checkBadges(next, { hour: new Date().getHours(), lessonDone: false });
-      if (got.length) { next = { ...next, badges: [...next.badges, ...got] }; toast("새 배지: 물건 수집가"); }
+      if (got.length) { next = { ...next, badges: [...next.badges, ...got] }; toast("새 배지: 의상 수집가"); }
       ctx.commit(next);
       ctx.sound.play("buy");
       line = ctx.say("item_bought", { item: nameOf(o) }).text;

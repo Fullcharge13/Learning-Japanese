@@ -1,0 +1,3 @@
+// 옛 보관함 물건(2026-11-09 축제 의상으로 바뀌기 전)의 판매 가격. 옛 저장의 물건 값을 엔으로 돌려줄 때만 쓴다(src/save.js).
+// 30일 보상이던 kadomatsu는 값이 없어 여기 없고, 대신 nebuta 의상을 준다.
+export const OLD_ITEM_PRICES = Object.freeze({ dango: 60, taiyaki: 60, takoyaki: 60, uchiwa: 60, tabi: 60, koma: 60, kendama: 120, furin: 120, daruma: 120, manekineko: 120, omamori: 120, sensu: 120, tako: 120, kanzashi: 180, geta: 180, zori: 180, jikatabi: 180, obi: 180, wagasa: 180, happi: 180, osechi: 180, yukata: 240, haori: 240, hakama: 240, taiko: 240, koinobori: 240, noh: 240, kabuki: 240, hannya: 240, kimono: 300, koto: 300, torii: 300, kiyomizu: 300 });

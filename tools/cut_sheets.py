@@ -4,17 +4,19 @@
     python3 tools/cut_sheets.py
 
 - docs/img/ref/yuki-sheet.jpg     → src/img/yuki/<표정>.png (15컷)
-- docs/img/ref/items-sheet-1·2.jpg → src/img/items/<물건>.png
-- 시트에 그려진 이름표 글씨(「기쁨」「하카마」 …)는 LABELS 상자를 배경색으로 덮어 지운다.
+- docs/img/ref/yuki-festival-sheet.jpg → src/img/outfits/<의상>.png (축제 의상 15벌, 크림색 배경을 투명하게)
+- 시트에 그려진 이름표 글씨(「기쁨」 …)는 LABELS 상자를 배경색으로 덮어 지운다.
   그림 속 효과 글씨(「파이팅!」「아하!」「휴~」)는 그림의 일부라 남긴다.
 - 칸 좌표는 이름표를 지운 시트에서 배경과 다른 덩어리를 찾아 정한 값(2576×1438). 정사각형 캔버스에 가운데 맞춰 256px.
-- 하치마키(시트 1의 1행 3칸)는 욱일 무늬라 자르지 않는다(설계서 §6).
 - 배경(흰색)에 가까운 픽셀은 투명하게(가장자리는 반투명).
 - docs/img/ref/shop-*-sheet.png → src/img/shop/flow-NN·story-NN·guest-<id>.png (가게 컷 45개)
-- 미리보기: docs/img/yuki-preview.png, docs/img/shop-preview.png
+- src/img/shop/menu-{takoyaki,dango,taiyaki}.png(가게 메뉴 그림)은 옛 물건 시트에서 잘라 둔 것이라 여기서 다시 만들지 않는다
+- 미리보기: docs/img/yuki-preview.png, docs/img/outfits-preview.png, docs/img/shop-preview.png
 """
 import os
+import numpy as np
 from PIL import Image, ImageDraw
+from scipy import ndimage
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SIZE, PAD = 256, 10
@@ -25,12 +27,6 @@ LABELS = {
     "yuki-sheet.jpg": [(405, 400, 505, 470), (940, 400, 1005, 470), (1450, 400, 1535, 470), (1940, 400, 2035, 470), (2428, 398, 2570, 476),
                        (412, 882, 552, 942), (925, 875, 1065, 945), (1440, 875, 1705, 945), (1935, 875, 2140, 945), (2418, 872, 2512, 948),
                        (398, 1292, 512, 1354), (398, 1358, 512, 1420), (585, 1350, 675, 1415), (1050, 1350, 1220, 1415), (1605, 1350, 1700, 1415), (2018, 1360, 2244, 1422)],
-    "items-sheet-1.jpg": [(440, 412, 596, 490), (860, 412, 1080, 490), (1370, 412, 1580, 490), (1880, 412, 2036, 490), (2420, 412, 2530, 490),
-                          (260, 880, 556, 955), (800, 880, 1050, 955), (1318, 880, 1580, 955), (1888, 880, 2056, 955), (2414, 880, 2526, 955),
-                          (0, 1348, 2576, 1438)],
-    "items-sheet-2.jpg": [(438, 412, 590, 490), (920, 412, 1076, 490), (1418, 412, 1580, 490), (1934, 412, 2042, 490), (2420, 412, 2526, 490),
-                          (434, 880, 542, 955), (940, 880, 1050, 955), (1428, 880, 1536, 955), (1884, 880, 2042, 955), (2364, 880, 2526, 955),
-                          (0, 1348, 2576, 1438), (1466, 988, 1644, 1118)],
 }
 
 YUKI = {  # (x0, y0, x1, y1)
@@ -41,24 +37,18 @@ YUKI = {  # (x0, y0, x1, y1)
     "pout": (113, 969, 500, 1427), "cheer": (526, 969, 1121, 1427), "shy": (1141, 970, 1500, 1427),
     "wink": (1652, 970, 2014, 1426), "hello": (2040, 969, 2512, 1427),
 }
-ITEMS = {
-    "items-sheet-1.jpg": {
-        "hakama": (104, 28, 512, 468), "jikatabi": (616, 49, 1018, 434), "kanzashi": (1624, 38, 2025, 453),
-        "happi": (2086, 62, 2537, 453), "kiyomizu": (65, 538, 564, 885), "koinobori": (617, 507, 1041, 914),
-        "kabuki": (1168, 516, 1481, 903), "noh": (1682, 509, 1992, 916), "tako": (2157, 506, 2472, 960),
-        "osechi": (60, 980, 482, 1349), "dango": (518, 993, 778, 1353), "takoyaki": (803, 990, 1129, 1331),
-        "taiyaki": (1133, 1045, 1464, 1301), "taiko": (1459, 1011, 1742, 1340), "kendama": (1745, 972, 1978, 1353),
-        "koma": (1980, 1010, 2269, 1337), "kadomatsu": (2280, 972, 2533, 1353),
-    },
-    "items-sheet-2.jpg": {
-        "kimono": (43, 9, 524, 503), "yukata": (612, 32, 1014, 501), "haori": (1073, 39, 1560, 454),
-        "geta": (1585, 84, 2060, 440), "zori": (2084, 73, 2536, 454), "tabi": (90, 524, 497, 935),
-        "obi": (609, 532, 1023, 908), "sensu": (1068, 546, 1573, 893), "uchiwa": (1659, 499, 2016, 967),
-        "wagasa": (2084, 496, 2542, 958), "daruma": (107, 979, 450, 1346), "manekineko": (524, 979, 806, 1342),
-        "omamori": (861, 974, 1112, 1347), "koto": (1262, 975, 1636, 1353), "torii": (1640, 994, 1973, 1343),
-        "hannya": (1993, 1007, 2244, 1345), "furin": (2303, 972, 2492, 1353),
-    },
-}
+# 축제 의상 시트(2576×1438, 5×3): 칸마다 그림 오른쪽에 이름표. 열 경계는 이웃 그림 사이 빈 곳(행마다 다름).
+OUTFIT_SHEET = "yuki-festival-sheet.jpg"
+OUTFIT_IDS = ["nebuta", "hanagasa", "awaodori", "yosakoi", "kanto", "tanabata", "gion", "tenjin", "yamakasa", "eisa",
+              "hyakumangoku", "owara", "nishimonai", "yassa", "ohara"]
+OUTFIT_ROWS = [(0, 505), (505, 963), (963, 1438)]
+OUTFIT_SPLITS = [[520, 1050, 1560, 2065], [540, 1055, 1570, 2075], [541, 1090, 1590, 2050]]
+OUTFIT_TITLE = (590, 0, 2075, 88)  # 맨 위 제목 줄: 그림과 겹치지 않아 통째로 덮는다
+# 이름표 영역(쓰지 않는 니가타·나가노 포함). 상자 안에서 「작고 어두운 무채색 덩어리」(글자 획)만 지워 옷 가장자리는 남긴다
+OUTFIT_LABELS = [(370, 405, 570, 510), (900, 405, 1140, 510), (1380, 400, 1600, 515), (1790, 400, 2110, 515), (2390, 405, 2570, 510),
+                 (410, 860, 570, 965), (910, 860, 1080, 965), (1410, 860, 1600, 965), (1900, 840, 2110, 965), (2400, 860, 2570, 965),
+                 (390, 1300, 570, 1438), (580, 1330, 700, 1438), (880, 1330, 1120, 1438), (1420, 1300, 1570, 1438),
+                 (1600, 1300, 1745, 1438), (1920, 1300, 2110, 1438), (2410, 1300, 2576, 1438)]
 
 
 def load(name):
@@ -69,18 +59,18 @@ def load(name):
     return im
 
 
-def cut(sheet, box):
+def cut(sheet, box, bg=BG):
     x0, y0, x1, y1 = box
     part = sheet.crop((x0 - PAD, y0 - PAD, x1 + PAD, y1 + PAD))
     side = max(part.size)
-    canvas = Image.new("RGB", (side, side), BG)
+    canvas = Image.new("RGB", (side, side), bg)
     canvas.paste(part, ((side - part.width) // 2, (side - part.height) // 2))
     im = canvas.resize((SIZE, SIZE), Image.LANCZOS).convert("RGBA")
     px = im.load()
     for y in range(SIZE):
         for x in range(SIZE):
             r, g, b, _ = px[x, y]
-            dist = abs(r - BG[0]) + abs(g - BG[1]) + abs(b - BG[2])
+            dist = abs(r - bg[0]) + abs(g - bg[1]) + abs(b - bg[2])
             if dist < FAR:
                 px[x, y] = (r, g, b, 0 if dist <= NEAR else round(255 * (dist - NEAR) / (FAR - NEAR)))
     return im
@@ -133,9 +123,46 @@ def cut_shop():
     return len(out)
 
 
+def cut_outfits():
+    """의상 시트 → src/img/outfits/<id>.png 15장 + 미리보기. 배경색은 시트 모서리의 중앙값(크림색)"""
+    src = np.asarray(Image.open(os.path.join(ROOT, "docs", "img", "ref", OUTFIT_SHEET)).convert("RGB")).astype(int)
+    bg = np.median(np.concatenate([src[:20, :20].reshape(-1, 3), src[-20:, -20:].reshape(-1, 3)]), axis=0).astype(int)
+    x0, y0, x1, y1 = OUTFIT_TITLE
+    src[y0:y1, x0:x1] = bg
+    for x0, y0, x1, y1 in OUTFIT_LABELS:
+        r = src[y0:y1, x0:x1]
+        dark = (r.sum(2) < 330) & ((r.max(2) - r.min(2)) < 70)
+        lab, _ = ndimage.label(dark)
+        glyphs = np.zeros_like(dark)
+        for i, sl in enumerate(ndimage.find_objects(lab), 1):
+            touches = sl[0].start == 0 or sl[1].start == 0 or sl[0].stop == r.shape[0] or sl[1].stop == r.shape[1]
+            if sl[0].stop - sl[0].start < 60 and sl[1].stop - sl[1].start < 60 and not touches:
+                glyphs |= lab == i
+        r[ndimage.binary_dilation(glyphs, iterations=3)] = bg
+    sheet = Image.fromarray(src.astype("uint8"))
+    fg = np.abs(src - bg).sum(2) > 60
+    folder = os.path.join(ROOT, "src", "img", "outfits")
+    os.makedirs(folder, exist_ok=True)
+    out, ids = [], iter(OUTFIT_IDS)
+    for (ry0, ry1), splits in zip(OUTFIT_ROWS, OUTFIT_SPLITS):
+        edges = [0] + splits + [src.shape[1]]
+        for cx0, cx1 in zip(edges, edges[1:]):
+            ys, xs = np.nonzero(fg[ry0:ry1, cx0:cx1])
+            h, w = fg.shape  # cut()이 PAD만큼 넓혀 자르므로 시트 밖(검은 띠)으로 나가지 않게 줄인다
+            box = (max(PAD, cx0 + xs.min()), max(PAD, ry0 + ys.min()), min(w - PAD, cx0 + xs.max()), min(h - PAD, ry0 + ys.max()))
+            im = cut(sheet, box, tuple(int(v) for v in bg))
+            im.quantize(256, method=Image.Quantize.FASTOCTREE, dither=Image.Dither.NONE).save(os.path.join(folder, next(ids) + ".png"), optimize=True)
+            out.append(im)
+    prev = Image.new("RGB", (5 * SIZE, 3 * SIZE), (210, 225, 235))
+    for i, im in enumerate(out):
+        prev.paste(im, ((i % 5) * SIZE, (i // 5) * SIZE), im)
+    prev.save(os.path.join(ROOT, "docs", "img", "outfits-preview.png"), optimize=True)
+    return len(out)
+
+
 def main():
     out = []
-    jobs = [("yuki-sheet.jpg", YUKI, "yuki")] + [(n, t, "items") for n, t in ITEMS.items()]
+    jobs = [("yuki-sheet.jpg", YUKI, "yuki")]
     for sheet_name, table, folder in jobs:
         sheet = load(sheet_name)
         os.makedirs(os.path.join(ROOT, "src", "img", folder), exist_ok=True)
@@ -149,7 +176,7 @@ def main():
     for i, im in enumerate(out):
         prev.paste(im, ((i % cols) * SIZE, (i // cols) * SIZE), im)
     prev.save(os.path.join(ROOT, "docs", "img", "yuki-preview.png"), optimize=True)
-    print("%d pictures, %d shop pictures" % (len(out), cut_shop()))
+    print("%d pictures, %d outfits, %d shop pictures" % (len(out), cut_outfits(), cut_shop()))
 
 
 if __name__ == "__main__":

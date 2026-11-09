@@ -12,10 +12,8 @@ test("every face has its picture file (15 cuts of the Yuki sheet)", () => {
   for (const id of FACE_IDS) assert.ok(existsSync(new URL(`src/img/yuki/${id}.png`, root)), id);
 });
 
-test("every item has its picture, and the hachimaki is not one of them", () => {
-  for (const x of ITEMS) if (x.id !== "none") assert.ok(existsSync(new URL(`src/img/items/${x.id}.png`, root)), x.id);
-  assert.ok(!ITEMS.some((x) => /hachimaki/.test(x.id)));
-  assert.ok(!existsSync(new URL("src/img/items/hachimaki.png", root)));
+test("every outfit has its picture", () => {
+  for (const x of ITEMS) if (x.id !== "none") assert.ok(existsSync(new URL(`src/img/outfits/${x.id}.png`, root)), x.id);
 });
 
 test("face picks its picture, unknown face falls back to smile", () => {
@@ -26,9 +24,13 @@ test("face picks its picture, unknown face falls back to smile", () => {
   assert.ok(yukiImg({ face: "joy" }).includes('alt="유키 선생님"'));
 });
 
-test("item is drawn beside Yuki; none or a bad id draws nothing", () => {
-  assert.ok(yukiImg({ item: "kimono" }).includes("img/items/kimono.png"));
-  assert.ok(!yukiImg({ item: "none" }).includes("img/items/"));
+test("wearing an outfit draws the outfit picture instead of a face; none or a bad id draws the face", () => {
+  const o = yukiImg({ face: "joy", item: "tenjin" });
+  assert.ok(o.includes("img/outfits/tenjin.png") && o.includes("오사카 덴진 마쓰리"), o);
+  assert.ok(!o.includes("img/yuki/") && !o.includes("img/items/"));
+  const f = yukiImg({ face: "joy" });
+  assert.ok(f.includes("img/yuki/joy.png") && !f.includes("img/outfits/"));
+  assert.ok(yukiImg({ face: "joy", item: "kimono" }).includes("img/yuki/joy.png"), "old item id → face");
   assert.ok(!yukiImg({ item: '"><script>' }).includes("<script>"));
 });
 

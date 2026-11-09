@@ -208,6 +208,7 @@ export function render(root, ctx) {
     ctx.commit(next);
     ctx.dayStart(); // 가져온 저장의 날짜로 연속 기록·퀘스트를 오늘에 맞춤
     toast("저장 파일을 가져왔어요.");
+    ctx.noticeRefund();
     ctx.show("home");
   });
 }

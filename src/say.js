@@ -33,7 +33,7 @@ function unit(rng) {
  * 상황에 맞는 해치 선생님 대사 한 줄을 고른다.
  * @param {string} situation  ledger 「대사 상황 id」(greet, correct, …)
  * @param {{name?:string, streak?:number, xp?:number, item?:string}} [vars]
- *   자리 표시 값. item은 물건 표의 이름(「기모노 · 着物{きもの}」). 값이 없는 자리 표시를 쓰는 줄은 건너뛴다.
+ *   자리 표시 값. item은 의상 표의 이름(「오사카 덴진 마쓰리 · 天神祭{てんじんまつり}」). 값이 없는 자리 표시를 쓰는 줄은 건너뛴다.
  * @param {() => number} [rng]  0 이상 1 미만을 돌려주는 난수 함수
  * @param {number|null} [last]  **같은 상황**에서 직전에 고른 줄 번호(돌려받은 index). 이 줄은 다시 고르지 않는다.
  * @returns {{text:string, face:string, index:number}}  index는 LINES[situation] 안의 번호, 대체 대사면 -1

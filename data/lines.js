@@ -4,7 +4,7 @@
 // 일본어 한마디 뒤에는 늘 (한국어 뜻)을 단다. 한자는 「字{よみ}」로 쓰면 말풍선에 후리가나가 붙는다(src/ruby.js).
 // 표정: src/yuki.js FACE_IDS
 // 자리 표시: {name} {streak} {xp} {item}
-//   {item}에는 물건 이름(「기모노 · 着物{きもの}」)이 들어간다.
+//   {item}에는 의상 이름(「오사카 덴진 마쓰리 · 天神祭{てんじんまつり}」)이 들어간다.
 //   {streak}·{xp}·{item} 값이 없으면 say()가 그 줄을 건너뛴다. 상황마다 자리 표시 없는 줄을 하나 이상 둔다.
 // {name}은 줄 맨 앞에 「{name} 씨, 」 꼴로 한 번만 쓴다. 이름이 비면 say()가 이 덩어리를 통째로 뺀다.
 
@@ -77,10 +77,10 @@ export const LINES = {
     { text: "{name} 씨, おかえり!(어서 와요!) 오늘 다시 시작해요.", face: "joy" },
   ],
   item_bought: [
-    { text: "{item}, 어때요? 저랑 어울려요?", face: "sparkle" },
-    { text: "{item}, 마음에 들어요! 오늘은 이걸로 할게요.", face: "joy" },
-    { text: "새 물건 {item}! 보는 눈이 있네요.", face: "wink" },
-    { text: "다 일본 물건이에요. 이름도 같이 외워 봐요.", face: "shy" },
+    { text: "{item} 의상, 어울려요?", face: "sparkle" },
+    { text: "{item}! 오늘은 이걸 입을게요.", face: "joy" },
+    { text: "새 의상 {item}! 축제 가고 싶어요.", face: "wink" },
+    { text: "まつり(축제) 이름도 같이 외워 봐요.", face: "shy" },
   ],
   welcome_back: [
     { text: "{name} 씨, ひさしぶり!(오랜만이에요!) 잘 지냈어요?", face: "surprise" },

@@ -120,7 +120,7 @@ export function cardExample(c, win = globalThis) {
 
 export const MILESTONE_REWARD = {
   7: "보상 50엔",
-  30: "선물: 가도마츠",
+  30: "선물: 아오모리 네부타 마쓰리 의상",
   100: "「100일 연속」 배지",
 };
 
