@@ -87,11 +87,13 @@ export function reviewPool(chapters, concepts, completed) {
   const queue = new Set(concepts || []);
   const doneSet = new Set(completed || []);
   const pool = [];
+  const seen = new Set(); // 레슨·장 평가·모의고사에 복사된 같은 문제는 한 번만
+  const key = (it) => JSON.stringify([it.concept, it.q, it.sentence?.jp, [...(it.options || it.lines || [])].sort()]);
   for (const ch of chapters || []) {
     const ls = [...(ch.LESSONS || []), ...(ch.ADVANCED || []).filter((l) => doneSet.has(l.id))];
     for (const l of ls) {
       for (const it of l.items || []) {
-        if (it && TOUCH.has(it.type) && queue.has(it.concept)) pool.push({ ...it, type: it.type === "check" ? "choice" : it.type, from: l.id });
+        if (it && TOUCH.has(it.type) && queue.has(it.concept) && !seen.has(key(it)) && seen.add(key(it))) pool.push({ ...it, type: it.type === "check" ? "choice" : it.type, from: l.id });
       }
     }
   }

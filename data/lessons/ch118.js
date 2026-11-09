@@ -11,7 +11,8 @@ export const LESSONS = [
    "一 한 일",
    "二 두 이",
    "三 석 삼",
-   "四 넉 사"
+   "四 넉 사",
+   "五 다섯 오"
   ],
   "cards": [
    {
@@ -63,21 +64,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-一",
-    "q": "「いちど」 한자로 쓰면?",
-    "options": [
-     "一度",
-     "九日",
-     "今月",
-     "七日"
-    ],
-    "answer": 0,
-    "explain": "一度{いちど} = 한 번 · 一 한 일",
-    "say": "一度{いちど}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-二",
     "q": "「二」 어떻게 읽을까요?",
@@ -90,21 +76,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "二{に} = 이 (둘) · 二 두 이",
     "say": "二{に}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-二",
-    "q": "「ふつか」 한자로 쓰면?",
-    "options": [
-     "二日",
-     "一度",
-     "九つ",
-     "五日"
-    ],
-    "answer": 0,
-    "explain": "二日{ふつか} = 2일·이틀 · 二 두 이",
-    "say": "二日{ふつか}"
    },
    {
     "type": "choice",
@@ -123,21 +94,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-三",
-    "q": "「みっか」 한자로 쓰면?",
-    "options": [
-     "三日",
-     "九日",
-     "二日",
-     "九つ"
-    ],
-    "answer": 0,
-    "explain": "三日{みっか} = 3일·사흘 · 三 석 삼",
-    "say": "三日{みっか}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-四",
     "q": "「四」 어떻게 읽을까요?",
@@ -153,21 +109,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-四",
-    "q": "「よっか」 한자로 쓰면?",
-    "options": [
-     "四日",
-     "九つ",
-     "二日",
-     "七日"
-    ],
-    "answer": 0,
-    "explain": "四日{よっか} = 4일·나흘 · 四 넉 사",
-    "say": "四日{よっか}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-五",
     "q": "「五」 어떻게 읽을까요?",
@@ -180,6 +121,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "五{ご} = 오 (다섯) · 五 다섯 오",
     "say": "五{ご}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-一",
+    "q": "「いちど」 한자로 쓰면?",
+    "options": [
+     "一度",
+     "九日",
+     "今月",
+     "七日"
+    ],
+    "answer": 0,
+    "explain": "一度{いちど} = 한 번 · 一 한 일",
+    "say": "一度{いちど}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-二",
+    "q": "「ふつか」 한자로 쓰면?",
+    "options": [
+     "二日",
+     "一度",
+     "九つ",
+     "五日"
+    ],
+    "answer": 0,
+    "explain": "二日{ふつか} = 2일·이틀 · 二 두 이",
+    "say": "二日{ふつか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-三",
+    "q": "「みっか」 한자로 쓰면?",
+    "options": [
+     "三日",
+     "九日",
+     "二日",
+     "九つ"
+    ],
+    "answer": 0,
+    "explain": "三日{みっか} = 3일·사흘 · 三 석 삼",
+    "say": "三日{みっか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-四",
+    "q": "「よっか」 한자로 쓰면?",
+    "options": [
+     "四日",
+     "九つ",
+     "二日",
+     "七日"
+    ],
+    "answer": 0,
+    "explain": "四日{よっか} = 4일·나흘 · 四 넉 사",
+    "say": "四日{よっか}"
    },
    {
     "type": "choice",
@@ -207,7 +208,8 @@ export const LESSONS = [
    "六 여섯 육",
    "七 일곱 칠",
    "八 여덟 팔",
-   "九 아홉 구"
+   "九 아홉 구",
+   "十 열 십"
   ],
   "cards": [
    {
@@ -259,21 +261,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-六",
-    "q": "「むいか」 한자로 쓰면?",
-    "options": [
-     "六日",
-     "上手",
-     "下手",
-     "九日"
-    ],
-    "answer": 0,
-    "explain": "六日{むいか} = 6일·엿새 · 六 여섯 육",
-    "say": "六日{むいか}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-七",
     "q": "「七」 어떻게 읽을까요?",
@@ -286,21 +273,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "七{しち} = 칠 (일곱) · 七 일곱 칠",
     "say": "七{しち}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-七",
-    "q": "「なのか」 한자로 쓰면?",
-    "options": [
-     "七日",
-     "五日",
-     "九つ",
-     "三日"
-    ],
-    "answer": 0,
-    "explain": "七日{なのか} = 7일·이레 · 七 일곱 칠",
-    "say": "七日{なのか}"
    },
    {
     "type": "choice",
@@ -319,21 +291,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-八",
-    "q": "「ようか」 한자로 쓰면?",
-    "options": [
-     "八日",
-     "五日",
-     "二日",
-     "下手"
-    ],
-    "answer": 0,
-    "explain": "八日{ようか} = 8일·여드레 · 八 여덟 팔",
-    "say": "八日{ようか}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-九",
     "q": "「九日」 어떻게 읽을까요?",
@@ -341,26 +298,11 @@ export const LESSONS = [
      "ここのか",
      "おみやげ",
      "じょうず",
-     "どようび"
+     "ともだち"
     ],
     "answer": 0,
     "explain": "九日{ここのか} = 9일·아흐레 · 九 아홉 구",
     "say": "九日{ここのか}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-九",
-    "q": "「ここのつ」 한자로 쓰면?",
-    "options": [
-     "九つ",
-     "人気",
-     "七日",
-     "九日"
-    ],
-    "answer": 0,
-    "explain": "九{ここの}つ = 아홉 개 · 九 아홉 구",
-    "say": "九{ここの}つ"
    },
    {
     "type": "choice",
@@ -376,6 +318,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "十日{とおか} = 10일·열흘 · 十 열 십",
     "say": "十日{とおか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-六",
+    "q": "「むいか」 한자로 쓰면?",
+    "options": [
+     "六日",
+     "上手",
+     "下手",
+     "九日"
+    ],
+    "answer": 0,
+    "explain": "六日{むいか} = 6일·엿새 · 六 여섯 육",
+    "say": "六日{むいか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-七",
+    "q": "「なのか」 한자로 쓰면?",
+    "options": [
+     "七日",
+     "五日",
+     "九つ",
+     "三日"
+    ],
+    "answer": 0,
+    "explain": "七日{なのか} = 7일·이레 · 七 일곱 칠",
+    "say": "七日{なのか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-八",
+    "q": "「ようか」 한자로 쓰면?",
+    "options": [
+     "八日",
+     "五日",
+     "二日",
+     "下手"
+    ],
+    "answer": 0,
+    "explain": "八日{ようか} = 8일·여드레 · 八 여덟 팔",
+    "say": "八日{ようか}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-九",
+    "q": "「ここのつ」 한자로 쓰면?",
+    "options": [
+     "九つ",
+     "人気",
+     "七日",
+     "九日"
+    ],
+    "answer": 0,
+    "explain": "九{ここの}つ = 아홉 개 · 九 아홉 구",
+    "say": "九{ここの}つ"
    },
    {
     "type": "choice",
@@ -403,7 +405,8 @@ export const LESSONS = [
    "百 일백 백",
    "千 일천 천",
    "万 일만 만",
-   "円 둥글 원 (엔)"
+   "円 둥글 원 (엔)",
+   "日 날 일"
   ],
   "cards": [
    {
@@ -455,21 +458,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-百",
-    "q": "「やおや」 한자로 쓰면?",
-    "options": [
-     "八百屋",
-     "火曜日",
-     "小さい",
-     "お母さん"
-    ],
-    "answer": 0,
-    "explain": "八百屋{やおや} = 채소 가게 · 百 일백 백",
-    "say": "八百屋{やおや}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-千",
     "q": "「千」 어떻게 읽을까요?",
@@ -478,21 +466,6 @@ export const LESSONS = [
      "とし",
      "ちち",
      "した"
-    ],
-    "answer": 0,
-    "explain": "千{せん} = 천 · 千 일천 천",
-    "say": "千{せん}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-千",
-    "q": "「せん」 한자로 쓰면?",
-    "options": [
-     "千",
-     "上",
-     "何",
-     "一"
     ],
     "answer": 0,
     "explain": "千{せん} = 천 · 千 일천 천",
@@ -515,21 +488,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-万",
-    "q": "「まん」 한자로 쓰면?",
-    "options": [
-     "万",
-     "下",
-     "六",
-     "五"
-    ],
-    "answer": 0,
-    "explain": "万{まん} = 만 · 万 일만 만",
-    "say": "万{まん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-円",
     "q": "「円」 어떻게 읽을까요?",
@@ -545,21 +503,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-円",
-    "q": "「ひゃくえん」 한자로 쓰면?",
-    "options": [
-     "百円",
-     "三日",
-     "上手",
-     "お金"
-    ],
-    "answer": 0,
-    "explain": "百円{ひゃくえん} = 백 엔 · 円 둥글 원 (엔)",
-    "say": "百円{ひゃくえん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-日",
     "q": "「日本」 어떻게 읽을까요?",
@@ -572,6 +515,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "日本{にほん} = 일본 · 日 날 일",
     "say": "日本{にほん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-百",
+    "q": "「やおや」 한자로 쓰면?",
+    "options": [
+     "八百屋",
+     "火曜日",
+     "小さい",
+     "お母さん"
+    ],
+    "answer": 0,
+    "explain": "八百屋{やおや} = 채소 가게 · 百 일백 백",
+    "say": "八百屋{やおや}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-千",
+    "q": "「せん」 한자로 쓰면?",
+    "options": [
+     "千",
+     "上",
+     "何",
+     "一"
+    ],
+    "answer": 0,
+    "explain": "千{せん} = 천 · 千 일천 천",
+    "say": "千{せん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-万",
+    "q": "「まん」 한자로 쓰면?",
+    "options": [
+     "万",
+     "下",
+     "六",
+     "五"
+    ],
+    "answer": 0,
+    "explain": "万{まん} = 만 · 万 일만 만",
+    "say": "万{まん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-円",
+    "q": "「ひゃくえん」 한자로 쓰면?",
+    "options": [
+     "百円",
+     "三日",
+     "上手",
+     "お金"
+    ],
+    "answer": 0,
+    "explain": "百円{ひゃくえん} = 백 엔 · 円 둥글 원 (엔)",
+    "say": "百円{ひゃくえん}"
    },
    {
     "type": "choice",
@@ -599,7 +602,8 @@ export const LESSONS = [
    "月 달 월",
    "火 불 화",
    "水 물 수",
-   "木 나무 목"
+   "木 나무 목",
+   "金 쇠 금"
   ],
   "cards": [
    {
@@ -607,7 +611,7 @@ export const LESSONS = [
     "words": [
      {
       "jp": "月",
-      "ko": "달 월 · 음 ゲツ·ガツ · 훈 つき · 예: 毎月"
+      "ko": "달 월 · 음 ゲツ·ガツ · 훈 つき · 예: 今月"
      },
      {
       "jp": "火",
@@ -638,27 +642,12 @@ export const LESSONS = [
     "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-月",
-    "q": "「毎月」 어떻게 읽을까요?",
+    "q": "「今月」 어떻게 읽을까요?",
     "options": [
-     "まいげつ",
+     "こんげつ",
      "ともだち",
      "ちいさい",
      "ここのか"
-    ],
-    "answer": 0,
-    "explain": "毎月{まいげつ} = 매달 · 月 달 월",
-    "say": "毎月{まいげつ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-月",
-    "q": "「こんげつ」 한자로 쓰면?",
-    "options": [
-     "今月",
-     "九日",
-     "人気",
-     "お金"
     ],
     "answer": 0,
     "explain": "今月{こんげつ} = 이번 달 · 月 달 월",
@@ -671,24 +660,9 @@ export const LESSONS = [
     "q": "「火曜日」 어떻게 읽을까요?",
     "options": [
      "かようび",
-     "ともだち",
-     "ちいさい",
+     "ちいさな",
+     "だいがく",
      "ここのつ"
-    ],
-    "answer": 0,
-    "explain": "火曜日{かようび} = 화요일 · 火 불 화",
-    "say": "火曜日{かようび}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-火",
-    "q": "「かようび」 한자로 쓰면?",
-    "options": [
-     "火曜日",
-     "水曜日",
-     "お母さん",
-     "お土産"
     ],
     "answer": 0,
     "explain": "火曜日{かようび} = 화요일 · 火 불 화",
@@ -711,21 +685,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-水",
-    "q": "「すいようび」 한자로 쓰면?",
-    "options": [
-     "水曜日",
-     "小さな",
-     "土曜日",
-     "八百屋"
-    ],
-    "answer": 0,
-    "explain": "水曜日{すいようび} = 수요일 · 水 물 수",
-    "say": "水曜日{すいようび}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-木",
     "q": "「木」 어떻게 읽을까요?",
@@ -741,21 +700,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-木",
-    "q": "「もくようび」 한자로 쓰면?",
-    "options": [
-     "木曜日",
-     "土曜日",
-     "水曜日",
-     "八百屋"
-    ],
-    "answer": 0,
-    "explain": "木曜日{もくようび} = 목요일 · 木 나무 목",
-    "say": "木曜日{もくようび}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-金",
     "q": "「お金」 어떻게 읽을까요?",
@@ -768,6 +712,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "お金{かね} = 돈 · 金 쇠 금",
     "say": "お金{かね}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-月",
+    "q": "「せんげつ」 한자로 쓰면?",
+    "options": [
+     "先月",
+     "九日",
+     "人気",
+     "お金"
+    ],
+    "answer": 0,
+    "explain": "先月{せんげつ} = 지난달 · 月 달 월",
+    "say": "先月{せんげつ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-火",
+    "q": "「かようび」 한자로 쓰면?",
+    "options": [
+     "火曜日",
+     "水曜日",
+     "お母さん",
+     "お土産"
+    ],
+    "answer": 0,
+    "explain": "火曜日{かようび} = 화요일 · 火 불 화",
+    "say": "火曜日{かようび}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-水",
+    "q": "「すいようび」 한자로 쓰면?",
+    "options": [
+     "水曜日",
+     "小さな",
+     "土曜日",
+     "八百屋"
+    ],
+    "answer": 0,
+    "explain": "水曜日{すいようび} = 수요일 · 水 물 수",
+    "say": "水曜日{すいようび}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-木",
+    "q": "「もくようび」 한자로 쓰면?",
+    "options": [
+     "木曜日",
+     "土曜日",
+     "水曜日",
+     "八百屋"
+    ],
+    "answer": 0,
+    "explain": "木曜日{もくようび} = 목요일 · 木 나무 목",
+    "say": "木曜日{もくようび}"
    },
    {
     "type": "choice",
@@ -795,7 +799,8 @@ export const LESSONS = [
    "土 흙 토",
    "年 해 년",
    "時 때 시",
-   "今 이제 금"
+   "今 이제 금",
+   "午 낮 오"
   ],
   "cards": [
    {
@@ -838,27 +843,12 @@ export const LESSONS = [
     "options": [
      "おみやげ",
      "かようび",
-     "だいがく",
-     "ちいさい"
+     "せんげつ",
+     "だいがく"
     ],
     "answer": 0,
     "explain": "お土産{みやげ} = 기념품 · 土 흙 토",
     "say": "お土産{みやげ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-土",
-    "q": "「どようび」 한자로 쓰면?",
-    "options": [
-     "土曜日",
-     "二十日",
-     "お父さん",
-     "お土産"
-    ],
-    "answer": 0,
-    "explain": "土曜日{どようび} = 토요일 · 土 흙 토",
-    "say": "土曜日{どようび}"
    },
    {
     "type": "choice",
@@ -877,21 +867,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-年",
-    "q": "「まいねん」 한자로 쓰면?",
-    "options": [
-     "毎年",
-     "今日",
-     "九つ",
-     "下手"
-    ],
-    "answer": 0,
-    "explain": "毎年{まいねん} = 매년 · 年 해 년",
-    "say": "毎年{まいねん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-時",
     "q": "「時計」 어떻게 읽을까요?",
@@ -904,21 +879,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "時計{とけい} = 시계 · 時 때 시",
     "say": "時計{とけい}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-時",
-    "q": "「じかん」 한자로 쓰면?",
-    "options": [
-     "時間",
-     "七日",
-     "三日",
-     "上手"
-    ],
-    "answer": 0,
-    "explain": "時間{じかん} = 시간 · 時 때 시",
-    "say": "時間{じかん}"
    },
    {
     "type": "choice",
@@ -937,21 +897,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-今",
-    "q": "「きょう」 한자로 쓰면?",
-    "options": [
-     "今日",
-     "五日",
-     "七日",
-     "一度"
-    ],
-    "answer": 0,
-    "explain": "今日{きょう} = 오늘 · 今 이제 금",
-    "say": "今日{きょう}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-午",
     "q": "「午前」 어떻게 읽을까요?",
@@ -964,6 +909,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "午前{ごぜん} = 오전 · 午 낮 오",
     "say": "午前{ごぜん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-土",
+    "q": "「どようび」 한자로 쓰면?",
+    "options": [
+     "土曜日",
+     "二十日",
+     "お父さん",
+     "お土産"
+    ],
+    "answer": 0,
+    "explain": "土曜日{どようび} = 토요일 · 土 흙 토",
+    "say": "土曜日{どようび}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-年",
+    "q": "「まいねん」 한자로 쓰면?",
+    "options": [
+     "毎年",
+     "今日",
+     "九つ",
+     "下手"
+    ],
+    "answer": 0,
+    "explain": "毎年{まいねん} = 매년 · 年 해 년",
+    "say": "毎年{まいねん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-時",
+    "q": "「じかん」 한자로 쓰면?",
+    "options": [
+     "時間",
+     "七日",
+     "三日",
+     "上手"
+    ],
+    "answer": 0,
+    "explain": "時間{じかん} = 시간 · 時 때 시",
+    "say": "時間{じかん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-今",
+    "q": "「きょう」 한자로 쓰면?",
+    "options": [
+     "今日",
+     "五日",
+     "七日",
+     "一度"
+    ],
+    "answer": 0,
+    "explain": "今日{きょう} = 오늘 · 今 이제 금",
+    "say": "今日{きょう}"
    },
    {
     "type": "choice",
@@ -991,7 +996,8 @@ export const LESSONS = [
    "半 반 반",
    "毎 매양 매",
    "何 어찌 하",
-   "人 사람 인"
+   "人 사람 인",
+   "子 아들 자"
   ],
   "cards": [
    {
@@ -1003,7 +1009,7 @@ export const LESSONS = [
      },
      {
       "jp": "毎",
-      "ko": "매양 매 · 음 マイ · 훈 - · 예: 毎日"
+      "ko": "매양 매 · 음 マイ · 훈 - · 예: 毎朝"
      },
      {
       "jp": "何",
@@ -1043,44 +1049,14 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-半",
-    "q": "「はんぶん」 한자로 쓰면?",
-    "options": [
-     "半分",
-     "上手",
-     "人気",
-     "九日"
-    ],
-    "answer": 0,
-    "explain": "半分{はんぶん} = 절반 · 半 반 반",
-    "say": "半分{はんぶん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-毎",
-    "q": "「毎日」 어떻게 읽을까요?",
+    "q": "「毎朝」 어떻게 읽을까요?",
     "options": [
-     "まいにち",
+     "まいあさ",
      "ここのつ",
-     "だいがく",
+     "せんげつ",
      "こんげつ"
-    ],
-    "answer": 0,
-    "explain": "毎日{まいにち} = 매일 · 毎 매양 매",
-    "say": "毎日{まいにち}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-毎",
-    "q": "「まいあさ」 한자로 쓰면?",
-    "options": [
-     "毎朝",
-     "七日",
-     "三日",
-     "下手"
     ],
     "answer": 0,
     "explain": "毎朝{まいあさ} = 매일 아침 · 毎 매양 매",
@@ -1103,21 +1079,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-何",
-    "q": "「なん」 한자로 쓰면?",
-    "options": [
-     "何",
-     "二",
-     "人",
-     "万"
-    ],
-    "answer": 0,
-    "explain": "何{なん} = 무엇 · 何 어찌 하",
-    "say": "何{なん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-人",
     "q": "「人」 어떻게 읽을까요?",
@@ -1133,21 +1094,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-人",
-    "q": "「にんき」 한자로 쓰면?",
-    "options": [
-     "人気",
-     "お金",
-     "五日",
-     "下手"
-    ],
-    "answer": 0,
-    "explain": "人気{にんき} = 인기 · 人 사람 인",
-    "say": "人気{にんき}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-子",
     "q": "「帽子」 어떻게 읽을까요?",
@@ -1160,6 +1106,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "帽子{ぼうし} = 모자 · 子 아들 자",
     "say": "帽子{ぼうし}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-半",
+    "q": "「はんぶん」 한자로 쓰면?",
+    "options": [
+     "半分",
+     "上手",
+     "人気",
+     "九日"
+    ],
+    "answer": 0,
+    "explain": "半分{はんぶん} = 절반 · 半 반 반",
+    "say": "半分{はんぶん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-毎",
+    "q": "「まいばん」 한자로 쓰면?",
+    "options": [
+     "毎晩",
+     "七日",
+     "三日",
+     "下手"
+    ],
+    "answer": 0,
+    "explain": "毎晩{まいばん} = 매일 밤 · 毎 매양 매",
+    "say": "毎晩{まいばん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-何",
+    "q": "「なん」 한자로 쓰면?",
+    "options": [
+     "何",
+     "二",
+     "人",
+     "万"
+    ],
+    "answer": 0,
+    "explain": "何{なん} = 무엇 · 何 어찌 하",
+    "say": "何{なん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-人",
+    "q": "「にんき」 한자로 쓰면?",
+    "options": [
+     "人気",
+     "お金",
+     "五日",
+     "下手"
+    ],
+    "answer": 0,
+    "explain": "人気{にんき} = 인기 · 人 사람 인",
+    "say": "人気{にんき}"
    },
    {
     "type": "choice",
@@ -1187,7 +1193,8 @@ export const LESSONS = [
    "女 여자 녀",
    "男 사내 남",
    "父 아비 부",
-   "母 어미 모"
+   "母 어미 모",
+   "友 벗 우"
   ],
   "cards": [
    {
@@ -1239,21 +1246,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-女",
-    "q": "「かのじょ」 한자로 쓰면?",
-    "options": [
-     "彼女",
-     "今日",
-     "五日",
-     "二日"
-    ],
-    "answer": 0,
-    "explain": "彼女{かのじょ} = 그녀 · 女 여자 녀",
-    "say": "彼女{かのじょ}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-男",
     "q": "「男」 어떻게 읽을까요?",
@@ -1266,21 +1258,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "男{おとこ} = 남자 · 男 사내 남",
     "say": "男{おとこ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-男",
-    "q": "「おとこのこ」 한자로 쓰면?",
-    "options": [
-     "男の子",
-     "金曜日",
-     "お土産",
-     "お父さん"
-    ],
-    "answer": 0,
-    "explain": "男{おとこ}の子{こ} = 남자아이 · 男 사내 남",
-    "say": "男{おとこ}の子{こ}"
    },
    {
     "type": "choice",
@@ -1299,21 +1276,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-父",
-    "q": "「おとうさん」 한자로 쓰면?",
-    "options": [
-     "お父さん",
-     "小さい",
-     "小さな",
-     "二十日"
-    ],
-    "answer": 0,
-    "explain": "お父{とう}さん = 아버지 (남의·부를 때) · 父 아비 부",
-    "say": "お父{とう}さん"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-母",
     "q": "「母」 어떻게 읽을까요?",
@@ -1329,6 +1291,66 @@ export const LESSONS = [
    },
    {
     "type": "choice",
+    "kind": "kanji-read",
+    "concept": "k5-友",
+    "q": "「友達」 어떻게 읽을까요?",
+    "options": [
+     "ともだち",
+     "ここのつ",
+     "おみやげ",
+     "だいがく"
+    ],
+    "answer": 0,
+    "explain": "友達{ともだち} = 친구 · 友 벗 우",
+    "say": "友達{ともだち}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-女",
+    "q": "「かのじょ」 한자로 쓰면?",
+    "options": [
+     "彼女",
+     "今日",
+     "五日",
+     "二日"
+    ],
+    "answer": 0,
+    "explain": "彼女{かのじょ} = 그녀 · 女 여자 녀",
+    "say": "彼女{かのじょ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-男",
+    "q": "「おとこのこ」 한자로 쓰면?",
+    "options": [
+     "男の子",
+     "金曜日",
+     "お土産",
+     "お父さん"
+    ],
+    "answer": 0,
+    "explain": "男{おとこ}の子{こ} = 남자아이 · 男 사내 남",
+    "say": "男{おとこ}の子{こ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-父",
+    "q": "「おとうさん」 한자로 쓰면?",
+    "options": [
+     "お父さん",
+     "小さい",
+     "小さな",
+     "二十日"
+    ],
+    "answer": 0,
+    "explain": "お父{とう}さん = 아버지 (남의·부를 때) · 父 아비 부",
+    "say": "お父{とう}さん"
+   },
+   {
+    "type": "choice",
     "kind": "kanji-write",
     "concept": "k5-母",
     "q": "「おかあさん」 한자로 쓰면?",
@@ -1341,21 +1363,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "お母{かあ}さん = 어머니 (남의·부를 때) · 母 어미 모",
     "say": "お母{かあ}さん"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-友",
-    "q": "「友達」 어떻게 읽을까요?",
-    "options": [
-     "ともだち",
-     "ここのつ",
-     "おみやげ",
-     "ちいさい"
-    ],
-    "answer": 0,
-    "explain": "友達{ともだち} = 친구 · 友 벗 우",
-    "say": "友達{ともだち}"
    },
    {
     "type": "choice",
@@ -1383,7 +1390,8 @@ export const LESSONS = [
    "名 이름 명",
    "大 큰 대",
    "小 작을 소",
-   "上 윗 상"
+   "上 윗 상",
+   "下 아래 하"
   ],
   "cards": [
    {
@@ -1435,48 +1443,18 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-名",
-    "q": "「ゆうめい」 한자로 쓰면?",
-    "options": [
-     "有名",
-     "五日",
-     "九日",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "有名{ゆうめい} = 유명해요 · 名 이름 명",
-    "say": "有名{ゆうめい}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-大",
     "q": "「大阪」 어떻게 읽을까요?",
     "options": [
      "おおさか",
      "ここのか",
-     "どようび",
-     "ちいさな"
+     "ともだち",
+     "ちいさい"
     ],
     "answer": 0,
     "explain": "大阪{おおさか} = 오사카 · 大 큰 대",
     "say": "大阪{おおさか}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-大",
-    "q": "「だいがく」 한자로 쓰면?",
-    "options": [
-     "大学",
-     "上手",
-     "二日",
-     "一度"
-    ],
-    "answer": 0,
-    "explain": "大学{だいがく} = 대학교 · 大 큰 대",
-    "say": "大学{だいがく}"
    },
    {
     "type": "choice",
@@ -1487,26 +1465,11 @@ export const LESSONS = [
      "ちいさい",
      "ここのつ",
      "おおさか",
-     "ともだち"
+     "ちいさな"
     ],
     "answer": 0,
     "explain": "小{ちい}さい = 작아요 · 小 작을 소",
     "say": "小{ちい}さい"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-小",
-    "q": "「ちいさな」 한자로 쓰면?",
-    "options": [
-     "小さな",
-     "お土産",
-     "男の子",
-     "金曜日"
-    ],
-    "answer": 0,
-    "explain": "小{ちい}さな = 작은 · 小 작을 소",
-    "say": "小{ちい}さな"
    },
    {
     "type": "choice",
@@ -1525,21 +1488,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-上",
-    "q": "「じょうず」 한자로 쓰면?",
-    "options": [
-     "上手",
-     "九日",
-     "今日",
-     "三日"
-    ],
-    "answer": 0,
-    "explain": "上手{じょうず} = 잘해요 · 上 윗 상",
-    "say": "上手{じょうず}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-下",
     "q": "「下」 어떻게 읽을까요?",
@@ -1552,6 +1500,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "下{した} = 아래 · 下 아래 하",
     "say": "下{した}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-名",
+    "q": "「ゆうめい」 한자로 쓰면?",
+    "options": [
+     "有名",
+     "五日",
+     "九日",
+     "人気"
+    ],
+    "answer": 0,
+    "explain": "有名{ゆうめい} = 유명해요 · 名 이름 명",
+    "say": "有名{ゆうめい}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-大",
+    "q": "「だいがく」 한자로 쓰면?",
+    "options": [
+     "大学",
+     "上手",
+     "二日",
+     "一度"
+    ],
+    "answer": 0,
+    "explain": "大学{だいがく} = 대학교 · 大 큰 대",
+    "say": "大学{だいがく}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-小",
+    "q": "「ちいさな」 한자로 쓰면?",
+    "options": [
+     "小さな",
+     "お土産",
+     "男の子",
+     "金曜日"
+    ],
+    "answer": 0,
+    "explain": "小{ちい}さな = 작은 · 小 작을 소",
+    "say": "小{ちい}さな"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-上",
+    "q": "「じょうず」 한자로 쓰면?",
+    "options": [
+     "上手",
+     "九日",
+     "今日",
+     "三日"
+    ],
+    "answer": 0,
+    "explain": "上手{じょうず} = 잘해요 · 上 윗 상",
+    "say": "上手{じょうず}"
    },
    {
     "type": "choice",
@@ -1582,17 +1590,17 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-read",
-    "concept": "k5-二",
-    "q": "「二」 어떻게 읽을까요?",
+    "concept": "k5-三",
+    "q": "「三」 어떻게 읽을까요?",
     "options": [
-     "に",
+     "さん",
      "しち",
-     "いち",
-     "せん"
+     "せん",
+     "いま"
     ],
     "answer": 0,
-    "explain": "二{に} = 이 (둘) · 二 두 이",
-    "say": "二{に}"
+    "explain": "三{さん} = 삼 (셋) · 三 석 삼",
+    "say": "三{さん}"
    },
    {
     "type": "choice",
@@ -1627,47 +1635,17 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
-    "concept": "k5-父",
-    "q": "「おとうさん」 한자로 쓰면?",
+    "concept": "k5-女",
+    "q": "「かのじょ」 한자로 쓰면?",
     "options": [
-     "お父さん",
-     "小さい",
-     "小さな",
-     "二十日"
+     "彼女",
+     "今日",
+     "五日",
+     "二日"
     ],
     "answer": 0,
-    "explain": "お父{とう}さん = 아버지 (남의·부를 때) · 父 아비 부",
-    "say": "お父{とう}さん"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-水",
-    "q": "「水」 어떻게 읽을까요?",
-    "options": [
-     "みず",
-     "いち",
-     "さん",
-     "えん"
-    ],
-    "answer": 0,
-    "explain": "水{みず} = 물 · 水 물 수",
-    "say": "水{みず}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-人",
-    "q": "「人」 어떻게 읽을까요?",
-    "options": [
-     "ひと",
-     "しち",
-     "せん",
-     "いま"
-    ],
-    "answer": 0,
-    "explain": "人{ひと} = 사람 · 人 사람 인",
-    "say": "人{ひと}"
+    "explain": "彼女{かのじょ} = 그녀 · 女 여자 녀",
+    "say": "彼女{かのじょ}"
    },
    {
     "type": "choice",
@@ -1687,17 +1665,47 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
-    "concept": "k5-火",
-    "q": "「かようび」 한자로 쓰면?",
+    "concept": "k5-毎",
+    "q": "「まいばん」 한자로 쓰면?",
     "options": [
-     "火曜日",
-     "水曜日",
-     "お母さん",
-     "お土産"
+     "毎晩",
+     "七日",
+     "三日",
+     "下手"
     ],
     "answer": 0,
-    "explain": "火曜日{かようび} = 화요일 · 火 불 화",
-    "say": "火曜日{かようび}"
+    "explain": "毎晩{まいばん} = 매일 밤 · 毎 매양 매",
+    "say": "毎晩{まいばん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-木",
+    "q": "「もくようび」 한자로 쓰면?",
+    "options": [
+     "木曜日",
+     "土曜日",
+     "水曜日",
+     "八百屋"
+    ],
+    "answer": 0,
+    "explain": "木曜日{もくようび} = 목요일 · 木 나무 목",
+    "say": "木曜日{もくようび}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-read",
+    "concept": "k5-木",
+    "q": "「木」 어떻게 읽을까요?",
+    "options": [
+     "き",
+     "いち",
+     "した",
+     "に"
+    ],
+    "answer": 0,
+    "explain": "木{き} = 나무 · 木 나무 목",
+    "say": "木{き}"
    }
   ]
  }

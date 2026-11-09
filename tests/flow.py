@@ -1235,6 +1235,8 @@ def test_jlpt_grammar_lesson():
             it = items[a.which_item(items)]
             if it["type"] == "order":
                 saw_build_ruby = saw_build_ruby or bool(a.page.query_selector("#op .line ruby"))
+                assert all(b.get_attribute("aria-label") for b in a.page.query_selector_all("#op .line")), "pool cards need a plain label"
+                assert "가나 카드" not in a.page.inner_text("article.item"), "build cards are not kana cards"
             a.answer_touch(it)
             a.page.wait_for_selector("#result:not([hidden])")
             assert a.cont()

@@ -170,3 +170,81 @@ def test_kanji_readings_handwritten(built):
     cards = [w for l in _js_const(built / "ch118.js", "LESSONS") for c in l["cards"] for w in c["words"]]
     three = next(w for w in cards if w["jp"] == "三")
     assert "음 サン · 훈 みっ(つ)" in three["ko"], three
+
+
+
+# ---- 손질(N5 손질 2) ----
+def _lessons(built, n):
+    return _js_const(built / ("ch%d.js" % n), "LESSONS")
+
+
+def test_maitsuki_not_in_kanji_questions(built):
+    """毎月은 まいつき·まいげつ 둘 다 흔해서 한자 문제 단어로 쓰지 않음(원본 목록은 まいげつ)"""
+    for n in (118, 119):
+        for l in _lessons(built, n):
+            assert all(plain(it["say"]) != "毎月" for it in l["items"]), l["id"]
+
+
+def test_kanji_words_one_kanji_each(built):
+    """한 장 안에서 문제 단어 하나는 한자 하나에만(天気를 天·気가 같이 쓰지 않음), 当て字 沢山 안 씀"""
+    for n in (118, 119):
+        owner = {}
+        for l in _lessons(built, n):
+            for it in l["items"]:
+                if it["kind"].startswith("kanji"):
+                    w = plain(it["say"])
+                    assert w != "沢山"
+                    assert owner.setdefault(w, it["concept"]) == it["concept"], (w, owner[w], it["concept"])
+
+
+def test_kanji_reads_before_writes(built):
+    """레슨 안에서 읽기 문제를 먼저 다 내고 표기 문제는 뒤에(같은 단어 읽기→표기가 바로 붙지 않게)"""
+    for n in (118, 119):
+        for l in _lessons(built, n)[:-1]:
+            ks = [it["kind"] for it in l["items"]]
+            assert ks == sorted(ks, key=lambda k: k != "kanji-read"), (l["id"], ks)
+
+
+def test_kanji_write_no_same_reading(built):
+    """표기 문제 오답의 읽기가 질문 읽기와 같으면 정답이 둘(같은 소리 다른 표기)"""
+    from make_lessons import jlpt_words, load_words, kana
+    rd = {}
+    for w in jlpt_words(load_words(os.path.join(ROOT, "data", "words.csv"))):
+        rd.setdefault(plain(w["jp"]), set()).add(kana(w["jp"]))
+    for n in (118, 119):
+        for l in _lessons(built, n):
+            for it in l["items"]:
+                if it["kind"] == "kanji-write":
+                    q = it["q"][1:it["q"].index("」")]
+                    for o in it["options"][1:]:
+                        assert q not in rd.get(o, set()), (it["q"], o)
+
+
+def test_kanji_summary_and_titles(built):
+    n = 0
+    for ch in (118, 119):
+        for l in _lessons(built, ch)[:-1]:
+            n += 1
+            assert l["title"] == "한자 %d" % n
+            assert len(l["summary"]) == len({it["concept"] for it in l["items"]}), l["summary"]
+
+
+def test_mock_listen_mixed(built):
+    for l in _lessons(built, 120):
+        qs = [it["q"] for it in l["items"] if it.get("kind") == "listen"]
+        assert sum("뜻" in q for q in qs) == 4 and sum("대답" in q for q in qs) == 2, qs
+
+
+def test_polish_texts():
+    d = json.load(open(os.path.join(ROOT, "data", "jlpt-n5-mock.json"), encoding="utf-8"))
+    assert "ことができ" not in json.dumps(d, ensure_ascii=False)
+    from make_lessons import load_grammar
+    ps = {p["id"]: p for p in load_grammar(GRAMMAR)}
+    fills = lambda pid: {it["pre"] + "＿" + it["post"]: it["wrong"] for it in ps[pid]["items"] if it["type"] == "fill"}
+    assert "まで" not in fills("g5-15")["授業{じゅぎょう}は九{く}時{じ}＿です。"]
+    assert "から" not in fills("g5-15")["駅{えき}＿歩{ある}きます。"]
+    assert "よく" not in fills("g5-17")["＿昼{ひる}ご飯{はん}を食{た}べましたか。"]
+    assert "もう" not in fills("g5-17")["弟{おとうと}は＿寝{ね}ています。"]
+    assert all("兄{あに}は料理" not in k for k in fills("g5-08"))
+    b14 = [it for it in ps["g5-14"]["items"] if it["type"] == "build"][0]
+    assert b14["ko"] == "같이 공원을 산책합시다."

@@ -334,9 +334,9 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
     body.innerHTML = `<article class="item">${itemHead(cur)}
       <p class="ex-label">내가 맞춘 말 <small>(누르면 뺄 수 있어요)</small></p>
       <ol class="order-answer" id="oa" aria-label="고른 순서"></ol>
-      <p class="ex-label">가나 카드 <small>(누른 순서대로 들어가요)</small></p>
+      <p class="ex-label">${it.kind === "build" ? "카드" : "가나 카드"} <small>(누른 순서대로 들어가요)</small></p>
       <div class="order-pool" id="op">${order.map((li) =>
-        `<button class="line" lang="ja" data-li="${li}">${ruby(it.lines[li])}</button>`).join("")}</div>
+        `<button class="line" lang="ja" data-li="${li}" aria-label="${esc(plain(it.lines[li]))}">${ruby(it.lines[li])}</button>`).join("")}</div>
     </article>`;
     const act = footButton("확인", { disabled: true });
     const oa = body.querySelector("#oa");

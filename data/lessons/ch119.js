@@ -11,7 +11,8 @@ export const LESSONS = [
    "中 가운데 중",
    "右 오른 우",
    "左 왼 좌",
-   "外 바깥 외"
+   "外 바깥 외",
+   "前 앞 전"
   ],
   "cards": [
    {
@@ -63,21 +64,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-中",
-    "q": "「ちゅうごく」 한자로 쓰면?",
-    "options": [
-     "中国",
-     "入口",
-     "出身",
-     "休む"
-    ],
-    "answer": 0,
-    "explain": "中国{ちゅうごく} = 중국 · 中 가운데 중",
-    "say": "中国{ちゅうごく}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-右",
     "q": "「右」 어떻게 읽을까요?",
@@ -86,21 +72,6 @@ export const LESSONS = [
      "しろ",
      "なか",
      "くに"
-    ],
-    "answer": 0,
-    "explain": "右{みぎ} = 오른쪽 · 右 오른 우",
-    "say": "右{みぎ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-右",
-    "q": "「みぎ」 한자로 쓰면?",
-    "options": [
-     "右",
-     "川",
-     "本",
-     "北"
     ],
     "answer": 0,
     "explain": "右{みぎ} = 오른쪽 · 右 오른 우",
@@ -123,48 +94,18 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-左",
-    "q": "「ひだり」 한자로 쓰면?",
-    "options": [
-     "左",
-     "国",
-     "南",
-     "前"
-    ],
-    "answer": 0,
-    "explain": "左{ひだり} = 왼쪽 · 左 왼 좌",
-    "say": "左{ひだり}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-外",
     "q": "「外国」 어떻게 읽을까요?",
     "options": [
      "がいこく",
      "せんせい",
-     "でんしゃ",
-     "たくさん"
+     "にほんご",
+     "たべもの"
     ],
     "answer": 0,
     "explain": "外国{がいこく} = 외국 · 外 바깥 외",
     "say": "外国{がいこく}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-外",
-    "q": "「がいこくじん」 한자로 쓰면?",
-    "options": [
-     "外国人",
-     "食べ物",
-     "中国",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "外国人{がいこくじん} = 외국인 · 外 바깥 외",
-    "say": "外国人{がいこくじん}"
    },
    {
     "type": "choice",
@@ -184,12 +125,72 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-中",
+    "q": "「ちゅうごく」 한자로 쓰면?",
+    "options": [
+     "中国",
+     "入る",
+     "出口",
+     "休む"
+    ],
+    "answer": 0,
+    "explain": "中国{ちゅうごく} = 중국 · 中 가운데 중",
+    "say": "中国{ちゅうごく}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-右",
+    "q": "「みぎ」 한자로 쓰면?",
+    "options": [
+     "右",
+     "川",
+     "本",
+     "北"
+    ],
+    "answer": 0,
+    "explain": "右{みぎ} = 오른쪽 · 右 오른 우",
+    "say": "右{みぎ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-左",
+    "q": "「ひだり」 한자로 쓰면?",
+    "options": [
+     "左",
+     "国",
+     "南",
+     "前"
+    ],
+    "answer": 0,
+    "explain": "左{ひだり} = 왼쪽 · 左 왼 좌",
+    "say": "左{ひだり}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-外",
+    "q": "「がいこくじん」 한자로 쓰면?",
+    "options": [
+     "外国人",
+     "見ます",
+     "食べ物",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "外国人{がいこくじん} = 외국인 · 外 바깥 외",
+    "say": "外国人{がいこくじん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-前",
     "q": "「なまえ」 한자로 쓰면?",
     "options": [
      "名前",
      "先生",
-     "大学",
+     "外国",
      "休む"
     ],
     "answer": 0,
@@ -207,7 +208,8 @@ export const LESSONS = [
    "後 뒤 후",
    "東 동녘 동",
    "西 서녘 서",
-   "南 남녘 남"
+   "南 남녘 남",
+   "北 북녘 북"
   ],
   "cards": [
    {
@@ -259,21 +261,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-後",
-    "q": "「うしろ」 한자로 쓰면?",
-    "options": [
-     "後ろ",
-     "外国",
-     "人気",
-     "入口"
-    ],
-    "answer": 0,
-    "explain": "後{うし}ろ = 뒤 · 後 뒤 후",
-    "say": "後{うし}ろ"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-東",
     "q": "「東」 어떻게 읽을까요?",
@@ -286,21 +273,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "東{ひがし} = 동쪽 · 東 동녘 동",
     "say": "東{ひがし}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-東",
-    "q": "「とうきょう」 한자로 쓰면?",
-    "options": [
-     "東京",
-     "入る",
-     "中国",
-     "入口"
-    ],
-    "answer": 0,
-    "explain": "東京{とうきょう} = 도쿄 · 東 동녘 동",
-    "say": "東京{とうきょう}"
    },
    {
     "type": "choice",
@@ -319,21 +291,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-西",
-    "q": "「にし」 한자로 쓰면?",
-    "options": [
-     "西",
-     "国",
-     "後",
-     "山"
-    ],
-    "answer": 0,
-    "explain": "西{にし} = 서쪽 · 西 서녘 서",
-    "say": "西{にし}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-南",
     "q": "「南」 어떻게 읽을까요?",
@@ -342,21 +299,6 @@ export const LESSONS = [
      "でんわ",
      "しろい",
      "でんき"
-    ],
-    "answer": 0,
-    "explain": "南{みなみ} = 남쪽 · 南 남녘 남",
-    "say": "南{みなみ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-南",
-    "q": "「みなみ」 한자로 쓰면?",
-    "options": [
-     "南",
-     "北",
-     "川",
-     "本"
     ],
     "answer": 0,
     "explain": "南{みなみ} = 남쪽 · 南 남녘 남",
@@ -380,13 +322,73 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-後",
+    "q": "「うしろ」 한자로 쓰면?",
+    "options": [
+     "後ろ",
+     "名前",
+     "人気",
+     "入る"
+    ],
+    "answer": 0,
+    "explain": "後{うし}ろ = 뒤 · 後 뒤 후",
+    "say": "後{うし}ろ"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-東",
+    "q": "「とうきょう」 한자로 쓰면?",
+    "options": [
+     "東京",
+     "先週",
+     "中国",
+     "入る"
+    ],
+    "answer": 0,
+    "explain": "東京{とうきょう} = 도쿄 · 東 동녘 동",
+    "say": "東京{とうきょう}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-西",
+    "q": "「にし」 한자로 쓰면?",
+    "options": [
+     "西",
+     "国",
+     "後",
+     "山"
+    ],
+    "answer": 0,
+    "explain": "西{にし} = 서쪽 · 西 서녘 서",
+    "say": "西{にし}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-南",
+    "q": "「みなみ」 한자로 쓰면?",
+    "options": [
+     "南",
+     "北",
+     "川",
+     "本"
+    ],
+    "answer": 0,
+    "explain": "南{みなみ} = 남쪽 · 南 남녘 남",
+    "say": "南{みなみ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-北",
     "q": "「ほっかいどう」 한자로 쓰면?",
     "options": [
      "北海道",
-     "日本語",
-     "入口",
-     "入る"
+     "富士山",
+     "先週",
+     "先生"
     ],
     "answer": 0,
     "explain": "北海道{ほっかいどう} = 홋카이도 · 北 북녘 북",
@@ -403,7 +405,8 @@ export const LESSONS = [
    "山 메 산",
    "川 내 천",
    "天 하늘 천",
-   "気 기운 기"
+   "気 기운 기",
+   "雨 비 우"
   ],
   "cards": [
    {
@@ -455,21 +458,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-山",
-    "q": "「たくさん」 한자로 쓰면?",
-    "options": [
-     "沢山",
-     "人気",
-     "入る",
-     "入口"
-    ],
-    "answer": 0,
-    "explain": "沢山{たくさん} = 많이 · 山 메 산",
-    "say": "沢山{たくさん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-川",
     "q": "「川」 어떻게 읽을까요?",
@@ -478,21 +466,6 @@ export const LESSONS = [
      "にし",
      "さき",
      "ほん"
-    ],
-    "answer": 0,
-    "explain": "川{かわ} = 강·내 · 川 내 천",
-    "say": "川{かわ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-川",
-    "q": "「かわ」 한자로 쓰면?",
-    "options": [
-     "川",
-     "中",
-     "左",
-     "山"
     ],
     "answer": 0,
     "explain": "川{かわ} = 강·내 · 川 내 천",
@@ -515,21 +488,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-天",
-    "q": "「てんき」 한자로 쓰면?",
-    "options": [
-     "天気",
-     "大学",
-     "休む",
-     "出身"
-    ],
-    "answer": 0,
-    "explain": "天気{てんき} = 날씨 · 天 하늘 천",
-    "say": "天気{てんき}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-気",
     "q": "「人気」 어떻게 읽을까요?",
@@ -545,21 +503,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-気",
-    "q": "「てんき」 한자로 쓰면?",
-    "options": [
-     "天気",
-     "大学",
-     "出口",
-     "外国"
-    ],
-    "answer": 0,
-    "explain": "天気{てんき} = 날씨 · 気 기운 기",
-    "say": "天気{てんき}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-雨",
     "q": "「雨」 어떻게 읽을까요?",
@@ -572,6 +515,66 @@ export const LESSONS = [
     "answer": 0,
     "explain": "雨{あめ} = 비 · 雨 비 우",
     "say": "雨{あめ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-山",
+    "q": "「ふじさん」 한자로 쓰면?",
+    "options": [
+     "富士山",
+     "外国人",
+     "中国",
+     "人気"
+    ],
+    "answer": 0,
+    "explain": "富士山{ふじさん} = 후지산 · 山 메 산",
+    "say": "富士山{ふじさん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-川",
+    "q": "「かわ」 한자로 쓰면?",
+    "options": [
+     "川",
+     "中",
+     "左",
+     "山"
+    ],
+    "answer": 0,
+    "explain": "川{かわ} = 강·내 · 川 내 천",
+    "say": "川{かわ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-天",
+    "q": "「てんき」 한자로 쓰면?",
+    "options": [
+     "天気",
+     "外国",
+     "休む",
+     "出口"
+    ],
+    "answer": 0,
+    "explain": "天気{てんき} = 날씨 · 天 하늘 천",
+    "say": "天気{てんき}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-気",
+    "q": "「びょうき」 한자로 쓰면?",
+    "options": [
+     "病気",
+     "外国",
+     "入口",
+     "名前"
+    ],
+    "answer": 0,
+    "explain": "病気{びょうき} = 병 · 気 기운 기",
+    "say": "病気{びょうき}"
    },
    {
     "type": "choice",
@@ -599,7 +602,8 @@ export const LESSONS = [
    "本 근본 본",
    "学 배울 학",
    "校 학교 교",
-   "生 날 생"
+   "生 날 생",
+   "先 먼저 선"
   ],
   "cards": [
    {
@@ -651,27 +655,12 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-本",
-    "q": "「にほん」 한자로 쓰면?",
-    "options": [
-     "日本",
-     "中国",
-     "出身",
-     "名前"
-    ],
-    "answer": 0,
-    "explain": "日本{にほん} = 일본 · 本 근본 본",
-    "say": "日本{にほん}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-学",
     "q": "「学生」 어떻게 읽을까요?",
     "options": [
      "がくせい",
-     "でんしゃ",
+     "にほんご",
      "せんせい",
      "ぎんこう"
     ],
@@ -681,44 +670,14 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-学",
-    "q": "「だいがく」 한자로 쓰면?",
-    "options": [
-     "大学",
-     "人気",
-     "中国",
-     "休み"
-    ],
-    "answer": 0,
-    "explain": "大学{だいがく} = 대학교 · 学 배울 학",
-    "say": "大学{だいがく}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-校",
     "q": "「学校」 어떻게 읽을까요?",
     "options": [
      "がっこう",
      "がいこく",
-     "でんしゃ",
+     "にほんご",
      "かんこく"
-    ],
-    "answer": 0,
-    "explain": "学校{がっこう} = 학교 · 校 학교 교",
-    "say": "学校{がっこう}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-校",
-    "q": "「がっこう」 한자로 쓰면?",
-    "options": [
-     "学校",
-     "休む",
-     "出口",
-     "中国"
     ],
     "answer": 0,
     "explain": "学校{がっこう} = 학교 · 校 학교 교",
@@ -741,21 +700,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-生",
-    "q": "「がくせい」 한자로 쓰면?",
-    "options": [
-     "学生",
-     "出口",
-     "人気",
-     "中国"
-    ],
-    "answer": 0,
-    "explain": "学生{がくせい} = 학생 · 生 날 생",
-    "say": "学生{がくせい}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-先",
     "q": "「先」 어떻게 읽을까요?",
@@ -772,17 +716,77 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
-    "concept": "k5-先",
-    "q": "「せんせい」 한자로 쓰면?",
+    "concept": "k5-本",
+    "q": "「にほん」 한자로 쓰면?",
     "options": [
-     "先生",
-     "天気",
+     "日本",
+     "中国",
+     "出口",
+     "出身"
+    ],
+    "answer": 0,
+    "explain": "日本{にほん} = 일본 · 本 근본 본",
+    "say": "日本{にほん}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-学",
+    "q": "「だいがく」 한자로 쓰면?",
+    "options": [
      "大学",
+     "人気",
+     "中国",
+     "休み"
+    ],
+    "answer": 0,
+    "explain": "大学{だいがく} = 대학교 · 学 배울 학",
+    "say": "大学{だいがく}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-校",
+    "q": "「がっこう」 한자로 쓰면?",
+    "options": [
+     "学校",
+     "休む",
+     "入口",
      "中国"
     ],
     "answer": 0,
-    "explain": "先生{せんせい} = 선생님 · 先 먼저 선",
+    "explain": "学校{がっこう} = 학교 · 校 학교 교",
+    "say": "学校{がっこう}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-生",
+    "q": "「せんせい」 한자로 쓰면?",
+    "options": [
+     "先生",
+     "出口",
+     "人気",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "先生{せんせい} = 선생님 · 生 날 생",
     "say": "先生{せんせい}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-先",
+    "q": "「せんしゅう」 한자로 쓰면?",
+    "options": [
+     "先週",
+     "大学",
+     "外国",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "先週{せんしゅう} = 지난주 · 先 먼저 선",
+    "say": "先週{せんしゅう}"
    }
   ]
  },
@@ -795,7 +799,8 @@ export const LESSONS = [
    "国 나라 국",
    "語 말씀 어",
    "車 수레 차",
-   "電 번개 전"
+   "電 번개 전",
+   "長 길 장"
   ],
   "cards": [
    {
@@ -815,7 +820,7 @@ export const LESSONS = [
      },
      {
       "jp": "電",
-      "ko": "번개 전 · 음 デン · 훈 - · 예: 電車"
+      "ko": "번개 전 · 음 デン · 훈 - · 예: 電気"
      }
     ]
    },
@@ -847,21 +852,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-国",
-    "q": "「かんこく」 한자로 쓰면?",
-    "options": [
-     "韓国",
-     "休み",
-     "出身",
-     "出口"
-    ],
-    "answer": 0,
-    "explain": "韓国{かんこく} = 한국 · 国 나라 국",
-    "say": "韓国{かんこく}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-語",
     "q": "「英語」 어떻게 읽을까요?",
@@ -874,21 +864,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "英語{えいご} = 영어 · 語 말씀 어",
     "say": "英語{えいご}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-語",
-    "q": "「にほんご」 한자로 쓰면?",
-    "options": [
-     "日本語",
-     "入る",
-     "出口",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "日本語{にほんご} = 일본어 · 語 말씀 어",
-    "say": "日本語{にほんご}"
    },
    {
     "type": "choice",
@@ -907,44 +882,14 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-車",
-    "q": "「でんしゃ」 한자로 쓰면?",
-    "options": [
-     "電車",
-     "人気",
-     "大学",
-     "休み"
-    ],
-    "answer": 0,
-    "explain": "電車{でんしゃ} = 전철 · 車 수레 차",
-    "say": "電車{でんしゃ}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-電",
-    "q": "「電車」 어떻게 읽을까요?",
+    "q": "「電気」 어떻게 읽을까요?",
     "options": [
-     "でんしゃ",
-     "たべもの",
-     "いりぐち",
-     "がくせい"
-    ],
-    "answer": 0,
-    "explain": "電車{でんしゃ} = 전철 · 電 번개 전",
-    "say": "電車{でんしゃ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-電",
-    "q": "「でんき」 한자로 쓰면?",
-    "options": [
-     "電気",
-     "入る",
-     "大学",
-     "外国"
+     "でんき",
+     "でんわ",
+     "あいだ",
+     "くるま"
     ],
     "answer": 0,
     "explain": "電気{でんき} = 전기·불 · 電 번개 전",
@@ -968,13 +913,73 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-国",
+    "q": "「かんこく」 한자로 쓰면?",
+    "options": [
+     "韓国",
+     "休み",
+     "出口",
+     "入口"
+    ],
+    "answer": 0,
+    "explain": "韓国{かんこく} = 한국 · 国 나라 국",
+    "say": "韓国{かんこく}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-語",
+    "q": "「にほんご」 한자로 쓰면?",
+    "options": [
+     "日本語",
+     "先生",
+     "入る",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "日本語{にほんご} = 일본어 · 語 말씀 어",
+    "say": "日本語{にほんご}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-車",
+    "q": "「でんしゃ」 한자로 쓰면?",
+    "options": [
+     "電車",
+     "人気",
+     "外国",
+     "休み"
+    ],
+    "answer": 0,
+    "explain": "電車{でんしゃ} = 전철 · 車 수레 차",
+    "say": "電車{でんしゃ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-電",
+    "q": "「でんわ」 한자로 쓰면?",
+    "options": [
+     "電話",
+     "先週",
+     "外国",
+     "名前"
+    ],
+    "answer": 0,
+    "explain": "電話{でんわ} = 전화 · 電 번개 전",
+    "say": "電話{でんわ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-長",
     "q": "「ながい」 한자로 쓰면?",
     "options": [
      "長い",
-     "入る",
+     "先週",
      "休み",
-     "出口"
+     "入口"
     ],
     "answer": 0,
     "explain": "長{なが}い = 길어요 · 長 길 장",
@@ -991,7 +996,8 @@ export const LESSONS = [
    "高 높을 고",
    "白 흰 백",
    "見 볼 견",
-   "聞 들을 문"
+   "聞 들을 문",
+   "読 읽을 독"
   ],
   "cards": [
    {
@@ -1043,21 +1049,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-高",
-    "q": "「さいこう」 한자로 쓰면?",
-    "options": [
-     "最高",
-     "入る",
-     "休み",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "最高{さいこう} = 최고 · 高 높을 고",
-    "say": "最高{さいこう}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-白",
     "q": "「白」 어떻게 읽을까요?",
@@ -1070,21 +1061,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "白{しろ} = 흰색 · 白 흰 백",
     "say": "白{しろ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-白",
-    "q": "「しろい」 한자로 쓰면?",
-    "options": [
-     "白い",
-     "中国",
-     "外国",
-     "出身"
-    ],
-    "answer": 0,
-    "explain": "白{しろ}い = 하얘요 · 白 흰 백",
-    "say": "白{しろ}い"
    },
    {
     "type": "choice",
@@ -1103,21 +1079,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-見",
-    "q": "「みます」 한자로 쓰면?",
-    "options": [
-     "見ます",
-     "日本語",
-     "入口",
-     "出口"
-    ],
-    "answer": 0,
-    "explain": "見{み}ます = 봅니다 · 見 볼 견",
-    "say": "見{み}ます"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-聞",
     "q": "「新聞」 어떻게 읽을까요?",
@@ -1125,26 +1086,11 @@ export const LESSONS = [
      "しんぶん",
      "さいこう",
      "ぎんこう",
-     "だいがく"
+     "でんしゃ"
     ],
     "answer": 0,
     "explain": "新聞{しんぶん} = 신문 · 聞 들을 문",
     "say": "新聞{しんぶん}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-聞",
-    "q": "「きく」 한자로 쓰면?",
-    "options": [
-     "聞く",
-     "休む",
-     "出身",
-     "名前"
-    ],
-    "answer": 0,
-    "explain": "聞{き}く = 듣다·묻다 · 聞 들을 문",
-    "say": "聞{き}く"
    },
    {
     "type": "choice",
@@ -1164,13 +1110,73 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-高",
+    "q": "「さいこう」 한자로 쓰면?",
+    "options": [
+     "最高",
+     "先週",
+     "休み",
+     "人気"
+    ],
+    "answer": 0,
+    "explain": "最高{さいこう} = 최고 · 高 높을 고",
+    "say": "最高{さいこう}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-白",
+    "q": "「しろい」 한자로 쓰면?",
+    "options": [
+     "白い",
+     "中国",
+     "名前",
+     "出口"
+    ],
+    "answer": 0,
+    "explain": "白{しろ}い = 하얘요 · 白 흰 백",
+    "say": "白{しろ}い"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-見",
+    "q": "「みます」 한자로 쓰면?",
+    "options": [
+     "見ます",
+     "富士山",
+     "先週",
+     "入る"
+    ],
+    "answer": 0,
+    "explain": "見{み}ます = 봅니다 · 見 볼 견",
+    "say": "見{み}ます"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-聞",
+    "q": "「きく」 한자로 쓰면?",
+    "options": [
+     "聞く",
+     "休む",
+     "出口",
+     "出身"
+    ],
+    "answer": 0,
+    "explain": "聞{き}く = 듣다·묻다 · 聞 들을 문",
+    "say": "聞{き}く"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-読",
     "q": "「よみました」 한자로 쓰면?",
     "options": [
      "読みました",
      "北海道",
-     "中国",
-     "入口"
+     "食べ物",
+     "先週"
     ],
     "answer": 0,
     "explain": "読{よ}みました = 읽었습니다 · 読 읽을 독",
@@ -1187,7 +1193,8 @@ export const LESSONS = [
    "書 글 서",
    "話 말씀 화",
    "食 먹을 식",
-   "行 갈 행"
+   "行 갈 행",
+   "来 올 래"
   ],
   "cards": [
    {
@@ -1239,21 +1246,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-書",
-    "q": "「じしょ」 한자로 쓰면?",
-    "options": [
-     "辞書",
-     "名前",
-     "大学",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "辞書{じしょ} = 사전 · 書 글 서",
-    "say": "辞書{じしょ}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-話",
     "q": "「話」 어떻게 읽을까요?",
@@ -1269,48 +1261,18 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-話",
-    "q": "「でんわ」 한자로 쓰면?",
-    "options": [
-     "電話",
-     "休み",
-     "入口",
-     "出身"
-    ],
-    "answer": 0,
-    "explain": "電話{でんわ} = 전화 · 話 말씀 화",
-    "say": "電話{でんわ}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-食",
     "q": "「食堂」 어떻게 읽을까요?",
     "options": [
      "しょくどう",
-     "ちゅうごく",
+     "せんしゅう",
      "しゅっしん",
-     "がくせい"
+     "がいこくじん"
     ],
     "answer": 0,
     "explain": "食堂{しょくどう} = 식당 · 食 먹을 식",
     "say": "食堂{しょくどう}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-食",
-    "q": "「たべもの」 한자로 쓰면?",
-    "options": [
-     "食べ物",
-     "北海道",
-     "人気",
-     "休む"
-    ],
-    "answer": 0,
-    "explain": "食{た}べ物{もの} = 음식 · 食 먹을 식",
-    "say": "食{た}べ物{もの}"
    },
    {
     "type": "choice",
@@ -1319,7 +1281,7 @@ export const LESSONS = [
     "q": "「銀行」 어떻게 읽을까요?",
     "options": [
      "ぎんこう",
-     "だいがく",
+     "でんしゃ",
      "がくせい",
      "がいこく"
     ],
@@ -1329,29 +1291,14 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-行",
-    "q": "「りょこう」 한자로 쓰면?",
-    "options": [
-     "旅行",
-     "入口",
-     "名前",
-     "休み"
-    ],
-    "answer": 0,
-    "explain": "旅行{りょこう} = 여행 · 行 갈 행",
-    "say": "旅行{りょこう}"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-来",
     "q": "「来週」 어떻게 읽을까요?",
     "options": [
      "らいしゅう",
-     "いりぐち",
+     "よみました",
      "しゅっしん",
-     "がっこう"
+     "がくせい"
     ],
     "answer": 0,
     "explain": "来週{らいしゅう} = 다음 주 · 来 올 래",
@@ -1360,12 +1307,72 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-書",
+    "q": "「じしょ」 한자로 쓰면?",
+    "options": [
+     "辞書",
+     "出身",
+     "外国",
+     "人気"
+    ],
+    "answer": 0,
+    "explain": "辞書{じしょ} = 사전 · 書 글 서",
+    "say": "辞書{じしょ}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-話",
+    "q": "「はなす」 한자로 쓰면?",
+    "options": [
+     "話す",
+     "休み",
+     "入る",
+     "出口"
+    ],
+    "answer": 0,
+    "explain": "話{はな}す = 이야기하다 · 話 말씀 화",
+    "say": "話{はな}す"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-食",
+    "q": "「たべもの」 한자로 쓰면?",
+    "options": [
+     "食べ物",
+     "北海道",
+     "中国",
+     "休み"
+    ],
+    "answer": 0,
+    "explain": "食{た}べ物{もの} = 음식 · 食 먹을 식",
+    "say": "食{た}べ物{もの}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-行",
+    "q": "「りょこう」 한자로 쓰면?",
+    "options": [
+     "旅行",
+     "入る",
+     "出身",
+     "休み"
+    ],
+    "answer": 0,
+    "explain": "旅行{りょこう} = 여행 · 行 갈 행",
+    "say": "旅行{りょこう}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-来",
     "q": "「らいげつ」 한자로 쓰면?",
     "options": [
      "来月",
-     "出口",
-     "大学",
+     "入口",
+     "外国",
      "中国"
     ],
     "answer": 0,
@@ -1416,28 +1423,13 @@ export const LESSONS = [
     "q": "「出身」 어떻게 읽을까요?",
     "options": [
      "しゅっしん",
-     "がくせい",
-     "とうきょう",
-     "よみました"
+     "がいこくじん",
+     "ちゅうごく",
+     "とうきょう"
     ],
     "answer": 0,
     "explain": "出身{しゅっしん} = 출신 · 出 날 출",
     "say": "出身{しゅっしん}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-出",
-    "q": "「でぐち」 한자로 쓰면?",
-    "options": [
-     "出口",
-     "入る",
-     "外国",
-     "人気"
-    ],
-    "answer": 0,
-    "explain": "出口{でぐち} = 출구 · 出 날 출",
-    "say": "出口{でぐち}"
    },
    {
     "type": "choice",
@@ -1456,21 +1448,6 @@ export const LESSONS = [
    },
    {
     "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-入",
-    "q": "「はいる」 한자로 쓰면?",
-    "options": [
-     "入る",
-     "外国",
-     "入口",
-     "大学"
-    ],
-    "answer": 0,
-    "explain": "入{はい}る = 들어가다 · 入 들 입",
-    "say": "入{はい}る"
-   },
-   {
-    "type": "choice",
     "kind": "kanji-read",
     "concept": "k5-休",
     "q": "「休み」 어떻게 읽을까요?",
@@ -1483,21 +1460,6 @@ export const LESSONS = [
     "answer": 0,
     "explain": "休{やす}み = 휴일·휴가 · 休 쉴 휴",
     "say": "休{やす}み"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
-    "concept": "k5-休",
-    "q": "「やすむ」 한자로 쓰면?",
-    "options": [
-     "休む",
-     "出身",
-     "天気",
-     "中国"
-    ],
-    "answer": 0,
-    "explain": "休{やす}む = 쉬다 · 休 쉴 휴",
-    "say": "休{やす}む"
    },
    {
     "type": "choice",
@@ -1517,13 +1479,58 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
+    "concept": "k5-出",
+    "q": "「でぐち」 한자로 쓰면?",
+    "options": [
+     "出口",
+     "先週",
+     "名前",
+     "人気"
+    ],
+    "answer": 0,
+    "explain": "出口{でぐち} = 출구 · 出 날 출",
+    "say": "出口{でぐち}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-入",
+    "q": "「はいる」 한자로 쓰면?",
+    "options": [
+     "入る",
+     "名前",
+     "先週",
+     "外国"
+    ],
+    "answer": 0,
+    "explain": "入{はい}る = 들어가다 · 入 들 입",
+    "say": "入{はい}る"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-休",
+    "q": "「やすむ」 한자로 쓰면?",
+    "options": [
+     "休む",
+     "出口",
+     "大学",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "休{やす}む = 쉬다 · 休 쉴 휴",
+    "say": "休{やす}む"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
     "concept": "k5-間",
     "q": "「じかん」 한자로 쓰면?",
     "options": [
      "時間",
      "休み",
-     "出身",
-     "出口"
+     "出口",
+     "入口"
     ],
     "answer": 0,
     "explain": "時間{じかん} = 시간 · 間 사이 간",
@@ -1543,88 +1550,13 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-write",
-    "concept": "k5-校",
-    "q": "「がっこう」 한자로 쓰면?",
-    "options": [
-     "学校",
-     "休む",
-     "出口",
-     "中国"
-    ],
-    "answer": 0,
-    "explain": "学校{がっこう} = 학교 · 校 학교 교",
-    "say": "学校{がっこう}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-見",
-    "q": "「見る」 어떻게 읽을까요?",
-    "options": [
-     "みる",
-     "きく",
-     "あと",
-     "ほん"
-    ],
-    "answer": 0,
-    "explain": "見{み}る = 보다 · 見 볼 견",
-    "say": "見{み}る"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-電",
-    "q": "「電車」 어떻게 읽을까요?",
-    "options": [
-     "でんしゃ",
-     "たべもの",
-     "いりぐち",
-     "がくせい"
-    ],
-    "answer": 0,
-    "explain": "電車{でんしゃ} = 전철 · 電 번개 전",
-    "say": "電車{でんしゃ}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-入",
-    "q": "「入口」 어떻게 읽을까요?",
-    "options": [
-     "いりぐち",
-     "がくせい",
-     "かんこく",
-     "がいこく"
-    ],
-    "answer": 0,
-    "explain": "入口{いりぐち} = 입구 · 入 들 입",
-    "say": "入口{いりぐち}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-read",
-    "concept": "k5-聞",
-    "q": "「新聞」 어떻게 읽을까요?",
-    "options": [
-     "しんぶん",
-     "さいこう",
-     "ぎんこう",
-     "だいがく"
-    ],
-    "answer": 0,
-    "explain": "新聞{しんぶん} = 신문 · 聞 들을 문",
-    "say": "新聞{しんぶん}"
-   },
-   {
-    "type": "choice",
-    "kind": "kanji-write",
     "concept": "k5-本",
     "q": "「にほん」 한자로 쓰면?",
     "options": [
      "日本",
      "中国",
-     "出身",
-     "名前"
+     "出口",
+     "出身"
     ],
     "answer": 0,
     "explain": "日本{にほん} = 일본 · 本 근본 본",
@@ -1633,32 +1565,107 @@ export const LESSONS = [
    {
     "type": "choice",
     "kind": "kanji-read",
-    "concept": "k5-来",
-    "q": "「来週」 어떻게 읽을까요?",
+    "concept": "k5-読",
+    "q": "「読む」 어떻게 읽을까요?",
     "options": [
-     "らいしゅう",
-     "いりぐち",
-     "しゅっしん",
-     "がっこう"
+     "よむ",
+     "かわ",
+     "なか",
+     "さき"
     ],
     "answer": 0,
-    "explain": "来週{らいしゅう} = 다음 주 · 来 올 래",
-    "say": "来週{らいしゅう}"
+    "explain": "読{よ}む = 읽다 · 読 읽을 독",
+    "say": "読{よ}む"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-語",
+    "q": "「にほんご」 한자로 쓰면?",
+    "options": [
+     "日本語",
+     "先生",
+     "入る",
+     "中国"
+    ],
+    "answer": 0,
+    "explain": "日本語{にほんご} = 일본어 · 語 말씀 어",
+    "say": "日本語{にほんご}"
    },
    {
     "type": "choice",
     "kind": "kanji-read",
-    "concept": "k5-右",
-    "q": "「右」 어떻게 읽을까요?",
+    "concept": "k5-休",
+    "q": "「休み」 어떻게 읽을까요?",
     "options": [
-     "みぎ",
-     "しろ",
-     "なか",
-     "くに"
+     "やすみ",
+     "しろい",
+     "でぐち",
+     "でんき"
     ],
     "answer": 0,
-    "explain": "右{みぎ} = 오른쪽 · 右 오른 우",
-    "say": "右{みぎ}"
+    "explain": "休{やす}み = 휴일·휴가 · 休 쉴 휴",
+    "say": "休{やす}み"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-白",
+    "q": "「しろい」 한자로 쓰면?",
+    "options": [
+     "白い",
+     "中国",
+     "名前",
+     "出口"
+    ],
+    "answer": 0,
+    "explain": "白{しろ}い = 하얘요 · 白 흰 백",
+    "say": "白{しろ}い"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-read",
+    "concept": "k5-学",
+    "q": "「学生」 어떻게 읽을까요?",
+    "options": [
+     "がくせい",
+     "にほんご",
+     "せんせい",
+     "ぎんこう"
+    ],
+    "answer": 0,
+    "explain": "学生{がくせい} = 학생 · 学 배울 학",
+    "say": "学生{がくせい}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-write",
+    "concept": "k5-行",
+    "q": "「りょこう」 한자로 쓰면?",
+    "options": [
+     "旅行",
+     "入る",
+     "出身",
+     "休み"
+    ],
+    "answer": 0,
+    "explain": "旅行{りょこう} = 여행 · 行 갈 행",
+    "say": "旅行{りょこう}"
+   },
+   {
+    "type": "choice",
+    "kind": "kanji-read",
+    "concept": "k5-左",
+    "q": "「左」 어떻게 읽을까요?",
+    "options": [
+     "ひだり",
+     "くるま",
+     "でぐち",
+     "でんき"
+    ],
+    "answer": 0,
+    "explain": "左{ひだり} = 왼쪽 · 左 왼 좌",
+    "say": "左{ひだり}"
    }
   ]
  }
