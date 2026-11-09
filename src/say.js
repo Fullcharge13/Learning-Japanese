@@ -10,11 +10,12 @@ function usable(text, vars) {
 }
 
 // 자리 표시를 한 번에 채운다(바꿔 넣은 글자를 다시 바꾸지 않음, $ 패턴 해석 없음).
-// 이름이 비면 줄 맨 앞 「{name}，」 덩어리를 통째로 뺀다(대사 표는 이 꼴로만 씀 — 시험 name_form).
+// 이름이 비면 줄 맨 앞 「{name} 씨, 」 덩어리를 통째로 뺀다(대사 표는 이 꼴로만 씀 — 시험 name_form).
+// 후리가나 「字{よみ}」는 자리 표시가 아니라 그대로 둔다(말풍선이 ruby로 그림).
 function fill(text, vars) {
   const name = has(vars.name) ? String(vars.name).trim() : "";
-  const out = text.replace(/\{name\}，|\{(name|streak|xp|item)\}/g, (m, key) => {
-    if (key === undefined) return name ? `${name}，` : ""; // 「{name}，」 덩어리
+  const out = text.replace(/\{name\} 씨, |\{(name|streak|xp|item)\}/g, (m, key) => {
+    if (key === undefined) return name ? `${name} 씨, ` : ""; // 「{name} 씨, 」 덩어리
     if (key === "name") return name;
     return has(vars[key]) ? String(vars[key]) : "";
   });
@@ -32,7 +33,7 @@ function unit(rng) {
  * 상황에 맞는 해치 선생님 대사 한 줄을 고른다.
  * @param {string} situation  ledger 「대사 상황 id」(greet, correct, …)
  * @param {{name?:string, streak?:number, xp?:number, item?:string}} [vars]
- *   자리 표시 값. item은 물건 표의 이름(「장구 · 长鼓」). 값이 없는 자리 표시를 쓰는 줄은 건너뛴다.
+ *   자리 표시 값. item은 물건 표의 이름(「기모노 · 着物{きもの}」). 값이 없는 자리 표시를 쓰는 줄은 건너뛴다.
  * @param {() => number} [rng]  0 이상 1 미만을 돌려주는 난수 함수
  * @param {number|null} [last]  **같은 상황**에서 직전에 고른 줄 번호(돌려받은 index). 이 줄은 다시 고르지 않는다.
  * @returns {{text:string, face:string, index:number}}  index는 LINES[situation] 안의 번호, 대체 대사면 -1

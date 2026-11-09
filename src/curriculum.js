@@ -67,10 +67,10 @@ export function pathEndText({ chapters, completed }) {
   const last = (chapters || []).reduce((m, c) => Math.max(m, c.id), 0);
   const next = upcomingChapters(chapters)[0];
   if (all.length && all.every((l) => doneSet.has(l.id))) {
-    return next ? "这一版的课都学完了！用复习巩固一下吧" : "全部课程都学完了！用复习巩固一下吧";
+    return next ? "지금 판의 레슨을 모두 마쳤어요! 복습으로 다져 봐요" : "모든 레슨을 마쳤어요! 복습으로 다져 봐요";
   }
-  if (!next) return `第${last}课是最后一课，一起坚持到底吧`;
-  return `目前到第${last}课为止。第${next.no}课（${next.title}）会在下次更新开放`;
+  if (!next) return `${last}장이 마지막 장이에요. 끝까지 함께 가요`;
+  return `지금은 ${last}장까지 있어요. ${next.no}장(${next.title})은 다음 업데이트에 열려요`;
 }
 
 /**

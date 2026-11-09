@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "獬豸老师教韩语",
-  "short_name": "獬豸韩语",
-  "description": "和獬豸老师一起，每天 10 分钟，用手机学韩语单词",
+  "name": "사나다 일본어",
+  "short_name": "사나다 일본어",
+  "description": "사나다 유키 선생님과 하루 10분, 휴대폰으로 일본어 가나와 단어 익히기",
   "lang": "zh-Hans",
   "dir": "ltr",
   "start_url": "./",

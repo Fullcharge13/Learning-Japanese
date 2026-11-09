@@ -137,8 +137,8 @@ export function earnXp(save, xp, today) {
 
 // ---- 보호권 구매 ----
 export function buyFreeze(save) {
-  if (save.freezes >= FREEZE_MAX) return new Error("保护券最多只能有 2 张");
-  if (save.bytes < FREEZE_PRICE) return new Error("字节不够");
+  if (save.freezes >= FREEZE_MAX) return new Error("보호권은 2장까지만 가질 수 있어요");
+  if (save.bytes < FREEZE_PRICE) return new Error("엔이 모자라요");
   return { ...save, bytes: save.bytes - FREEZE_PRICE, freezes: save.freezes + 1 };
 }
 

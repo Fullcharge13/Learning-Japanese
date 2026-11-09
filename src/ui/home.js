@@ -8,8 +8,8 @@ import { pathEndText } from "../curriculum.js";
 import { hasNewContent } from "../newcontent.js";
 
 // 「새 내용」 점(v0.7.1): 노드 옆 작은 꼬리표. 누르기는 노드가 받는다(pointer-events: none, 노드 크기 그대로)
-const NEW_LABEL = "有新内容";
-const newDot = (id, cls = "") => `<span class="new-dot${cls}" role="img" aria-label="${NEW_LABEL}" data-for="${esc(id)}">新</span>`;
+const NEW_LABEL = "새 내용 있음";
+const newDot = (id, cls = "") => `<span class="new-dot${cls}" role="img" aria-label="${NEW_LABEL}" data-for="${esc(id)}">N</span>`;
 
 const ROW = 112;          // 레슨 한 칸 높이
 const W = 320;            // 길 폭
@@ -48,13 +48,13 @@ function advBranch(ctx, chapter, ex, ey) {
     const st = states[i];
     const k = String(l.id).split("-A")[1] || String(i + 1);
     const x = cx - span / 2 + i * STAR_GAP;
-    const stateKo = { locked: "未开放，通过本课测验后开放", open: "已开放", done: "已完成", perfect: "无失误完成" }[st];
+    const stateKo = { locked: "잠김, 장 평가를 통과하면 열려요", open: "열림", done: "끝냄", perfect: "실수 없이 끝냄" }[st];
     const fresh = hasNewContent(l, ctx.save);
     return `<button class="star-node ${st}" style="left:${x - STAR / 2}px;top:${sy - STAR / 2}px" data-lesson="${esc(l.id)}"
-      aria-label="${esc(`进阶 ${l.id} ${l.title}, ${stateKo}${fresh ? `, ${NEW_LABEL}` : ""}`)}">${starGlyph(k, st)}</button>${fresh
+      aria-label="${esc(`심화 ${l.id} ${l.title}, ${stateKo}${fresh ? `, ${NEW_LABEL}` : ""}`)}">${starGlyph(k, st)}</button>${fresh
       ? `<span class="new-dot-at" style="left:${x + STAR / 2 - 14}px;top:${sy - STAR / 2 - 10}px">${newDot(l.id, " star")}</span>` : ""}`;
   }).join("");
-  const cap = `<span class="adv-cap${opened ? " open" : ""}" style="top:${sy + STAR / 2 + 6}px">进阶 ${doneN}/${adv.length}${opened ? "" : " · 测验后开放"}</span>`;
+  const cap = `<span class="adv-cap${opened ? " open" : ""}" style="top:${sy + STAR / 2 + 6}px">심화 ${doneN}/${adv.length}${opened ? "" : " · 평가 뒤 열림"}</span>`;
   return { links, nodes: stars + cap };
 }
 
@@ -68,19 +68,19 @@ function questCard(save) {
     return `<li class="quest${done ? " done" : ""}">
       <span class="q-ic">${icon(done ? "check" : "star")}</span>
       <div class="q-main">
-        <span class="q-name">${esc(def.name)}${done ? '<span class="sr">（已完成）</span>' : ""}</span>
+        <span class="q-name">${esc(def.name)}${done ? '<span class="sr">(끝냄)</span>' : ""}</span>
         ${bar(p, def.goal, "q-bar", def.name)}
       </div>
       <span class="q-num">${p}/${def.goal}</span>
-      <span class="q-reward" aria-label="奖励 ${def.reward} 字节">+${def.reward}</span>
+      <span class="q-reward" aria-label="보상 ${def.reward}엔">+${def.reward}</span>
     </li>`;
   }).join("");
   const opened = !!q.chest;
   return `<section class="panel quests" aria-labelledby="q-title">
-    <h2 id="q-title">今日任务</h2>
+    <h2 id="q-title">오늘의 퀘스트</h2>
     <ul class="quest-list">${rows}</ul>
     <p class="chest${opened ? " open" : ""}">${icon(opened ? "chestOpen" : "chest")}
-      <span>${opened ? "打开了宝箱（+10 字节）" : "完成 3 个任务可打开宝箱 +10 字节"}</span></p>
+      <span>${opened ? "보물 상자를 열었어요 (+10엔)" : "퀘스트 3개를 끝내면 보물 상자 +10엔"}</span></p>
   </section>`;
 }
 
@@ -90,10 +90,10 @@ function reviewCard(save) {
   const names = queue.slice(0, 3).map((c) => (CONCEPTS.find((x) => x.id === c) || { name: c }).name);
   return `<section class="panel review">
     <div class="review-text">
-      <h2>需要复习的单词 ${queue.length} 个</h2>
-      <p>${esc(names.join(", "))}${queue.length > 3 ? " 等" : ""}</p>
+      <h2>복습할 단어 ${queue.length}개</h2>
+      <p>${esc(names.join(", "))}${queue.length > 3 ? " 등" : ""}</p>
     </div>
-    <button class="btn sun" id="review">${icon("review")}复习 5 题</button>
+    <button class="btn sun" id="review">${icon("review")}복습 5문제</button>
   </section>`;
 }
 
@@ -118,13 +118,13 @@ function pathSection(ctx, chapter, startIndex, currentId) {
     const cur = l.id === currentId && st === "open";
     const p = pts[i];
     const glyph = st === "locked" ? icon("lock") : st === "perfect" ? icon("star", "fill") : st === "done" ? icon("check") : `<b>${esc(l.id)}</b>`;
-    const stateKo = { locked: "未开放", open: cur ? "现在要学的课" : "已开放", done: "已完成", perfect: "无失误完成" }[st];
+    const stateKo = { locked: "잠김", open: cur ? "지금 배울 레슨" : "열림", done: "끝냄", perfect: "실수 없이 끝냄" }[st];
     const side = p.x > W / 2 ? "left" : "right";
     const fresh = hasNewContent(l, ctx.save);
     return `<div class="node-wrap" style="left:${p.x - NODE / 2}px;top:${p.y - NODE / 2}px">
       <button class="node ${st}${cur ? " current" : ""}" data-lesson="${esc(l.id)}" aria-label="${esc(`${l.id} ${l.title}, ${stateKo}${fresh ? `, ${NEW_LABEL}` : ""}`)}">${glyph}</button>
       ${fresh ? newDot(l.id) : ""}
-      <span class="node-label">${l.isExam && !/测验/.test(l.title) ? '<em>测验</em>' : ""}${esc(l.title)}</span>
+      <span class="node-label">${l.isExam && !/평가/.test(l.title) ? '<em>평가</em>' : ""}${esc(l.title)}</span>
       ${cur ? `<span class="node-ria ${side}" aria-hidden="true">${yukiImg({ face: "cheer", size: 58 })}</span>` : ""}
     </div>`;
   }).join("");
@@ -132,7 +132,7 @@ function pathSection(ctx, chapter, startIndex, currentId) {
   const br = hasAdv ? advBranch(ctx, chapter, last.x, last.y) : { links: "", nodes: "" };
   const advAll = hasAdv && chapter.advanced.every((l) => ["done", "perfect"].includes(ctx.lessonState(l.id)));
   return `<section class="chapter" aria-label="${esc(chapter.title)}">
-    <h2 class="chapter-title"><span class="ch-no">${chapter.id}</span>${esc(chapter.title)}${advAll ? `<span class="ch-star" title="进阶全部完成">${icon("star", "fill")}<span class="sr">进阶全部完成</span></span>` : ""}</h2>
+    <h2 class="chapter-title"><span class="ch-no">${chapter.id}</span>${esc(chapter.title)}${advAll ? `<span class="ch-star" title="심화 모두 끝냄">${icon("star", "fill")}<span class="sr">심화 모두 끝냄</span></span>` : ""}</h2>
     <div class="path" style="width:${W}px;height:${H}px">
       <svg class="snake" viewBox="0 ${-30} ${W} ${H + 30}" width="${W}" height="${H + 30}" aria-hidden="true">
         ${br.links}
@@ -157,15 +157,15 @@ export function render(root, ctx) {
   root.innerHTML = `<div class="screen home with-tabs">
     ${statusBar(save)}
     <main>
-      <h1 class="sr">学习路线</h1>
+      <h1 class="sr">학습 길</h1>
       <section class="hello">
         ${riaSays({ item: save.item, face: line.face, text: line.text, size: 92 })}
-        ${cur && !allDone ? `<button class="btn primary wide" id="continue">${icon("play")}<span>${save.completed_lessons.length ? "继续学习" : "开始第一课"} · ${esc(cur.id)} ${esc(cur.title)}</span></button>` : ""}
-        ${allDone ? `<p class="all-done">所有课程都学完了。可以重做或复习来积累 XP。</p>` : ""}
+        ${cur && !allDone ? `<button class="btn primary wide" id="continue">${icon("play")}<span>${save.completed_lessons.length ? "이어서 배우기" : "첫 레슨 시작"} · ${esc(cur.id)} ${esc(cur.title)}</span></button>` : ""}
+        ${allDone ? `<p class="all-done">모든 레슨을 끝냈어요. 다시 하기나 복습으로 XP를 모을 수 있어요.</p>` : ""}
       </section>
       ${reviewCard(save)}
       ${questCard(save)}
-      ${sections || '<p class="panel">课程加载失败，请刷新页面。</p>'}
+      ${sections || '<p class="panel">레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.</p>'}
       <p class="path-end">${esc(pathEndText({ chapters: ctx.chapters, completed: save.completed_lessons }))}</p>
     </main>
     ${tabBar("home")}
@@ -178,13 +178,13 @@ export function render(root, ctx) {
   root.querySelectorAll("[data-lesson]").forEach((b) => b.addEventListener("click", async () => {
     const id = b.dataset.lesson;
     const st = ctx.lessonState(id);
-    if (st === "locked") { toast(b.classList.contains("star-node") ? "通过本课测验后开放进阶课。" : "完成前一节课后开放。"); return; }
+    if (st === "locked") { toast(b.classList.contains("star-node") ? "장 평가를 통과하면 심화가 열려요." : "앞 레슨을 끝내면 열려요."); return; }
     if (st === "done" || st === "perfect") {
       const l = ctx.lessonById(id);
       const ok = await dialog({
-        title: `重做 ${id} ${l.title}`,
-        body: `<p>学完的课也可以重做。重做只得到少量 XP，没有字节。</p>`,
-        buttons: [{ label: "取消", value: false }, { label: "重做", value: true, kind: "primary" }],
+        title: `다시 하기: ${id} ${l.title}`,
+        body: `<p>끝낸 레슨도 다시 할 수 있어요. 다시 하면 XP는 조금만, 엔은 없어요.</p>`,
+        buttons: [{ label: "취소", value: false }, { label: "다시 하기", value: true, kind: "primary" }],
       });
       if (!ok) return;
     }

@@ -83,22 +83,22 @@ test("name_blank: 이름 없음 → {name}이나 빈 호칭이 남지 않음", (
   assert.ok(sawNameLine, "{name}을 쓰는 줄이 하나 이상 있어야 함");
 });
 
-test("name_form: {name}은 줄 맨 앞 「{name}，」 꼴로 한 번만", () => {
+test("name_form: {name}은 줄 맨 앞 「{name} 씨, 」 꼴로 한 번만", () => {
   for (const s of SITUATIONS) {
     for (const l of LINES[s]) {
       if (!l.text.includes("{name}")) continue;
-      assert.match(l.text, /^\{name\}，/, `${s}: ${l.text}`);
+      assert.match(l.text, /^\{name\} 씨, /, `${s}: ${l.text}`);
       assert.equal(l.text.split("{name}").length, 2, `${s}: {name} 두 번 이상`);
     }
   }
 });
 
-test("name_filled: 이름이 있으면 「이름，」으로 들어감", () => {
+test("name_filled: 이름이 있으면 「이름 씨, 」로 들어감", () => {
   const s = "greet";
   const i = LINES[s].findIndex((l) => l.text.includes("{name}"));
   assert.ok(i >= 0);
   const r = say(s, { name: "민지" }, () => (i + 0.5) / LINES[s].length, null);
-  assert.ok(r.text.startsWith("민지，"), r.text);
+  assert.ok(r.text.startsWith("민지 씨, "), r.text);
 });
 
 test("placeholders: {streak}·{xp} 채움", () => {
@@ -133,9 +133,9 @@ test("vars_missing: vars {} → 자리 표시가 빠진 줄은 건너뜀, 남는
       const rng = seeded(100 + k);
       for (const vars of [{}, undefined, null]) {
         const r = say(s, vars, rng, null);
-        assert.ok(!/[{}]/.test(r.text), `${s}: ${r.text}`);
+        assert.ok(!/[{}]/.test(r.text.replace(/[\u3400-\u9fff々]+\{[^{}]+\}/g, "")), `${s}: ${r.text}`);
         assert.ok(!/^[\s,，.。!！?？…·]/.test(r.text), `${s}: ${r.text}`);
-        assert.ok(!/(^|\s)(XP|天)/.test(r.text.replace(/\d+ ?(XP|天)/g, "")), `${s}: 숫자 없는 단위 ${r.text}`);
+        assert.ok(!/(^|\s)(XP|일)(\s|$)/.test(r.text.replace(/\d+ ?(XP|일)/g, "")), `${s}: 숫자 없는 단위 ${r.text}`);
       }
     }
   }
@@ -150,7 +150,7 @@ test("one_pass: 이름 속 $&·{xp}는 그대로 글자로 들어감 (다시 바
   const s = "greet";
   const i = LINES[s].findIndex((l) => l.text.includes("{name}"));
   const r = say(s, { name: "$&{xp}", xp: 5 }, () => (i + 0.5) / LINES[s].length, null);
-  assert.ok(r.text.startsWith("$&{xp}，"), r.text);
+  assert.ok(r.text.startsWith("$&{xp} 씨, "), r.text);
 });
 
 test("rng_guard: NaN·음수·1 이상 → 범위 안 줄", () => {
@@ -186,7 +186,21 @@ test("deterministic: 같은 씨앗 → 같은 결과", () => {
   assert.deepEqual(a, b);
 });
 
-test("course_done mentions both volumes", () => {
-  assert.ok(LINES.course_done.some((l) => l.text.includes("第一、二册")));
-  assert.ok(!LINES.course_done.some((l) => /第一册的/.test(l.text)));
+test("course_done mentions the 12 lessons", () => {
+  assert.ok(LINES.course_done.some((l) => l.text.includes("12과")));
+});
+
+test("wrong: 7 lines, 2 of them Osaka dialect with an angry or pout face", () => {
+  assert.equal(LINES.wrong.length, 7);
+  const osaka = LINES.wrong.filter((l) => /ちゃう|なんでやねん|あかん|ほんま/.test(l.text));
+  assert.equal(osaka.length, 2);
+  for (const l of osaka) assert.ok(["angry", "pout"].includes(l.face), l.text);
+});
+
+test("japanese phrases come with a Korean gloss in brackets", () => {
+  for (const [s, lines] of Object.entries(LINES)) {
+    for (const l of lines) {
+      if (/[\u3041-\u30ff]/.test(l.text.replace(/\{[^}]*\}/g, ""))) assert.match(l.text, /\([^)]*[가-힣][^)]*\)/, `${s}: ${l.text}`);
+    }
+  }
 });

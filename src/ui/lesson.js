@@ -11,8 +11,8 @@ import { reviewPool } from "../lessondata.js";
 const GUARD_MS = 400;
 const WAIT_MS = 300;    // 장 파일이 이보다 늦으면 「준비 중」 (v0.3 작업 1)
 const LOAD_TIMEOUT_MS = 12000;  // 이보다 오래 걸리면 「준비 중」을 그만두고 안내
-export const OFFLINE_LINE = "这一课需要在有网络时打开一次";
-export const STALE_LINE = "有新版本了，点一下刷新";
+export const OFFLINE_LINE = "이 레슨은 인터넷이 될 때 한 번 열어야 해요";
+export const STALE_LINE = "새 판이 나왔어요. 눌러서 새로 고쳐요";
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -31,7 +31,7 @@ async function buildReview(ctx) {
   const pool = reviewPool(got.filter((r) => r.status === "fulfilled").map((r) => r.value), concepts, ctx.save.completed_lessons);
   const failed = got.find((r) => r.status === "rejected");
   if (!pool.length && failed) throw failed.reason;
-  return { id: "review", title: "复习", cards: [], items: shuffle(pool).slice(0, 5) };
+  return { id: "review", title: "복습", cards: [], items: shuffle(pool).slice(0, 5) };
 }
 
 
@@ -40,13 +40,13 @@ async function buildReview(ctx) {
  *  state: blank(0.3초 전) · wait(준비 중) · error. kind(error일 때): offline · stale(새 판) · broken(그리다 실패) */
 function waitScreen(root, ctx, state, kind = "offline") {
   const err = state === "error";
-  const face = (f) => riaSays({ item: ctx.save.item, face: f, text: err ? ERROR_LINES[kind].say : "准备中……正在打开课程", size: 92 });
+  const face = (f) => riaSays({ item: ctx.save.item, face: f, text: err ? ERROR_LINES[kind].say : "준비 중이에요……레슨을 여는 중", size: 92 });
   const body = err
-    ? `<h1 class="sr">课程打开失败</h1>${face("think")}
+    ? `<h1 class="sr">레슨을 열지 못했어요</h1>${face("think")}
        <p class="muted center">${esc(ERROR_LINES[kind].note)}</p>
-       <div class="btn-row"><button class="btn ghost" id="to-home">回到学习路线</button><button class="btn primary" id="retry">${esc(ERROR_LINES[kind].btn)}</button></div>`
+       <div class="btn-row"><button class="btn ghost" id="to-home">학습 길로 돌아가기</button><button class="btn primary" id="retry">${esc(ERROR_LINES[kind].btn)}</button></div>`
     : state === "wait"
-      ? `${face("smile")}<div class="btn-row one"><button class="btn ghost" id="to-home">回到学习路线</button></div>`
+      ? `${face("smile")}<div class="btn-row one"><button class="btn ghost" id="to-home">학습 길로 돌아가기</button></div>`
       : "";
   root.innerHTML = `<div class="screen lesson-wait" data-state="${state}"${err ? ` data-kind="${kind}"` : ""} aria-busy="${err ? "false" : "true"}">
     <main role="status" aria-live="polite">${body}</main>
@@ -56,21 +56,21 @@ function waitScreen(root, ctx, state, kind = "offline") {
 }
 
 const ERROR_LINES = {
-  offline: { say: OFFLINE_LINE, note: "连上网络后请点「重试」。之前的进度不会丢失。", btn: "重试" },
-  stale: { say: STALE_LINE, note: "刷新后，之前的进度不会丢失。", btn: "刷新" },
-  broken: { say: "打开课程时出了问题", note: "请点「重试」。之前的进度不会丢失。", btn: "重试" },
+  offline: { say: OFFLINE_LINE, note: "인터넷에 연결한 뒤 「다시 시도」를 눌러요. 하던 진도는 그대로예요.", btn: "다시 시도" },
+  stale: { say: STALE_LINE, note: "새로 고쳐도 하던 진도는 그대로예요.", btn: "새로 고침" },
+  broken: { say: "레슨을 여는 중에 문제가 생겼어요", note: "「다시 시도」를 눌러요. 하던 진도는 그대로예요.", btn: "다시 시도" },
 };
 
-export const RESUME_ASK = "要从上次的地方继续吗？";
+export const RESUME_ASK = "지난번에 멈춘 곳부터 이어서 할까요?";
 
 /** 이어 하기 묻기: "resume" | "restart". 창을 그냥 닫으면(바깥 누르기·Esc) 지운 것 없이 이어 함 */
 async function askResume(ctx, lesson, S0) {
   const p = Math.round(summary(S0.flow).progress * 100);
   const v = await dialog({
-    title: "继续上课",
+    title: "이어서 하기",
     body: riaSays({ item: ctx.save.item, face: "smile", text: RESUME_ASK, size: 72, cls: "small resume-ask" })
-      + `<p class="muted resume-meta">${esc(`${lesson.id} ${lesson.title || ""}`.trim())} · 已完成 ${p}%</p>`,
-    buttons: [{ label: "继续", value: "resume", kind: "primary" }, { label: "从头开始", value: "restart" }],
+      + `<p class="muted resume-meta">${esc(`${lesson.id} ${lesson.title || ""}`.trim())} · ${p}% 진행</p>`,
+    buttons: [{ label: "이어서", value: "resume", kind: "primary" }, { label: "처음부터", value: "restart" }],
   });
   return v === "restart" ? "restart" : "resume";
 }
@@ -170,9 +170,9 @@ function run(root, ctx, lesson, review, resumed = null) {
 
   root.innerHTML = `<div class="screen lesson">
     <header class="lesson-top">
-      <button class="icon-btn" id="quit" aria-label="退出课程">${icon("close")}</button>
-      <div class="lesson-progress">${bar(0, 100, "lp-bar", "课程进度")}</div>
-      <span class="lesson-tag">${esc(review ? "复习" : lesson.id)}</span>
+      <button class="icon-btn" id="quit" aria-label="레슨 나가기">${icon("close")}</button>
+      <div class="lesson-progress">${bar(0, 100, "lp-bar", "레슨 진행")}</div>
+      <span class="lesson-tag">${esc(review ? "복습" : lesson.id)}</span>
     </header>
     <main class="lesson-body" id="body"></main>
     <footer class="lesson-foot" id="foot"></footer>
@@ -209,7 +209,7 @@ function run(root, ctx, lesson, review, resumed = null) {
         <p class="bubble">${esc(line.text)}</p>
       </div>
     </div>
-    <button class="btn ${ok ? "primary" : "coral"} wide" id="cont">继续</button>`;
+    <button class="btn ${ok ? "primary" : "coral"} wide" id="cont">계속</button>`;
     result.hidden = false;
     document.body.classList.add("result-open");
     S.guardUntil = performance.now() + GUARD_MS;
@@ -241,11 +241,11 @@ function run(root, ctx, lesson, review, resumed = null) {
     ctx.sound.play(ok ? (combo ? "combo" : "correct") : "wrong");
     openResult({
       ok, flowCorrect: ok,
-      title: ok ? (combo ? `连续答对 ${S.combo} 题！` : "答对了") : "差一点",
+      title: ok ? (combo ? `${S.combo}문제 연속 정답!` : "정답이에요") : "아까워요",
       text: it.explain || "",
       answerHTML: ok ? "" : answerHTML,
       situation: ok ? (combo ? "combo" : "correct") : "wrong",
-      sfx: ok ? (combo ? "漂亮！" : "叮咚！") : "哎呀？",
+      sfx: ok ? (combo ? "すごい!" : "ピンポン!") : "あれ?",
     });
   }
 
@@ -259,7 +259,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     const c = cur.card;
     const first = cur.index === 0;
     body.innerHTML = `<article class="card-view">
-      ${first && lesson.goal ? `<p class="goal-line">${icon("book")}<span>今天的目标：${esc(lesson.goal)}</span></p>` : ""}
+      ${first && lesson.goal ? `<p class="goal-line">${icon("book")}<span>오늘의 목표: ${esc(lesson.goal)}</span></p>` : ""}
       <h1 class="lesson-title">${esc(lesson.title)}</h1>
       <div class="ria-row">
         <div class="ria-wrap">${yukiImg({ face: first ? "smile" : "think", size: 84 })}</div>
@@ -267,7 +267,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       </div>
       ${cardExample(c)}
     </article>`;
-    const b = footButton(cur.index + 1 < lesson.cards.length ? "下一张" : "开始做题");
+    const b = footButton(cur.index + 1 < lesson.cards.length ? "다음 카드" : "문제 풀기");
     b.addEventListener("click", () => { S.flow = nextCard(S.flow); step(); });
   }
 
@@ -280,10 +280,10 @@ function run(root, ctx, lesson, review, resumed = null) {
   // ---- 문제 머리 ----
   function itemHead(cur) {
     const it = cur.item;
-    const tag = cur.retry ? `<span class="tag retry">${icon("review")}再做一次</span>`
-      : it.type === "check" ? `<span class="tag check">检查理解</span>`
-      : review && it.from ? `<span class="tag">${esc(it.from)} 复习</span>` : "";
-    return `${tag}<h1 class="q">${esc(it.q || (it.type === "order" ? "按顺序点音节，拼出单词。" : "选出正确答案。"))}</h1>
+    const tag = cur.retry ? `<span class="tag retry">${icon("review")}다시 한 번</span>`
+      : it.type === "check" ? `<span class="tag check">이해 확인</span>`
+      : review && it.from ? `<span class="tag">${esc(it.from)} 복습</span>` : "";
+    return `${tag}<h1 class="q">${esc(it.q || (it.type === "order" ? "가나 카드를 순서대로 눌러요." : "알맞은 답을 골라요."))}</h1>
       ${it.sentence ? sentenceBox(it.sentence) : ""}
       ${it.code ? codeBlock(it.code) : ""}`;
   }
@@ -294,10 +294,10 @@ function run(root, ctx, lesson, review, resumed = null) {
     const it = { ...orig, options: sh.options, answer: sh.answer };
     let pick = -1;
     body.innerHTML = `<article class="item">${itemHead(cur)}
-      <div class="options" role="radiogroup" aria-label="选项">${it.options.map((o, i) =>
+      <div class="options" role="radiogroup" aria-label="보기">${it.options.map((o, i) =>
         `<button class="opt" role="radio" aria-checked="false" data-i="${i}"><span class="opt-key" aria-hidden="true">${i + 1}</span><span class="opt-text">${esc(o)}</span></button>`).join("")}</div>
     </article>`;
-    const act = footButton("确认", { disabled: true });
+    const act = footButton("확인", { disabled: true });
     body.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
       pick = +b.dataset.i;
       body.querySelectorAll(".opt").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
@@ -305,7 +305,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     }));
     act.addEventListener("click", () => {
       if (pick < 0) return;
-      judged(cur, pick === it.answer, `<p class="answer">正确答案：<span>${esc(it.options[it.answer])}</span></p>`);
+      judged(cur, pick === it.answer, `<p class="answer">정답: <span>${esc(it.options[it.answer])}</span></p>`);
     });
   }
 
@@ -314,18 +314,18 @@ function run(root, ctx, lesson, review, resumed = null) {
     const order = shuffleOrder(it.lines, newSeed());
     const chosen = [];
     body.innerHTML = `<article class="item">${itemHead(cur)}
-      <p class="ex-label">我拼的单词 <small>（点一下可以拿掉）</small></p>
-      <ol class="order-answer" id="oa" aria-label="选择的顺序"></ol>
-      <p class="ex-label">音节卡片 <small>（按点击顺序放入）</small></p>
+      <p class="ex-label">내가 맞춘 말 <small>(누르면 뺄 수 있어요)</small></p>
+      <ol class="order-answer" id="oa" aria-label="고른 순서"></ol>
+      <p class="ex-label">가나 카드 <small>(누른 순서대로 들어가요)</small></p>
       <div class="order-pool" id="op">${order.map((li) =>
         `<button class="line" lang="ko" data-li="${li}">${esc(it.lines[li])}</button>`).join("")}</div>
     </article>`;
-    const act = footButton("确认", { disabled: true });
+    const act = footButton("확인", { disabled: true });
     const oa = body.querySelector("#oa");
     const paint = () => {
       oa.innerHTML = chosen.length ? chosen.map((li, k) =>
-        `<li><button class="line placed" lang="ko" data-k="${k}" aria-label="${esc(`拿掉第 ${k + 1} 个：${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
-        : `<li class="empty">点下面的卡片</li>`;
+        `<li><button class="line placed" lang="ko" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
+        : `<li class="empty">아래 카드를 눌러요</li>`;
       body.querySelectorAll("#op .line").forEach((b) => {
         const used = chosen.includes(+b.dataset.li);
         b.disabled = used;
@@ -343,7 +343,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       if (chosen.length !== it.lines.length) return;
       // 순서 문제는 정답 순서가 하나뿐이라 저장된 순서와 비교한다(C23)
       const ok = chosen.map((li) => it.lines[li]).join("\n") === it.lines.join("\n");
-      judged(cur, ok, `<p class="answer">正确答案：<span lang="ko">${esc(it.lines.join(""))}</span></p>`);
+      judged(cur, ok, `<p class="answer">정답: <span lang="ko">${esc(it.lines.join(""))}</span></p>`);
     });
   }
 
@@ -377,9 +377,9 @@ function run(root, ctx, lesson, review, resumed = null) {
 
   root.querySelector("#quit").addEventListener("click", async () => {
     const ok = await dialog({
-      title: "要退出这节课吗？",
-      body: "<p>已经做的题不会保存，下次要从头开始。</p>",
-      buttons: [{ label: "继续做题", value: false, kind: "primary" }, { label: "退出", value: true }],
+      title: "레슨을 그만둘까요?",
+      body: "<p>푼 문제는 저장되지 않아 다음에 처음부터 해야 해요.</p>",
+      buttons: [{ label: "계속 풀기", value: false, kind: "primary" }, { label: "나가기", value: true }],
     });
     if (ok) {
       if (!review && ctx.resume) ctx.resume.clear();

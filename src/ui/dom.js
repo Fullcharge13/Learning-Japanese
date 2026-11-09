@@ -110,9 +110,9 @@ export function cardExample(c) {
 }
 
 export const MILESTONE_REWARD = {
-  7: "获得奖励 50 字节",
-  30: "获得礼物：鼓",
-  100: "获得「连续 100 天」徽章",
+  7: "보상 50엔",
+  30: "선물: 가도마츠",
+  100: "「100일 연속」 배지",
 };
 
 /** 연속 기록 이정표 축하 창. 누르면(또는 Enter·Esc) 닫히고 resolve */
@@ -121,10 +121,10 @@ export function celebrate({ item, milestone }) {
     const prev = document.activeElement;
     const wrap = el(`<div class="celebrate" role="dialog" aria-modal="true" aria-labelledby="cel-title">
       <div class="cel-card">
-        <div class="ria-wrap big jump">${yukiImg({ face: "sparkle", item, size: 150 })}<span class="sfx" aria-hidden="true">锵！</span></div>
-        <h2 id="cel-title" class="cel-title">${icon("flame")}连续 ${esc(milestone)} 天！</h2>
+        <div class="ria-wrap big jump">${yukiImg({ face: "sparkle", item, size: 150 })}<span class="sfx" aria-hidden="true">짠!</span></div>
+        <h2 id="cel-title" class="cel-title">${icon("flame")}${esc(milestone)}일 연속!</h2>
         <p class="cel-reward">${esc(MILESTONE_REWARD[milestone] || "")}</p>
-        <button class="btn sun wide" id="cel-ok">好的</button>
+        <button class="btn sun wide" id="cel-ok">좋아요</button>
       </div>
     </div>`);
     const shownAt = performance.now();

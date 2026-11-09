@@ -1,89 +1,94 @@
-// 해치(獬豸) 선생님 대사 표 — 상황 13종 × 3~5줄. 화면 언어는 간체 중국어.
-// 표정: src/haechi.js FACE_IDS (smile joy sparkle think surprise worry cheer wink hello done sleepy)
+// 사나다 유키 선생님 대사 표 — 상황 13종 × 3~7줄. 화면 언어는 한국어(해요체).
+// 유키: 30세, 전국시대 사나다 가문의 후예, 오사카 출신. 도쿄대 국어학·동양사학 박사, 한국외대 한국어교육 박사, TOPIK 6급.
+//   평소엔 표준어(도쿄 말), 오답일 때 가끔 오사카 사투리(wrong 7줄 중 2줄, 얼굴 angry·pout).
+// 일본어 한마디 뒤에는 늘 (한국어 뜻)을 단다. 한자는 「字{よみ}」로 쓰면 말풍선에 후리가나가 붙는다(src/ruby.js).
+// 표정: src/yuki.js FACE_IDS
 // 자리 표시: {name} {streak} {xp} {item}
-//   {item}에는 물건 이름(「장구 · 长鼓」)이 들어간다.
+//   {item}에는 물건 이름(「기모노 · 着物{きもの}」)이 들어간다.
 //   {streak}·{xp}·{item} 값이 없으면 say()가 그 줄을 건너뛴다. 상황마다 자리 표시 없는 줄을 하나 이상 둔다.
-// {name}은 줄 맨 앞에 「{name}，」 꼴로 한 번만 쓴다. 이름이 비면 say()가 이 덩어리를 통째로 뺀다.
+// {name}은 줄 맨 앞에 「{name} 씨, 」 꼴로 한 번만 쓴다. 이름이 비면 say()가 이 덩어리를 통째로 뺀다.
 
 export const LINES = {
   greet: [
-    { text: "{name}，欢迎！今天也一起学几个韩语单词吧。", face: "smile" },
-    { text: "来啦！今天的目标只有一个：比昨天多记一个词。", face: "cheer" },
-    { text: "我是獬豸，守护光化门的那位。今天守护你的韩语！", face: "wink" },
-    { text: "{name}，位子给你留好了。开始吧？", face: "joy" },
-    { text: "每天几分钟，韩语就会慢慢变成你的。", face: "smile" },
+    { text: "{name} 씨, こんにちは!(안녕하세요!) 오늘도 같이 해요.", face: "smile" },
+    { text: "사나다 유키예요. 오늘 목표는 어제보다 한 단어 더!", face: "wink" },
+    { text: "오사카에서 왔어요. 한국어는 드라마로 배웠답니다.", face: "shy" },
+    { text: "{name} 씨, 자리 맡아 뒀어요. 시작해 볼까요?", face: "hello" },
+    { text: "하루 몇 분이면 충분해요. がんばろう!(힘내자!)", face: "cheer" },
   ],
   correct: [
-    { text: "叮咚！完全正确。", face: "joy" },
-    { text: "对了！看得出你是真的记住了。", face: "smile" },
-    { text: "漂亮！这个词已经是你的了。", face: "sparkle" },
-    { text: "答对了，记住刚才的感觉。", face: "cheer" },
+    { text: "そうそう!(맞아요!) 완벽해요.", face: "joy" },
+    { text: "정답! 제대로 기억하고 있네요.", face: "smile" },
+    { text: "すごい!(대단해요!) 이 말은 이제 당신 거예요.", face: "sparkle" },
+    { text: "맞았어요. 방금 그 느낌을 기억해 두세요.", face: "cheer" },
   ],
   combo: [
-    { text: "连续答对！节奏很好。", face: "sparkle" },
-    { text: "这么顺，韩国朋友都要夸你了。", face: "wink" },
-    { text: "一连答对，说明真的记牢了。", face: "joy" },
-    { text: "停不下来了吧？保持这个速度！", face: "cheer" },
+    { text: "연속 정답! 리듬이 아주 좋아요.", face: "sparkle" },
+    { text: "この調子{ちょうし}!(이 기세로!) 계속 가요.", face: "joy" },
+    { text: "이렇게 술술 풀리면 일본 친구도 놀라겠어요.", face: "wink" },
+    { text: "멈출 수 없죠? 이 속도 그대로!", face: "cheer" },
   ],
   wrong: [
-    { text: "差一点！一起看看是哪里不一样。", face: "think" },
-    { text: "没关系，错的答案也能帮你记住。", face: "smile" },
-    { text: "嗯，再仔细看一遍吧。", face: "think" },
-    { text: "这个词很多人一开始都会搞混。", face: "worry" },
-    { text: "很好的尝试！下次一个字一个字地看。", face: "cheer" },
+    { text: "おしい!(아까워요!) 어디가 다른지 같이 봐요.", face: "think" },
+    { text: "괜찮아요. 틀린 답도 기억을 도와줘요.", face: "smile" },
+    { text: "음, 한 글자씩 천천히 다시 봐요.", face: "think" },
+    { text: "이건 처음엔 다들 헷갈려요.", face: "worry" },
+    { text: "좋은 시도였어요! 다음엔 꼭 맞힐 거예요.", face: "cheer" },
+    { text: "ちゃうちゃう!(아냐 아냐!) 앗, 오사카 말이 나와 버렸네요.", face: "pout" },
+    { text: "なんでやねん!(왜 그래~!) …농담이에요. 정답을 봐요.", face: "angry" },
   ],
   running: [
-    { text: "稍等一下，马上就好。", face: "think" },
-    { text: "正在准备，请稍候。", face: "smile" },
-    { text: "马上就来！", face: "wink" },
+    { text: "잠깐만요, 금방 돼요.", face: "think" },
+    { text: "준비하고 있어요. ちょっと待{ま}ってね(잠깐 기다려요).", face: "smile" },
+    { text: "곧 갈게요!", face: "wink" },
   ],
   error: [
-    { text: "哎呀，出了点问题。再试一次吧。", face: "surprise" },
-    { text: "别担心，重新打开就好了。", face: "smile" },
-    { text: "好像卡住了，我们再来一次。", face: "worry" },
+    { text: "あれ?(어라?) 문제가 생겼어요. 다시 해 봐요.", face: "surprise" },
+    { text: "걱정 마요. 다시 열면 괜찮아질 거예요.", face: "smile" },
+    { text: "멈춘 것 같아요. 한 번 더 해 볼까요?", face: "worry" },
   ],
   hint: [
-    { text: "给你一个提示，答案还是要你自己找哦。", face: "wink" },
-    { text: "先想想这个词是什么意思。", face: "think" },
-    { text: "汉字词的读音常常和汉语很像。", face: "smile" },
-    { text: "带着这个线索再往前一步。", face: "cheer" },
+    { text: "힌트를 줄게요. 답은 스스로 찾아봐요.", face: "wink" },
+    { text: "먼저 이 말이 무슨 뜻인지 떠올려 봐요.", face: "think" },
+    { text: "한자어는 한국어 발음과 닮은 게 많아요.", face: "hello" },
+    { text: "이 단서를 들고 한 걸음 더!", face: "cheer" },
   ],
   lesson_done: [
-    { text: "完成！得到了 {xp} XP。", face: "done" },
-    { text: "{name}，坚持到最后了！今天学的词都是你的了。", face: "sparkle" },
-    { text: "辛苦啦！又长进了 {xp} XP。", face: "smile" },
-    { text: "完成一课！下一课我也准备好了。", face: "cheer" },
+    { text: "끝! {xp} XP를 얻었어요.", face: "done" },
+    { text: "{name} 씨, 끝까지 해냈어요! 오늘 배운 말은 당신 거예요.", face: "sparkle" },
+    { text: "おつかれさま!(수고했어요!) {xp} XP 성장!", face: "smile" },
+    { text: "레슨 하나 끝! 다음 레슨도 준비해 뒀어요.", face: "cheer" },
   ],
   course_done: [
-    { text: "{name}，第一、二册的单词全部学完了！真为你骄傲！", face: "sparkle" },
-    { text: "全部课程完成！可以开始用韩语打招呼了。", face: "done" },
-    { text: "坚持到最后了。你已经是韩语学习者啦！", face: "cheer" },
+    { text: "{name} 씨, 가나부터 12과까지 전부 끝냈어요! 정말 자랑스러워요!", face: "sparkle" },
+    { text: "모든 레슨 완료! 이제 일본어로 인사할 수 있어요.", face: "done" },
+    { text: "끝까지 왔어요. もう立派{りっぱ}な学習者{がくしゅうしゃ}!(이제 어엿한 학습자!)", face: "cheer" },
   ],
   streak_up: [
-    { text: "连续学习 {streak} 天！坚持是最厉害的本领。", face: "sparkle" },
-    { text: "{name}，已经 {streak} 天了，习惯在慢慢养成。", face: "joy" },
-    { text: "今天的目标完成！一点一点积累起来了。", face: "joy" },
-    { text: "今天也做到了。连续 {streak} 天！", face: "cheer" },
+    { text: "{streak}일 연속! 꾸준함이 최고의 실력이에요.", face: "sparkle" },
+    { text: "{name} 씨, 벌써 {streak}일째예요. 습관이 되고 있어요.", face: "joy" },
+    { text: "오늘 목표 달성! 조금씩 쌓이고 있어요.", face: "joy" },
+    { text: "오늘도 해냈어요. {streak}일 연속!", face: "cheer" },
   ],
   streak_broken: [
-    { text: "我刚才睡着了……我们从第一天重新开始吧！", face: "sleepy" },
-    { text: "休息一天也没关系，学过的词都还在。", face: "smile" },
-    { text: "记录只是数字，实力没有减少。", face: "sleepy" },
-    { text: "{name}，欢迎回来！今天重新开始吧！", face: "joy" },
+    { text: "깜빡 졸았나 봐요…… 1일째부터 다시 시작해요!", face: "sleepy" },
+    { text: "하루 쉬어도 괜찮아요. 배운 말은 그대로 있어요.", face: "smile" },
+    { text: "기록은 숫자일 뿐, 실력은 줄지 않았어요.", face: "sad" },
+    { text: "{name} 씨, おかえり!(어서 와요!) 오늘 다시 시작해요.", face: "joy" },
   ],
   item_bought: [
-    { text: "{item}，怎么样？和我配吗？", face: "sparkle" },
-    { text: "{item}，我很喜欢！今天就带着它。", face: "joy" },
-    { text: "新的传统物品 {item}！眼光真好。", face: "wink" },
-    { text: "这些都是韩国的传统物品，名字也可以一起记哦。", face: "smile" },
+    { text: "{item}, 어때요? 저랑 어울려요?", face: "sparkle" },
+    { text: "{item}, 마음에 들어요! 오늘은 이걸로 할게요.", face: "joy" },
+    { text: "새 물건 {item}! 보는 눈이 있네요.", face: "wink" },
+    { text: "다 일본 물건이에요. 이름도 같이 외워 봐요.", face: "shy" },
   ],
   welcome_back: [
-    { text: "{name}，好久不见！最近好吗？", face: "surprise" },
-    { text: "回来啦。先轻松地复习一下吧？", face: "smile" },
-    { text: "一直在等你呢。", face: "wink" },
-    { text: "你学到哪里我都记着，接着来吧。", face: "cheer" },
+    { text: "{name} 씨, ひさしぶり!(오랜만이에요!) 잘 지냈어요?", face: "surprise" },
+    { text: "돌아왔군요. 가볍게 복습부터 할까요?", face: "smile" },
+    { text: "계속 기다리고 있었어요.", face: "shy" },
+    { text: "어디까지 했는지 다 기억해요. 이어서 가요.", face: "cheer" },
   ],
 };
 
 // 모르는 상황일 때 쓰는 중립 대사
-export const FALLBACK_LINE = { text: "慢慢来，我一直在这里。", face: "smile" };
+export const FALLBACK_LINE = { text: "천천히 해요. 저는 늘 여기 있어요.", face: "smile" };

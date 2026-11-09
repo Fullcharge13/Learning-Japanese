@@ -19,15 +19,15 @@ export function render(root, ctx, params = {}) {
     const own = s.items.includes(o.id);
     const placed = s.item === o.id;
     let action;
-    if (placed) action = `<button class="btn ghost wide" disabled>放在身边</button>`;
-    else if (own) action = `<button class="btn primary wide" id="place">放在獬豸身边</button>`;
-    else if (o.price == null) action = `<p class="lock-note">${icon("lock")}连续 30 天的奖励</p>`;
-    else action = `<button class="btn sun wide" id="buy"${s.bytes < o.price ? " disabled" : ""}>${icon("byte")}<span>用 ${o.price} 字节购买</span></button>
-      ${s.bytes < o.price ? `<p class="muted center">再攒 ${o.price - Math.max(0, s.bytes)} 字节就能买</p>` : ""}`;
+    if (placed) action = `<button class="btn ghost wide" disabled>옆에 두었어요</button>`;
+    else if (own) action = `<button class="btn primary wide" id="place">유키 옆에 두기</button>`;
+    else if (o.price == null) action = `<p class="lock-note">${icon("lock")}30일 연속 보상</p>`;
+    else action = `<button class="btn sun wide" id="buy"${s.bytes < o.price ? " disabled" : ""}>${icon("byte")}<span>${o.price}엔으로 사기</span></button>
+      ${s.bytes < o.price ? `<p class="muted center">${o.price - Math.max(0, s.bytes)}엔 더 모으면 살 수 있어요</p>` : ""}`;
     root.innerHTML = `<div class="screen closet with-tabs">
       ${statusBar(s)}
       <main>
-        <h1 class="page-title">收藏室</h1>
+        <h1 class="page-title">보관함</h1>
         <section class="stage">
           <div class="ria-wrap big">${yukiImg({ face: placed ? "smile" : "sparkle", item: o.id, size: 170 })}</div>
           <div class="stage-info">
@@ -36,9 +36,9 @@ export function render(root, ctx, params = {}) {
             ${action}
           </div>
         </section>
-        <ul class="outfit-grid" aria-label="物品列表">${ITEMS.map((x) => {
+        <ul class="outfit-grid" aria-label="물건 목록">${ITEMS.map((x) => {
           const owned = s.items.includes(x.id);
-          const tag = s.item === x.id ? "身边" : owned ? "已拥有" : x.price == null ? "30 天奖励" : `${x.price} 字节`;
+          const tag = s.item === x.id ? "옆에" : owned ? "가짐" : x.price == null ? "30일 보상" : `${x.price}엔`;
           return `<li><button class="outfit${x.id === sel ? " sel" : ""}${owned ? " owned" : ""}" data-o="${x.id}" aria-pressed="${x.id === sel}" aria-label="${esc(`${nameOf(x)}, ${tag}`)}">
             ${x.id === "none" ? yukiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/items/${x.id}.png" width="74" height="74" alt="">`}
             <span class="o-name"><span lang="ko">${esc(x.ko)}</span><br>${esc(x.zh)}</span>
@@ -47,10 +47,10 @@ export function render(root, ctx, params = {}) {
         }).join("")}</ul>
         <section class="panel freeze">
           <div class="freeze-text">
-            <h2>${icon("shield")}连续记录保护券 <b>${s.freezes}/${FREEZE_MAX}</b></h2>
-            <p>没完成目标的那天，下次打开时自动使用，保住连续记录。</p>
+            <h2>${icon("shield")}연속 기록 보호권 <b>${s.freezes}/${FREEZE_MAX}</b></h2>
+            <p>목표를 못 채운 날이 있으면 다음에 열 때 저절로 써서 연속 기록을 지켜 줘요.</p>
           </div>
-          <button class="btn ghost" id="freeze"${s.freezes >= FREEZE_MAX || s.bytes < FREEZE_PRICE ? " disabled" : ""}>${s.freezes >= FREEZE_MAX ? "已满" : `${FREEZE_PRICE} 字节`}</button>
+          <button class="btn ghost" id="freeze"${s.freezes >= FREEZE_MAX || s.bytes < FREEZE_PRICE ? " disabled" : ""}>${s.freezes >= FREEZE_MAX ? "가득" : `${FREEZE_PRICE}엔`}</button>
         </section>
       </main>
       ${tabBar("closet")}
@@ -71,7 +71,7 @@ export function render(root, ctx, params = {}) {
       if (r instanceof Error) { toast(r.message); return; }
       let next = { ...r, item: o.id };
       const got = checkBadges(next, { hour: new Date().getHours(), lessonDone: false });
-      if (got.length) { next = { ...next, badges: [...next.badges, ...got] }; toast("新徽章：物品收藏家"); }
+      if (got.length) { next = { ...next, badges: [...next.badges, ...got] }; toast("새 배지: 물건 수집가"); }
       ctx.commit(next);
       ctx.sound.play("buy");
       line = ctx.say("item_bought", { item: nameOf(o) }).text;
@@ -82,7 +82,7 @@ export function render(root, ctx, params = {}) {
       if (r instanceof Error) { toast(r.message); return; }
       ctx.commit(r);
       ctx.sound.play("buy");
-      toast(`买到了连续记录保护券 (${r.freezes}/${FREEZE_MAX})`);
+      toast(`연속 기록 보호권을 샀어요 (${r.freezes}/${FREEZE_MAX})`);
       paint();
     });
   }

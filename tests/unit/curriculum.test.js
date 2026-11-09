@@ -34,9 +34,9 @@ test("cur_upcoming: 1권만이라 예정된 과가 없음", () => {
 });
 
 test("path_end_text: 남은 레슨이 있을 때와 모두 끝냈을 때", () => {
-  assert.equal(pathEndText({ chapters: CH, completed: ["1-1"] }), "第3课是最后一课，一起坚持到底吧");
+  assert.equal(pathEndText({ chapters: CH, completed: ["1-1"] }), "3장이 마지막 장이에요. 끝까지 함께 가요");
   const all = CH.flatMap((c) => c.lessons.map((l) => l.id));
-  assert.equal(pathEndText({ chapters: CH, completed: all }), "全部课程都学完了！用复习巩固一下吧");
+  assert.equal(pathEndText({ chapters: CH, completed: all }), "모든 레슨을 마쳤어요! 복습으로 다져 봐요");
 });
 
 import { chapterWindow } from "../../src/curriculum.js";
@@ -68,8 +68,8 @@ const FULL = Array.from({ length: 17 }, (_, i) => mk(i + 1, `장${i + 1}`));
 const FULL_IDS = FULL.flatMap((c) => c.lessons.map((l) => l.id));
 
 test("course_end_path: 17장 전부 끝내면 과정 완주 문구(다음 업데이트 말 없음)", () => {
-  assert.equal(pathEndText({ chapters: FULL, completed: FULL_IDS }), "全部课程都学完了！用复习巩固一下吧");
-  assert.equal(pathEndText({ chapters: FULL, completed: [] }), "第17课是最后一课，一起坚持到底吧");
+  assert.equal(pathEndText({ chapters: FULL, completed: FULL_IDS }), "모든 레슨을 마쳤어요! 복습으로 다져 봐요");
+  assert.equal(pathEndText({ chapters: FULL, completed: [] }), "17장이 마지막 장이에요. 끝까지 함께 가요");
 });
 
 test("course_just_finished: 처음으로 마지막 레슨까지 끝낸 순간만 참", () => {

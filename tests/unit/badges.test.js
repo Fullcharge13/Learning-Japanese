@@ -75,8 +75,8 @@ test("streak100: already granted (by Task 2 milestone) -> not returned again", (
   const s = mkSave({ streak: { days: 100, best: 100 }, badges: ["streak7", "streak30", "streak100"] });
   assert.deepEqual(checkBadges(s, { hour: 12 }), []);
   const b = BADGES.find((x) => x.id === "streak100");
-  assert.equal(b.name, "连续 100 天");
-  assert.equal(b.desc, "连续 100 天完成每日目标");
+  assert.equal(b.name, "100일 연속");
+  assert.equal(b.desc, "하루 목표를 100일 연속 달성");
 });
 
 test("stat thresholds: perfect 10, review_items 30", () => {
@@ -89,7 +89,7 @@ test("stat thresholds: perfect 10, review_items 30", () => {
 test("collector: 3 items besides none", () => {
   assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono"] }), { hour: 12 }), []);
   assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono", "geta"] }), { hour: 12 }), ["collector"]);
-  assert.equal(BADGES.find((b) => b.id === "collector").name, "物品收藏家");
+  assert.equal(BADGES.find((b) => b.id === "collector").name, "물건 수집가");
 });
 
 test("does not mutate save", () => {
