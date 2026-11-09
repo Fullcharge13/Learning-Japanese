@@ -93,7 +93,7 @@ function shopCard(ctx) {
   return `<section class="panel shop-card${open ? "" : " locked"}">
     <img src="img/shop/flow-01.png" width="72" height="72" alt="">
     <div><h2>유키의 다코야키 가게</h2><p class="muted">${open ? (s.run ? `${s.run.dayNo}일째 장사 중` : `${s.day}일 장사함 · 금고 ${s.money.toLocaleString("ko-KR")}円`) : "가타카나 평가를 통과하면 열려요"}</p></div>
-    <button class="btn ${open ? "sun" : "ghost"}" id="shop"${open ? "" : " disabled"}>${open ? (s.run ? "이어서 장사" : "가게로") : icon("lock")}</button>
+    <button class="btn ${open ? "sun" : "ghost"}" id="shop"${open ? "" : ' disabled aria-label="잠김"'}>${open ? (s.run ? "이어서 장사" : "가게로") : icon("lock")}</button>
   </section>`;
 }
 

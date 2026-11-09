@@ -3,7 +3,7 @@
 // 단계마다 결과 창을 닫을 때 저장한다(새로 고쳐도 같은 손님·같은 단계부터).
 import {
   shopOpen, doneChapter, startRun, dayCustomers, orderLine, greetCards, judgeOrder, payFor, recordStep, runDone,
-  finishDay, buyUpgrade,
+  finishDay, buyUpgrade, flowCut,
 } from "../shop/rules.js";
 import { MENU, COUNTS, GREETINGS, GUESTS, UPGRADES, FLOW, STORIES } from "../../data/shop.js";
 import { yukiImg } from "../yuki.js";
@@ -165,14 +165,14 @@ function dayView(root, ctx, params) {
     result.hidden = false;
     document.body.classList.add("result-open");
     const guard = performance.now() + GUARD_MS;
-    result.querySelector("#cont").addEventListener("click", () => {
+    const cont = result.querySelector("#cont");
+    requestAnimationFrame(() => cont.focus({ preventScroll: true }));
+    cont.addEventListener("click", () => {
       if (performance.now() < guard) return;
       document.body.classList.remove("result-open");
       ctx.commit({ ...ctx.save, shop: next });
       // 손님 2명을 보낼 때마다 흐름 컷 한 장(날마다 이어지는 순서, 02~14 돌림)
-      const passed = run.step === "bye" ? run.idx + 1 : 0;
-      const cut = passed && passed % 2 === 0 && !runDone(next)
-        ? FLOW[1 + (((run.dayNo - 1) * 3 + passed / 2 - 1) % (FLOW.length - 2))].id : null;
+      const cut = run.step === "bye" ? flowCut(run, run.idx + 1) : null;
       ctx.show("shop", { view: "day", cut });
     });
   });

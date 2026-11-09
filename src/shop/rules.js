@@ -2,7 +2,7 @@
 // 저장 save.shop: { v, day, money, upgrades, stories, xpToday: {date, n}, run }
 // run은 하루를 시작할 때의 맥락(끝낸 장·메뉴·손님 수)을 담아, 장사 중에 레슨을 끝내거나 날짜가 바뀌어도 손님이 그대로다.
 import {
-  MENU, TEMPLATES, COUNTS, GREETINGS, GUESTS, UPGRADES, STORIES,
+  MENU, TEMPLATES, COUNTS, GREETINGS, GUESTS, UPGRADES, STORIES, FLOW,
   SHOP_TIP, BASE_GUESTS, MAX_GUESTS, DAY_XP, XP_RUNS_PER_DAY,
 } from "../../data/shop.js";
 import { mulberry32 } from "../shuffle.js";
@@ -165,7 +165,8 @@ const uniq = (list, ok) => (Array.isArray(list) ? [...new Set(list.filter((x) =>
 function cleanRun(r) {
   if (!isObj(r) || !isObj(r.ctx) || typeof r.date !== "string" || !DATE.test(r.date) || typeof r.seed !== "string") return null;
   const { doneCh, menus, n } = r.ctx;
-  if (!Number.isInteger(doneCh) || doneCh < 0 || !Number.isInteger(n) || n < 1 || n > MAX_GUESTS) return null;
+  // 가게는 2장(가타카나) 평가 뒤에 열린다: 그 전 장으로는 쓸 수 있는 주문 틀이 없어 손님을 만들 수 없음
+  if (!Number.isInteger(doneCh) || doneCh < 2 || !Number.isInteger(n) || n < 1 || n > MAX_GUESTS) return null;
   if (!Array.isArray(menus) || !menus.length || !menus.every((m) => MENU_BY[m])) return null;
   if (!Number.isInteger(r.dayNo) || r.dayNo < 1 || !Number.isInteger(r.idx) || r.idx < 0 || r.idx > n || !STEPS.includes(r.step)) return null;
   if (!Array.isArray(r.results) || r.results.length > n || !r.results.every(isObj)) return null;
@@ -186,4 +187,12 @@ export function cleanShop(raw) {
     xpToday: { date: typeof xp.date === "string" && DATE.test(xp.date) ? xp.date : null, n: int(xp.n, 0, XP_RUNS_PER_DAY) },
     run: cleanRun(raw.run),
   };
+}
+
+/** 손님 passed명을 보낸 뒤 보여 줄 흐름 컷 id(없으면 null). 하루 컷 수 = floor((n-1)/2), 가운데 13컷(flow-02..14)을 날마다 이어서 돌림 */
+export function flowCut(run, passed) {
+  const n = run.ctx.n, k = Math.floor((n - 1) / 2);
+  if (passed % 2 !== 0 || passed >= n || k < 1) return null;
+  const mid = FLOW.length - 2;
+  return FLOW[1 + (((run.dayNo - 1) * k + passed / 2 - 1) % mid)].id;
 }

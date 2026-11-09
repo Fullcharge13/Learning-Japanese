@@ -794,6 +794,7 @@ def test_shop_locked_then_open():
         a.start()
         assert a.page.is_disabled("#shop")
         assert "가타카나 평가를 통과하면 열려요" in a.page.inner_text(".shop-card")
+        assert a.page.get_attribute("#shop", "aria-label") == "잠김", "icon-only locked button needs a name"
     with App("iPhone 17", save=_kana_done_save()) as a:
         a.start()
         assert not a.page.is_disabled("#shop")
@@ -820,6 +821,20 @@ def test_shop_full_day():
         txt = a.page.inner_text(".screen.shop")
         assert "6/6" in txt and "{:,}円".format(expect) in txt and "부모님과 인사!" in txt, txt
         assert not a.errors, a.errors
+
+
+def test_shop_result_focus():
+    """결과 창이 열리면 키보드 초점이 「계속」으로(레슨과 같게)"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        a.page.click("#act")  # 오픈 컷
+        a.page.locator(".options .opt").first.click()
+        a.page.click("#act")
+        a.page.wait_for_selector("#result:not([hidden])")
+        a.page.wait_for_timeout(100)
+        assert a.js("() => document.activeElement && document.activeElement.id") == "cont"
 
 
 def test_shop_resume():

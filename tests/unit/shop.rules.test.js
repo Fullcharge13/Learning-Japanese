@@ -196,3 +196,23 @@ test("guest table has 15 and every customer is a known guest", () => {
   const ids = new Set(GUESTS.map((g) => g.id));
   for (const c of dayCustomers(run(withMoney(0, { upgrades: ["plate2", "noren"] })))) assert.ok(ids.has(c.who));
 });
+
+test("cleanShop drops a run whose chapter is before the shop opened (no order template fits)", () => {
+  const ok = startRun(defaultShop(), { date: D, doneCh: 2 });
+  for (const doneCh of [0, 1]) assert.equal(cleanShop({ run: { ...ok.run, ctx: { ...ok.run.ctx, doneCh } } }).run, null, String(doneCh));
+});
+
+import { flowCut } from "../../src/shop/rules.js";
+
+test("flowCut: every middle cut (flow-02..14) shows up over the days, with 6 guests", () => {
+  const seen = new Set();
+  for (let day = 1; day <= 13; day++) {
+    const run = { dayNo: day, ctx: { n: 6 } };
+    for (let passed = 1; passed <= 6; passed++) { const c = flowCut(run, passed); if (c) seen.add(c); }
+  }
+  assert.equal(seen.size, 13);
+  assert.ok(!seen.has("flow-01") && !seen.has("flow-15"));
+  assert.equal(flowCut({ dayNo: 1, ctx: { n: 6 } }, 1), null);
+  assert.equal(flowCut({ dayNo: 1, ctx: { n: 6 } }, 6), null, "last guest goes to the closing cut");
+  assert.equal(flowCut({ dayNo: 1, ctx: { n: 6 } }, 2), "flow-02");
+});
