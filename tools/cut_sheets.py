@@ -10,6 +10,7 @@
 - 칸 좌표는 이름표를 지운 시트에서 배경과 다른 덩어리를 찾아 정한 값(2576×1438). 정사각형 캔버스에 가운데 맞춰 256px.
 - 배경(흰색)에 가까운 픽셀은 투명하게(가장자리는 반투명).
 - docs/img/ref/shop-*-sheet.png → src/img/shop/flow-NN·story-NN·guest-<id>.png (가게 컷 45개)
+- src/img/shop/menu-{takoyaki,dango,taiyaki}.png(가게 메뉴 그림)은 옛 물건 시트에서 잘라 둔 것이라 여기서 다시 만들지 않는다
 - 미리보기: docs/img/yuki-preview.png, docs/img/outfits-preview.png, docs/img/shop-preview.png
 """
 import os

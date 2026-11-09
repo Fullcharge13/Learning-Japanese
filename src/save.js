@@ -103,7 +103,7 @@ function clampRanges(s) {
 
 const ITEM_ORDER = ITEMS.map((o) => o.id);
 
-// 가진 물건·둔 물건 정리: 물건 표 순서, 중복 없음, none 항상 포함, 표에 없는 id는 버림. 둔 물건이 가진 것이 아니면 none.
+// 가진 의상·입은 의상 정리: 의상 표 순서, 중복 없음, none 항상 포함, 표에 없는 id는 버림. 입은 의상이 가진 것이 아니면 none.
 function cleanItems(s) {
   const owned = new Set(["none", ...s.items.filter((x) => typeof x === "string")]);
   s.items = ITEM_ORDER.filter((id) => owned.has(id));

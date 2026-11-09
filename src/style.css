@@ -624,7 +624,6 @@ input[type="text"]:focus { border-color: var(--teal-ink); outline: 3px solid var
 /* ---------- 해치 그림 ---------- */
 .yuki { position: relative; display: inline-block; line-height: 0; }
 .yuki-img { display: block; max-width: 100%; height: auto; }
-.yuki-item { position: absolute; right: -18%; bottom: 0; height: auto; }
 .word-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .word-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
   padding: 10px 12px 10px 16px; border: 2px solid var(--line); border-radius: 16px; background: var(--card); }

@@ -8,11 +8,11 @@ export const DAY_XP = 10;
 export const XP_RUNS_PER_DAY = 2;
 
 export const MENU = [
-  { id: "takoyaki", jp: "たこ焼{や}き", ko: "다코야키", price: 400, img: "img/items/takoyaki.png", start: true },
+  { id: "takoyaki", jp: "たこ焼{や}き", ko: "다코야키", price: 400, img: "img/shop/menu-takoyaki.png", start: true },
   { id: "ocha", jp: "お茶{ちゃ}", ko: "차", price: 150, img: null, start: true },
   { id: "juice", jp: "ジュース", ko: "주스", price: 200, img: null, start: false },
-  { id: "dango", jp: "団子{だんご}", ko: "당고", price: 300, img: "img/items/dango.png", start: false },
-  { id: "taiyaki", jp: "たい焼{や}き", ko: "타이야키", price: 250, img: "img/items/taiyaki.png", start: false },
+  { id: "dango", jp: "団子{だんご}", ko: "당고", price: 300, img: "img/shop/menu-dango.png", start: false },
+  { id: "taiyaki", jp: "たい焼{や}き", ko: "타이야키", price: 250, img: "img/shop/menu-taiyaki.png", start: false },
   { id: "negitako", jp: "ねぎたこ", ko: "파 다코야키", price: 500, img: null, start: false },
   { id: "ramune", jp: "ラムネ", ko: "라무네", price: 200, img: null, start: false },
 ];

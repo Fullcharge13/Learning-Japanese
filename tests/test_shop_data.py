@@ -72,3 +72,11 @@ def test_pictures():
     want = {"flow-%02d.png" % i for i in range(1, 16)} | {"story-%02d.png" % i for i in range(1, 16)}
     assert want <= names, sorted(want - names)[:5]
     assert len([n for n in names if n.startswith("guest-")]) == 15
+
+
+def test_menu_pictures_exist(shop):
+    """메뉴 그림 주소가 가리키는 파일이 있음(옛 물건 그림 폴더를 지운 뒤에도)"""
+    for m in shop["MENU"]:
+        if m["img"]:
+            assert not m["img"].startswith("img/items/"), m["id"]
+            assert os.path.isfile(os.path.join(ROOT, "src", m["img"])), m["img"]

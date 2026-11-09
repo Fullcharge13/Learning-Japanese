@@ -86,10 +86,11 @@ test("stat thresholds: perfect 10, review_items 30", () => {
   assert.deepEqual(checkBadges(at, { hour: 12 }), ["perfectionist", "reviewer"]);
 });
 
-test("collector: 3 items besides none", () => {
-  assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono"] }), { hour: 12 }), []);
-  assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono", "geta"] }), { hour: 12 }), ["collector"]);
-  assert.equal(BADGES.find((b) => b.id === "collector").name, "물건 수집가");
+test("collector: 3 outfits besides plain clothes", () => {
+  assert.deepEqual(checkBadges(mkSave({ items: ["none", "tenjin", "gion"] }), { hour: 12 }), []);
+  assert.deepEqual(checkBadges(mkSave({ items: ["none", "tenjin", "gion", "yassa"] }), { hour: 12 }), ["collector"]);
+  const c = BADGES.find((b) => b.id === "collector");
+  assert.deepEqual([c.name, c.desc], ["의상 수집가", "축제 의상 3벌 모으기"]);
 });
 
 test("does not mutate save", () => {

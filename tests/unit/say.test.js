@@ -111,7 +111,7 @@ test("placeholders: {streak}·{xp} 채움", () => {
   }
 });
 
-test("placeholders_item: 실제 물건 이름 전부 × {item} 줄 전부", () => {
+test("placeholders_item: 실제 의상 이름 전부 × {item} 줄 전부", () => {
   const s = "item_bought";
   const idx = LINES[s].map((l, i) => (l.text.includes("{item}") ? i : -1)).filter((i) => i >= 0);
   assert.ok(idx.length >= 1);
