@@ -146,7 +146,7 @@ export const LESSONS = [
      "계단"
     ],
     "answer": 0,
-    "explain": "隣{となり} = 옆 · 바로 옆에 붙어 있을 때",
+    "explain": "隣{となり} = 옆 · 옆집·옆자리처럼 나란히 있는 바로 옆",
     "say": "隣{となり}",
     "qSay": true
    },
