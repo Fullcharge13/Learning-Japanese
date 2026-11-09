@@ -136,10 +136,10 @@ function keepBroken(storage, text) {
   } catch { /* 남기지 못해도 새 저장으로 시작 */ }
 }
 
-export function loadEx(storage) {
+export function loadEx(storage, key = SAVE_KEY) {
   let text;
   try {
-    text = storage.getItem(SAVE_KEY);
+    text = storage.getItem(key);
   } catch {
     return { save: newSave(), readFailed: true };
   }
@@ -167,10 +167,10 @@ export function load(storage) {
   return loadEx(storage).save;
 }
 
-export function store(storage, save) {
+export function store(storage, save, key = SAVE_KEY) {
   const logs = Array.isArray(save.submission_logs) ? save.submission_logs.slice(-LOG_CAP) : [];
   try {
-    storage.setItem(SAVE_KEY, JSON.stringify({ ...save, submission_logs: logs }));
+    storage.setItem(key, JSON.stringify({ ...save, submission_logs: logs }));
     return true;
   } catch {
     return false;

@@ -19,7 +19,7 @@ const pic = (id, alt, cls = "shop-pic") => `<img class="${cls}" src="img/shop/${
 
 export function render(root, ctx, params = {}) {
   const shop = ctx.save.shop;
-  const open = shopOpen(ctx.examIds(), ctx.save.completed_lessons);
+  const open = shopOpen(ctx.examIds(), ctx.gateDone());
   if (!open) { ctx.show("home"); return undefined; }
   const view = params.view || "front";
   if (view === "day") return dayView(root, ctx, params);
@@ -57,7 +57,7 @@ function frontView(root, ctx, shop) {
   root.querySelector("#start").addEventListener("click", () => {
     const s = ctx.save.shop;
     if (!s.run) {
-      ctx.commit({ ...ctx.save, shop: startRun(s, { date: ctx.today(), doneCh: doneChapter(ctx.examIds(), ctx.save.completed_lessons) }) });
+      ctx.commit({ ...ctx.save, shop: startRun(s, { date: ctx.today(), doneCh: doneChapter(ctx.examIds(), ctx.gateDone()) }) });
       ctx.show("shop", { view: "day", cut: FLOW[0].id });
     } else ctx.show("shop", { view: "day" });
   });

@@ -944,6 +944,42 @@ def test_furigana_and_speak():
             assert not a.errors, a.errors
 
 
+def test_dev_mode_unlocks_and_keeps_record():
+    """설정 맨 아래 개발자 모드: 켜면 모든 레슨·가게가 열리고 따로 저장, 끄면 학습 기록 그대로"""
+    seed = {"saveVer": 2, "xp": 123, "completed_lessons": ["1-1"], "current_lesson": "1-2", "current_chapter": 1}
+    last = _lesson_ids([26])[-1]
+    state = "(id) => window.__ria.ctx.lessonState(id)"
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        assert a.js(state, last) == "locked"
+        _to_settings(a)
+        assert a.js("() => [...document.querySelectorAll('main > *')].pop().matches('.devmode')"), "dev panel is last"
+        a.page.click("#dev")
+        a.page.wait_for_timeout(200)
+        assert a.page.get_attribute("#dev", "aria-checked") == "true"
+        assert a.js("() => document.activeElement.id") == "dev", "stays on the switch after redraw"
+        assert a.page.query_selector(".ls.locked") is None, "course list all open"
+        a.shot("devmode-on.png")
+        assert a.js(state, last) == "open"
+        assert a.js("() => window.__ria.ctx.save.xp") == 0, "dev slot is separate"
+        a.page.click('[data-go="home"]')
+        a.page.wait_for_selector(".screen.home")
+        assert not a.page.is_disabled("#shop")
+        assert a.save()["xp"] == 123 and a.save()["completed_lessons"] == ["1-1"], "learning record untouched"
+        a.page.reload()
+        a.page.wait_for_selector(".screen.splash #go")
+        a.start()
+        assert a.js(state, last) == "open", "dev mode survives reload"
+        _to_settings(a)
+        a.page.click("#dev")
+        a.page.wait_for_timeout(200)
+        assert a.page.get_attribute("#dev", "aria-checked") == "false"
+        assert a.js(state, last) == "locked"
+        assert a.js("() => window.__ria.ctx.save.xp") == 123
+        assert "dev_mode" not in a.save()
+        assert not a.errors, a.errors
+
+
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")
