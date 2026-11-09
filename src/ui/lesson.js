@@ -5,7 +5,7 @@ import { newSession, mark as markConcept, touchResult, logSubmit, finishInfo } f
 import { packResume, restoreSession, hasProgress } from "../resume.js";
 import { yukiImg } from "../yuki.js";
 import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn } from "./dom.js";
-import { ruby } from "../ruby.js";
+import { ruby, plain } from "../ruby.js"; // 문장 만들기 카드도 후리가나(가나 카드는 그대로)
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
 import { shortLessonId } from "../track.js";
@@ -328,13 +328,13 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
       <ol class="order-answer" id="oa" aria-label="고른 순서"></ol>
       <p class="ex-label">가나 카드 <small>(누른 순서대로 들어가요)</small></p>
       <div class="order-pool" id="op">${order.map((li) =>
-        `<button class="line" lang="ja" data-li="${li}">${esc(it.lines[li])}</button>`).join("")}</div>
+        `<button class="line" lang="ja" data-li="${li}">${ruby(it.lines[li])}</button>`).join("")}</div>
     </article>`;
     const act = footButton("확인", { disabled: true });
     const oa = body.querySelector("#oa");
     const paint = () => {
       oa.innerHTML = chosen.length ? chosen.map((li, k) =>
-        `<li><button class="line placed" lang="ja" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
+        `<li><button class="line placed" lang="ja" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${plain(it.lines[li])}`)}">${ruby(it.lines[li])}</button></li>`).join("")
         : `<li class="empty">아래 카드를 눌러요</li>`;
       body.querySelectorAll("#op .line").forEach((b) => {
         const used = chosen.includes(+b.dataset.li);
@@ -353,7 +353,7 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
       if (chosen.length !== it.lines.length) return;
       // 순서 문제는 정답 순서가 하나뿐이라 저장된 순서와 비교한다(C23)
       const ok = chosen.map((li) => it.lines[li]).join("\n") === it.lines.join("\n");
-      judged(cur, ok, `<p class="answer">정답: <span lang="ja">${esc(it.lines.join(""))}</span></p>`);
+      judged(cur, ok, `<p class="answer">정답: <span lang="ja">${ruby(it.lines.join(""))}</span></p>`);
     });
   }
 
