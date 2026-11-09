@@ -36,3 +36,14 @@ test("same input, same output; size sets width", () => {
   assert.equal(yukiImg({ face: "wink", size: 64 }), yukiImg({ face: "wink", size: 64 }));
   assert.ok(yukiImg({ size: 64 }).includes('width="64"'));
 });
+
+import { GREET_FACES, greetFace } from "../../src/yuki.js";
+
+test("greetFace: picks one of the cheerful faces, spread across the list", () => {
+  assert.ok(GREET_FACES.length >= 6 && GREET_FACES.every((f) => FACE_IDS.includes(f)));
+  for (const bad of ["angry", "pout", "sad", "sleepy"]) assert.ok(!GREET_FACES.includes(bad), bad);
+  const seen = new Set();
+  for (let i = 0; i < GREET_FACES.length; i++) seen.add(greetFace(() => (i + 0.5) / GREET_FACES.length));
+  assert.equal(seen.size, GREET_FACES.length);
+  for (const v of [NaN, -1, 1, 5]) assert.ok(GREET_FACES.includes(greetFace(() => v)), String(v));
+});

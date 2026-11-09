@@ -12,3 +12,12 @@ export function yukiImg({ face = "smile", item = "none", size = 160 } = {}) {
     ? `<img class="yuki-item" src="img/items/${item}.png" width="${Math.round(px * 0.45)}" height="${Math.round(px * 0.45)}" alt="" aria-hidden="true">` : "";
   return `<span class="yuki"><img class="yuki-img" src="img/yuki/${f}.png" width="${px}" height="${px}" alt="유키 선생님">${thing}</span>`;
 }
+
+// 홈 인사 때 무작위로 고르는 밝은 표정(화남·삐짐·슬픔·졸림은 인사로 어색해서 뺌)
+export const GREET_FACES = Object.freeze(["smile", "joy", "sparkle", "wink", "hello", "cheer", "shy", "done", "surprise"]);
+
+export function greetFace(rng = Math.random) {
+  const v = Number(rng());
+  const i = Number.isFinite(v) && v > 0 ? Math.min(GREET_FACES.length - 1, Math.floor(v * GREET_FACES.length)) : 0;
+  return GREET_FACES[i];
+}

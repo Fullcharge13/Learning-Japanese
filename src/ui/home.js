@@ -2,7 +2,7 @@
 import { ruby } from "../ruby.js";
 import { QUESTS } from "../../data/quests.js";
 import { CONCEPTS } from "../../data/concepts.js";
-import { yukiImg } from "../yuki.js";
+import { yukiImg, greetFace } from "../yuki.js";
 import { esc, icon, bar, riaSays, dialog, toast } from "./dom.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 import { pathEndText } from "../curriculum.js";
@@ -160,7 +160,7 @@ export function render(root, ctx) {
     <main>
       <h1 class="sr">학습 길</h1>
       <section class="hello">
-        ${riaSays({ item: save.item, face: line.face, text: line.text, size: 92 })}
+        ${riaSays({ item: save.item, face: special ? line.face : greetFace(), text: line.text, size: 92 })}
         ${cur && !allDone ? `<button class="btn primary wide" id="continue">${icon("play")}<span>${save.completed_lessons.length ? "이어서 배우기" : "첫 레슨 시작"} · ${esc(cur.id)} ${esc(cur.title)}</span></button>` : ""}
         ${allDone ? `<p class="all-done">모든 레슨을 끝냈어요. 다시 하기나 복습으로 XP를 모을 수 있어요.</p>` : ""}
       </section>
