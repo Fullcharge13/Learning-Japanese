@@ -4,6 +4,7 @@
 import { ITEMS } from "../data/items.js";
 import { cleanSeenUpdates } from "./newcontent.js";
 import { CONCEPTS } from "../data/concepts.js";
+import { defaultShop, cleanShop } from "./shop/rules.js";
 
 const WORD_IDS = new Set(CONCEPTS.map((c) => c.id));
 
@@ -31,6 +32,7 @@ export function newSave() {
     badges: [], items: ["none"], item: "none",
     stats: { lessons: 0, perfect: 0, review_items: 0 },
     settings: { sound: true, dailyGoal: 20, name: "" },
+    shop: defaultShop(), // 다코야키 가게(src/shop/rules.js). 없거나 망가지면 migrate가 cleanShop으로
     seen_updates: {},  // v0.7.1 「새 내용」 점: { 레슨 id: 끝까지 다시 본 판 "v0.7.1" }. saveVer 그대로, 없으면 {}
   };
 }
@@ -116,6 +118,7 @@ export function migrate(raw) {
   const s = clampRanges(fill(newSave(), structuredClone(raw)));
   cleanItems(s);
   s.app = "sanada-japanese";
+  s.shop = cleanShop(raw.shop);
   // 이 앱에 없는 단어(다른 앱 저장·지운 단어)는 복습·약한 단어에서 뺀다 — 복습 카드가 빈 채로 남지 않게
   s.review_queue = s.review_queue.filter((id) => WORD_IDS.has(id));
   s.weak_concepts = Object.fromEntries(Object.entries(s.weak_concepts).filter(([id]) => WORD_IDS.has(id)));
