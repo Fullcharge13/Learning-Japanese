@@ -32,3 +32,41 @@ def pruned_n5(path=VENDOR_N5):
             seen.add((jp, reading))
             out.append({"jp": jp, "reading": reading})
     return out
+
+_GODAN = {"き": "く", "ぎ": "ぐ", "し": "す", "ち": "つ", "に": "ぬ", "び": "ぶ", "み": "む", "り": "る", "い": "う"}
+
+
+def plain(s):
+    return re.sub(r"\{[^}]*\}", "", s or "")
+
+
+def reading(s):
+    return re.sub(r"[\u3400-\u9fff々〆ヶ]+\{([^}]*)\}", r"\1", s or "")
+
+
+def forms(s):
+    """비교용 형태들: 끝 문장부호·です 떼기(동사 활용은 일부러 맞추지 않음 — JLPT 길은 동사를 사전형으로 따로 가르친다)"""
+    s = (s or "").strip().rstrip("。？?！!")
+    out = {s}
+    for suf in ("です", "ですか"):
+        if s.endswith(suf):
+            out.add(s[: -len(suf)])
+    return out
+
+
+JLPT_CSV = os.path.join(ROOT, "data", "jlpt-n5.csv")
+WORDS_CSV = os.path.join(ROOT, "data", "words.csv")
+
+
+def load_jlpt(path=JLPT_CSV, words_path=WORDS_CSV):
+    """JLPT 단어 표. 회화 길과 겹치는 단어(jp 칸이 빈 줄)는 words.csv의 표기·뜻·품사를 가져오고 shared=True"""
+    with open(words_path, encoding="utf-8") as f:
+        base = {w["id"]: w for w in csv.DictReader(f)}
+    out = []
+    with open(path, encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            shared = not r["jp"].strip()
+            src = base[r["id"]] if shared else r
+            out.append({"id": r["id"], "chapter": int(r["chapter"]), "unit": int(r["unit"]), "jp": src["jp"], "ko": src["ko"],
+                        "pos": src["pos"], "note": r.get("note", "") or (src.get("note", "") if shared else ""), "shared": shared})
+    return out
