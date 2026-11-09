@@ -98,3 +98,10 @@ def test_context_words_have_examples():
     ex = load_examples(os.path.join(ROOT, "data", "examples.csv"), words)  # 형식·빈칸·후리가나 검사 포함
     miss = [r["jp"] for r in new if r["pos"] in CONTEXT_POS and r["id"] not in ex]
     assert not miss, "%d words without example: %s" % (len(miss), miss[:20])
+
+
+def test_modern_okurigana():
+    """옛 목록의 송り仮名 없는 표기(終る·曲る) 대신 지금 표준 표기(終わる·曲がる)"""
+    got = {plain(r["jp"]) for r in load_jlpt()}
+    assert not got & {"終る", "曲る"}, got & {"終る", "曲る"}
+    assert {"終わる", "曲がる"} <= got

@@ -1168,6 +1168,21 @@ def test_jlpt_dev_mode():
         assert not a.errors, a.errors
 
 
+def test_jlpt_lesson_quit_returns_to_jlpt():
+    """JLPT 레슨 머리글은 「N5 · 1-1」, ✕로 나가면 JLPT 화면"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click('[data-go="jlpt"]')
+        a.page.click("#jlpt-continue")
+        a.page.wait_for_selector(".screen.lesson")
+        head = a.page.inner_text(".lesson-top")
+        assert "101-1" not in head and "1-1" in head, head
+        a.page.click("#quit")
+        a.page.get_by_role("button", name="나가기", exact=True).click()
+        a.page.wait_for_selector(".screen.jlpt")
+        assert not a.errors, a.errors
+
+
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")

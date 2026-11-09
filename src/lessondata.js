@@ -66,14 +66,17 @@ export function buildLessonIndex(modules) {
   return out.sort((a, b) => a.id - b.id);
 }
 
-/** 복습: 이 개념들이 들어 있는 장 번호(오름차순). completed를 주면 심화는 끝낸 것만 본다 */
+/** 복습: 이 개념들이 들어 있는 장 번호(오름차순). completed를 주면 심화는 끝낸 것만, 본 과정은 끝낸 레슨이 있는 장만 본다 */
 export function chaptersForConcepts(index, concepts, completed = null) {
   const want = new Set(concepts || []);
   if (!want.size) return [];
   const doneSet = completed ? new Set(completed) : null;
   const has = (l) => (l.concepts || []).some((k) => want.has(k));
-  return (index || []).filter((c) => c.lessons.some(has)
-    || (c.advanced || []).some((l) => (!doneSet || doneSet.has(l.id)) && has(l))).map((c) => c.id);
+  const hit = (index || []).filter((c) => c.lessons.some(has)
+    || (c.advanced || []).some((l) => (!doneSet || doneSet.has(l.id)) && has(l)));
+  // 두 길(회화·JLPT)에 같은 단어가 있으면 학습자가 끝낸 레슨의 장만(안 배운 장의 오답 보기가 섞이지 않게). 끝낸 곳이 없으면 전부
+  const learned = doneSet ? hit.filter((c) => c.lessons.some((l) => doneSet.has(l.id) && has(l))) : [];
+  return (learned.length ? learned : hit).map((c) => c.id);
 }
 
 const TOUCH = new Set(["choice", "blank", "order", "check"]);

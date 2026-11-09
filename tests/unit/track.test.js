@@ -77,3 +77,9 @@ test("finishing a JLPT lesson is not the talk course finish", () => {
   assert.equal(courseJustFinished({ chapters: talk, completed: all, firstTime: true, lessonId: "3-3" }), true);
   assert.equal(courseJustFinished({ chapters: talk, completed: [...all, "101-1"], firstTime: true, lessonId: "101-1" }), false);
 });
+
+test("review of a shared word stays in the chapters the learner has finished", () => {
+  assert.deepEqual(chaptersForConcepts(CH, ["c3-008"], ["3-1"]), [3], "talk-only learner: no JLPT chapter");
+  assert.deepEqual(chaptersForConcepts(CH, ["c3-008"], ["101-1"]), [101]);
+  assert.deepEqual(chaptersForConcepts(CH, ["c3-008"], []), [3, 101], "nothing finished yet: any chapter");
+});

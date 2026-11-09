@@ -8,12 +8,16 @@ import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn } from 
 import { ruby } from "../ruby.js";
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
+import { shortLessonId } from "../track.js";
 
 const GUARD_MS = 400;
 const WAIT_MS = 300;    // 장 파일이 이보다 늦으면 「준비 중」 (v0.3 작업 1)
 const LOAD_TIMEOUT_MS = 12000;  // 이보다 오래 걸리면 「준비 중」을 그만두고 안내
 export const OFFLINE_LINE = "이 레슨은 인터넷이 될 때 한 번 열어야 해요";
 export const STALE_LINE = "새 판이 나왔어요. 눌러서 새로 고쳐요";
+
+/** 화면에 보이는 레슨 번호: JLPT는 「N5 · 1-3」 */
+const lessonTag = (ctx, id) => (ctx.trackOfLesson(id) === "jlpt" ? `N5 · ${shortLessonId(id)}` : id);
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -39,7 +43,7 @@ async function buildReview(ctx) {
 
 /** 장 파일을 기다리는 동안·못 받았을 때 화면.
  *  state: blank(0.3초 전) · wait(준비 중) · error. kind(error일 때): offline · stale(새 판) · broken(그리다 실패) */
-function waitScreen(root, ctx, state, kind = "offline") {
+function waitScreen(root, ctx, state, kind = "offline", back = "home") {
   const err = state === "error";
   const face = (f) => riaSays({ item: ctx.save.item, face: f, text: err ? ERROR_LINES[kind].say : "준비 중이에요……레슨을 여는 중", size: 92 });
   const body = err
@@ -53,7 +57,7 @@ function waitScreen(root, ctx, state, kind = "offline") {
     <main role="status" aria-live="polite">${body}</main>
   </div>`;
   const home = root.querySelector("#to-home");
-  if (home) home.addEventListener("click", () => ctx.show("home"));
+  if (home) home.addEventListener("click", () => ctx.show(back));
 }
 
 const ERROR_LINES = {
@@ -70,7 +74,7 @@ async function askResume(ctx, lesson, S0) {
   const v = await dialog({
     title: "이어서 하기",
     body: riaSays({ item: ctx.save.item, face: "smile", text: RESUME_ASK, size: 72, cls: "small resume-ask" })
-      + `<p class="muted resume-meta">${esc(`${lesson.id} ${lesson.title || ""}`.trim())} · ${p}% 진행</p>`,
+      + `<p class="muted resume-meta">${esc(`${lessonTag(ctx, lesson.id)} ${lesson.title || ""}`.trim())} · ${p}% 진행</p>`,
     buttons: [{ label: "이어서", value: "resume", kind: "primary" }, { label: "처음부터", value: "restart" }],
   });
   return v === "restart" ? "restart" : "resume";
@@ -79,12 +83,13 @@ async function askResume(ctx, lesson, S0) {
 /** 레슨 화면: 장 파일을 받은 뒤 run()으로. 늦으면 「준비 중」(학습 길로 나갈 수 있음), 12초 넘거나 실패하면 안내와 다시 시도 */
 export function render(root, ctx, params = {}) {
   const review = !!params.review;
+  const back = !review && params.id && ctx.trackOfLesson(params.id) === "jlpt" ? "jlpt" : "home"; // 나가면 그 레슨의 길로
   let alive = true, timers = [], inner = null, token = 0;
   const clear = () => { timers.forEach(clearTimeout); timers = []; };
   function fail(kind, err) {
     clear();
     if (err) console.warn("lesson load", err);
-    waitScreen(root, ctx, "error", kind);
+    waitScreen(root, ctx, "error", kind, back);
     root.querySelector("#retry").addEventListener("click", () => {
       // 새 판(장 파일 404, 새 서비스 작업자) → 새로고침해야 새 장 파일 이름표를 받는다
       if (kind === "stale") { location.reload(); return; }
@@ -97,8 +102,8 @@ export function render(root, ctx, params = {}) {
     const my = ++token;
     const live = () => alive && my === token;
     clear();
-    waitScreen(root, ctx, "blank");
-    timers.push(setTimeout(() => { if (live()) waitScreen(root, ctx, "wait"); }, WAIT_MS));
+    waitScreen(root, ctx, "blank", "offline", back);
+    timers.push(setTimeout(() => { if (live()) waitScreen(root, ctx, "wait", "offline", back); }, WAIT_MS));
     const timeout = new Promise((_, reject) => {
       timers.push(setTimeout(() => reject(Object.assign(new Error("chapter load timeout"), { timeout: true })), LOAD_TIMEOUT_MS));
     });
@@ -111,7 +116,7 @@ export function render(root, ctx, params = {}) {
     Promise.race([load, timeout]).then((lesson) => {
       if (!live()) return;
       clear();
-      if (!lesson || !lesson.items || !lesson.items.length) { ctx.show("home"); return; }
+      if (!lesson || !lesson.items || !lesson.items.length) { ctx.show(back); return; }
       start(lesson, live);
     }, (err) => {
       if (!live()) return;
@@ -173,7 +178,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     <header class="lesson-top">
       <button class="icon-btn" id="quit" aria-label="레슨 나가기">${icon("close")}</button>
       <div class="lesson-progress">${bar(0, 100, "lp-bar", "레슨 진행")}</div>
-      <span class="lesson-tag">${esc(review ? "복습" : lesson.id)}</span>
+      <span class="lesson-tag">${esc(review ? "복습" : lessonTag(ctx, lesson.id))}</span>
     </header>
     <main class="lesson-body" id="body"></main>
     <footer class="lesson-foot" id="foot"></footer>
@@ -387,7 +392,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     });
     if (ok) {
       if (!review && ctx.resume) ctx.resume.clear();
-      ctx.show("home");
+      ctx.show(!review && ctx.trackOfLesson(lesson.id) === "jlpt" ? "jlpt" : "home");
     }
   });
 
