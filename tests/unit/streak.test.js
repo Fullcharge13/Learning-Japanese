@@ -327,3 +327,11 @@ test("F2 bad_goal: dailyGoal이 10/20/30이 아니면 20으로", () => {
   const s10 = addDailyXp(fixture({ settings: { sound: true, dailyGoal: 10, name: "" } }), 10, "2026-10-29");
   assert.equal(s10.streak.days, 1);
 });
+
+import { MILESTONE_REWARD } from "../../src/ui/dom.js";
+import { ITEMS } from "../../data/items.js";
+test("30-day celebration names the outfit that rules.js actually gives", () => {
+  const nebuta = ITEMS.find((o) => o.id === "nebuta");
+  assert.ok(MILESTONE_REWARD[30].includes(nebuta.ko), MILESTONE_REWARD[30]);
+  assert.ok(!MILESTONE_REWARD[30].includes("가도마츠"));
+});
