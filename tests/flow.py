@@ -980,6 +980,49 @@ def test_dev_mode_unlocks_and_keeps_record():
         assert not a.errors, a.errors
 
 
+def test_outfit_buy_wear():
+    """보관함: 오사카 덴진 의상 사기 → 홈 인사에 의상 그림 → 벗기 → 표정 그림"""
+    with App("iPhone 17", save={"saveVer": 2, "bytes": 500}) as a:
+        a.start()
+        a.page.click('[data-go="closet"]')
+        a.page.wait_for_selector(".screen.closet")
+        assert a.page.locator(".outfit-grid li").count() == 16
+        a.page.click('[data-o="tenjin"]')
+        a.page.click("#buy")
+        assert a.save()["item"] == "tenjin" and a.save()["bytes"] == 380
+        w = a.js("() => document.querySelector('.stage .yuki-img').getBoundingClientRect().width")
+        assert w <= 175, "outfit picture keeps its 170px size, not the list button style (%s)" % w
+        a.shot("outfit-closet.png")
+        a.page.click('[data-go="home"]')
+        a.page.wait_for_selector(".screen.home")
+        assert a.page.query_selector('.screen.home img[src$="outfits/tenjin.png"]'), "home greeting wears the outfit"
+        a.page.click('[data-go="closet"]')
+        a.page.click('[data-o="tenjin"]')
+        a.page.click("#unwear")
+        assert a.save()["item"] == "none"
+        a.page.click('[data-go="home"]')
+        a.page.wait_for_selector(".screen.home")
+        assert not a.page.query_selector('.screen.home img[src*="img/outfits/"]')
+        assert a.page.query_selector('.screen.home .ria-row img[src*="img/yuki/"]')
+        assert not a.errors, a.errors
+
+
+def test_old_items_refund_notice():
+    """옛 물건을 가진 저장: 연 뒤 돌려준 엔 안내 한 번, 엔 증가, 다시 열면 안내 없음"""
+    old = {"saveVer": 2, "bytes": 10, "items": ["none", "dango", "kimono"], "item": "kimono"}
+    with App("iPhone 17", save=old) as a:
+        a.page.wait_for_selector("#toasts .toast")
+        assert "물건 값 360엔을 돌려드렸어요" in a.page.inner_text("#toasts"), a.page.inner_text("#toasts")
+        sv = a.save()
+        assert sv["bytes"] == 370 and "item_refund" not in sv and sv["items"] == ["none"], sv
+        a.page.reload()
+        a.page.wait_for_selector(".screen.splash #go")
+        a.page.wait_for_timeout(500)
+        assert "돌려드렸어요" not in (a.js("() => document.getElementById('toasts')?.innerText || ''"))
+        assert a.save()["bytes"] == 370
+        assert not a.errors, a.errors
+
+
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")

@@ -1,5 +1,5 @@
 // 리아와 파이썬! — 앱 입구. 상태는 app = { save, screen, modal } 하나, 화면 전환은 show() 하나.
-import { loadEx, store, migrate } from "./save.js";
+import { loadEx, store, migrate, takeRefund } from "./save.js";
 import { rollDay } from "./rules.js";
 import { ensureQuests } from "./quests.js";
 import { say as pickLine } from "./say.js";
@@ -87,6 +87,14 @@ function dayStart() {
 }
 
 // ---- 저장 ----
+/** 옛 물건 값을 돌려줬으면(축제 의상으로 바뀜) 한 번 알리고 표시를 지운다. 앱 시작·저장 가져오기·개발자 모드 전환 뒤 */
+function noticeRefund() {
+  const { save, refund } = takeRefund(app.save);
+  if (!refund) return;
+  commit(save);
+  toast(`보관함이 축제 의상으로 바뀌었어요. 가지고 있던 물건 값 ${refund}엔을 돌려드렸어요.`);
+}
+
 function commit(next) {
   next = markDev(next, app.dev); // 가져온 저장에 개발자 표시가 섞이거나 빠지지 않게
   app.save = next;
@@ -233,7 +241,8 @@ const ctx = {
   lessonState, currentLessonId, gateDone,
   isDev: () => app.dev,
   /** 개발자 모드 켜기·끄기: 저장 칸을 바꿔 읽고 오늘 기록을 맞춘다 */
-  setDev(on) { app.dev = !!on; app.save = setDevMode(storage, app.dev).save; dayStart(); },
+  setDev(on) { app.dev = !!on; app.save = setDevMode(storage, app.dev).save; dayStart(); noticeRefund(); },
+  noticeRefund,
   examIds,
   shopRules, // 시험 도구가 가게 손님 정답을 계산할 때(window.__ria.ctx.shopRules)
   today: () => localDate(),
@@ -266,6 +275,7 @@ async function boot() {
   if (app.lessons.length) resume.read();   // 낡은 기록 치우기(레슨 목록을 못 받았으면 건드리지 않음)
   dayStart();
   show("splash");
+  noticeRefund();
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState !== "visible") return;
     const before = app.save.quests.date + "|" + app.save.streak.lastGoalDate;

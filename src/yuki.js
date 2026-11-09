@@ -9,7 +9,7 @@ export function yukiImg({ face = "smile", item = "none", size = 160 } = {}) {
   const f = FACE_IDS.includes(face) ? face : "smile";
   const px = Number.isFinite(+size) && +size > 0 ? Math.round(+size) : 160;
   const o = item !== "none" && ITEMS.find((x) => x.id === item);
-  if (o) return `<span class="yuki"><img class="yuki-img outfit" src="img/outfits/${o.id}.png" width="${px}" height="${px}" alt="${o.ko} 의상을 입은 유키 선생님"></span>`;
+  if (o) return `<span class="yuki"><img class="yuki-img yuki-outfit" src="img/outfits/${o.id}.png" width="${px}" height="${px}" alt="${o.ko} 의상을 입은 유키 선생님"></span>`;
   return `<span class="yuki"><img class="yuki-img" src="img/yuki/${f}.png" width="${px}" height="${px}" alt="유키 선생님"></span>`;
 }
 
