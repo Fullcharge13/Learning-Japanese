@@ -257,3 +257,10 @@ test("adv_old_save: 심화 진도가 없는 옛 저장도 그대로 열림(saveV
   assert.equal(c.advDone, 0);
   assert.equal(c.done, 5);
 });
+
+test("reviewPool: 같은 문제(레슨·장 평가·모의고사에 복사된 것)는 한 번만", () => {
+  const it = { type: "choice", concept: "g5-01", q: "빈칸", sentence: { jp: "私{わたし}＿学生{がくせい}です。" }, options: ["は", "を", "に", "で"], answer: 0 };
+  const chs = [{ CHAPTER: { id: 115 }, LESSONS: [{ id: "115-1", items: [it] }, { id: "115-7", items: [{ ...it }] }] },
+    { CHAPTER: { id: 120 }, LESSONS: [{ id: "120-1", items: [{ ...it, options: ["で", "に", "を", "は"], answer: 3 }] }] }];
+  assert.equal(reviewPool(chs, ["g5-01"], []).length, 1);
+});

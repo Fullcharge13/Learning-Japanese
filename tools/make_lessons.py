@@ -341,7 +341,7 @@ def kanji_words(words=None):
     readings = {}
     for w in words:
         readings.setdefault(plain(w["jp"]), set()).add(kana(w["jp"]))
-    skip = {p for p, r in readings.items() if len(r) > 1} | {"一月"}
+    skip = {p for p, r in readings.items() if len(r) > 1} | {"一月", "沢山", "毎月"}  # 沢山: 当て字(보통 かな), 毎月: まいつき·まいげつ 둘 다 흔함
     out = {}
     for k in load_kanji():
         cands = [w for w in words if k["kanji"] in plain(w["jp"]) and w["pos"] != "kana" and KANA.match(kana(w["jp"]))
@@ -371,13 +371,20 @@ def build_kanji_chapter(chapter, words=None):
     ks = [k for k in load_kanji() if k["chapter"] == chapter]
     kw = kanji_words(words)
     title = CHAPTER_TITLES[chapter]
-    used = [w for k in ks for w in kw[k["kanji"]][:2]]
+    # 한 장 안에서 단어 하나는 한자 하나에만(天気를 天·気가 같이 쓰지 않게). 다른 단어가 없으면 그대로
+    taken, mine = set(), {}
+    for k in ks:
+        ws = [w for w in kw[k["kanji"]] if plain(w["jp"]) not in taken] or kw[k["kanji"]][:1]
+        mine[k["kanji"]] = ws[:2]
+        taken |= {plain(w["jp"]) for w in ws[:2]}
+    used = [w for k in ks for w in mine[k["kanji"]]]
     readings, spellings = [kana(w["jp"]) for w in used], [plain(w["jp"]) for w in used]
+    first = 1 + sum(len({k["unit"] for k in load_kanji() if k["chapter"] == c}) for c in range(118, chapter))  # 한자 1~16 이어 매김
     lessons, pool = [], []
     for u in sorted({k["unit"] for k in ks}):
         unit_ks, items, cards = [k for k in ks if k["unit"] == u], [], []
         for k in unit_ks:
-            ws = kw[k["kanji"]]
+            ws = mine[k["kanji"]]
             a, b = ws[0], ws[1] if len(ws) > 1 else ws[0]
             cid = "k5-" + k["kanji"]
             why = lambda w: "%s = %s · %s %s" % (w["jp"], w["ko"], k["kanji"], k["ko"])
@@ -391,9 +398,10 @@ def build_kanji_chapter(chapter, words=None):
                               "options": wo, "answer": 0, "explain": why(b), "say": b["jp"]})
             on, kun = _kanji_readings(k["kanji"])
             cards.append({"jp": k["kanji"], "ko": "%s · 음 %s · 훈 %s · 예: %s" % (k["ko"], "·".join(on) or "-", "·".join(kun) or "-", plain(a["jp"]))})
+        items.sort(key=lambda it: it["kind"] != "kanji-read")  # 읽기 먼저 다, 표기는 뒤에(같은 단어가 바로 붙지 않게)
         pool += items
-        lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": "한자 %d" % (len(lessons) + 1 + (8 if chapter == 119 else 0)),
-                        "goal": "새 한자 %d자" % len(unit_ks), "summary": ["%s %s" % (k["kanji"], k["ko"]) for k in unit_ks[:4]],
+        lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": "한자 %d" % (first + len(lessons)),
+                        "goal": "새 한자 %d자" % len(unit_ks), "summary": ["%s %s" % (k["kanji"], k["ko"]) for k in unit_ks],
                         "cards": [{"say": "새 한자를 만나 봐요!", "words": cards[i:i + 4]} for i in range(0, len(cards), 4)], "items": items})
     exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
     lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
@@ -436,6 +444,9 @@ def build_mock_chapter(built, mock, chapter=120):
     pools = {k: random.Random("mock:" + k).sample([it for it in src if kind(it) == k], k=len([it for it in src if kind(it) == k]))
              for k, _ in MOCK_MIX}
     listen = [_mock_listen(n, it) for n, it in enumerate(mock["listening"], 1)]
+    # 뜻 고르기·대답 고르기를 회마다 고르게: 꼴마다 회 수로 나눠 차례로(뜻 4 + 대답 2)
+    by = [[x for x, src in zip(listen, mock["listening"]) if src["ask"] == a] for a in ("meaning", "reply")]
+    listen = [x for r in range(MOCK_ROUNDS) for g in by for x in g[r * len(g) // MOCK_ROUNDS:(r + 1) * len(g) // MOCK_ROUNDS]]
     per = len(listen) // MOCK_ROUNDS
     title = CHAPTER_TITLES[chapter]
     lessons = []
