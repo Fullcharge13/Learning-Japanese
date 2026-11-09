@@ -100,3 +100,38 @@ def test_kanji_built(built):
     assert len({c for c in seen if c.startswith("k5-")}) == 79
     cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
     assert cs["k5-日"]["name"] == "한자 · 日 날 일" and cs["k5-日"]["chapter"] == 118
+
+
+# ---- 모의고사 ----
+MOCK_MIX = {"kanji-read": 4, "kanji-write": 3, None: 4, "grammar": 4, "build": 2, "reading": 2, "listen": 6}
+
+
+def test_mock_three_25(built):
+    ch = _js_const(built / "ch120.js", "CHAPTER")
+    assert ch["title"] == "N5 · 20장 모의고사"
+    ls = _js_const(built / "ch120.js", "LESSONS")
+    assert [l["title"] for l in ls] == ["모의고사 1", "모의고사 2", "모의고사 3"]
+    seen = []
+    for l in ls:
+        assert l["isExam"] and len(l["items"]) == 25, (l["id"], len(l["items"]))
+        mix = {}
+        for it in l["items"]:
+            mix[it.get("kind")] = mix.get(it.get("kind"), 0) + 1
+        assert mix == MOCK_MIX, mix
+        assert all(it.get("sentence") for it in l["items"] if it.get("kind") is None)  # 문맥 = 예문 빈칸
+        seen.append(tuple(json.dumps([it["q"], it.get("sentence"), it.get("say"), it["options"] if "options" in it else it["lines"]], ensure_ascii=False) for it in l["items"]))
+    for a, b in ((0, 1), (0, 2), (1, 2)):
+        assert not set(seen[a]) & set(seen[b]), "회마다 다른 문제"  # 시드가 달라 겹치지 않음
+    cs = {c["id"] for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert {it["concept"] for l in ls for it in l["items"]} <= cs
+
+
+def test_mock_listen_no_japanese_in_q(built):
+    ja = re.compile(r"[ぁ-ゟ゠-ヿ㐀-鿿]")
+    n = 0
+    for l in _js_const(built / "ch120.js", "LESSONS"):
+        for it in l["items"]:
+            if it.get("kind") == "listen":
+                n += 1
+                assert it["qSay"] and it["say"] and not ja.search(it["q"]) and "sentence" not in it, it
+    assert n == 18

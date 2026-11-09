@@ -399,6 +399,52 @@ def build_kanji_chapter(chapter, words=None):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
+# ---- N5 모의고사(120장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
+MOCK_FILE = os.path.join(ROOT, "data", "jlpt-n5-mock.json")
+MOCK_MIX = (("kanji-read", 4), ("kanji-write", 3), ("context", 4), ("grammar", 4), ("build", 2))
+MOCK_ROUNDS = 3
+
+
+def load_mock(path=MOCK_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _mock_reading(p):
+    return [{"type": "choice", "kind": "reading", "concept": p["id"], "q": q["q"], "sentence": {"jp": p["text"], "ko": ""},
+             "options": q["options"], "answer": 0, "explain": p["ko"], "say": q["q"]} for q in p["questions"]]
+
+
+def _mock_listen(n, it):
+    meaning = it["ask"] == "meaning"
+    return {"type": "choice", "kind": "listen", "concept": "m5-l%02d" % n, "qSay": True,
+            "q": "잘 듣고 뜻을 골라요" if meaning else "잘 듣고 알맞은 대답을 골라요",
+            "options": it["options"], "answer": 0, "explain": "%s %s %s" % (it["jp"], "=" if meaning else "→", it["options"][0]), "say": it["jp"]}
+
+
+def mock_concepts(mock):
+    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 120} for n, p in enumerate(mock["reading"], 1)]
+            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 120} for n in range(1, len(mock["listening"]) + 1)])
+
+
+def build_mock_chapter(built, mock, chapter=120):
+    """built: 장 번호 → 만든 장(101~119). 꼴마다 문제를 한 번 섞어 회마다 다른 조각을 쓴다(겹침 없음)"""
+    src = [it for ch, d in built.items() if 100 < ch < chapter for l in d["LESSONS"] if not l.get("isExam") for it in l["items"]]
+    kind = lambda it: it.get("kind") or ("context" if it["type"] == "choice" and it.get("sentence") else None)
+    pools = {k: random.Random("mock:" + k).sample([it for it in src if kind(it) == k], k=len([it for it in src if kind(it) == k]))
+             for k, _ in MOCK_MIX}
+    listen = [_mock_listen(n, it) for n, it in enumerate(mock["listening"], 1)]
+    per = len(listen) // MOCK_ROUNDS
+    title = CHAPTER_TITLES[chapter]
+    lessons = []
+    for r in range(MOCK_ROUNDS):
+        items = [dict(it) for k, n in MOCK_MIX for it in pools[k][r * n:(r + 1) * n]]
+        items += _mock_reading(mock["reading"][r]) + listen[r * per:(r + 1) * per]
+        lessons.append({"id": "%d-%d" % (chapter, r + 1), "chapter": chapter, "title": "모의고사 %d" % (r + 1),
+                        "goal": "N5 시험 꼴로 풀어 보기", "summary": [], "isExam": True, "cards": [], "items": items})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
 HEADER = "// 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)\n"
 
 
@@ -431,8 +477,12 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     extra = {ch: (lambda ch=ch: build_grammar_chapter(grammar, ch)) for ch in sorted({p["chapter"] for p in grammar})}
     if jlpt:
         extra.update({ch: (lambda ch=ch: build_kanji_chapter(ch, words)) for ch in sorted({k["chapter"] for k in load_kanji()})})
+    mock = load_mock() if jlpt else None
+    if jlpt:
+        extra[120] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
+    made = {}
     for ch in sorted({w["chapter"] for w in words} | set(extra)):
-        data = extra[ch]() if ch in extra else build_chapter(words, ch, examples)
+        data = made[ch] = extra[ch]() if ch in extra else build_chapter(words, ch, examples)
         total += len(data["LESSONS"])
         with open(os.path.join(out_dir, "ch%d.js" % ch), "w", encoding="utf-8") as f:
             f.write(HEADER)
@@ -446,6 +496,7 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
         names += [{"id": p["id"], "name": "문법 · %s" % p["title"], "chapter": p["chapter"]} for p in grammar]
         if jlpt:
             names += [{"id": "k5-" + k["kanji"], "name": "한자 · %s %s" % (k["kanji"], k["ko"]), "chapter": k["chapter"]} for k in load_kanji()]
+            names += mock_concepts(mock)
         f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join("  " + json.dumps(n, ensure_ascii=False) for n in names))
     if jlpt:
         with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:

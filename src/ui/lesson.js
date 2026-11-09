@@ -4,7 +4,7 @@ import { current, nextCard, answer, summary } from "../lessonflow.js";
 import { newSession, mark as markConcept, touchResult, logSubmit, finishInfo } from "../session.js";
 import { packResume, restoreSession, hasProgress } from "../resume.js";
 import { yukiImg } from "../yuki.js";
-import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn } from "./dom.js";
+import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn, listenBox } from "./dom.js";
 import { ruby, plain } from "../ruby.js"; // 문장 만들기 카드도 후리가나(가나 카드는 그대로)
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
@@ -282,7 +282,7 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
   // ---- 예문 빈칸 상자: 일본어 예문(빈칸 ＿＿, 후리가나) + 한국어 뜻 힌트 ----
   function sentenceBox(s) {
     const jp = String(s.jp || "").split("＿＿").map(ruby).join('<span class="blank">＿＿</span>');
-    return `<div class="sent"><p class="sent-jp" lang="ja">${jp}</p><p class="sent-hint">${esc(s.ko || "")}</p></div>`;
+    return `<div class="sent"><p class="sent-jp" lang="ja">${jp}</p>${s.ko ? `<p class="sent-hint">${esc(s.ko)}</p>` : ""}</div>`;
   }
 
   // ---- 문제 머리 ----
@@ -293,7 +293,9 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
       : review && it.from ? `<span class="tag">${esc(it.from)} 복습</span>` : "";
     const q = it.q || (it.type === "order" ? "가나 카드를 순서대로 눌러요." : "알맞은 답을 골라요.");
     // 질문 옆 🔊는 생성기가 qSay로 표시한 일→한 문제만(가나 소리·한→일은 들으면 답이 됨)
-    return `${tag}<h1 class="q">${ruby(q)}</h1>${it.qSay && it.say ? `<p class="q-say">${sayBtn(it.say)}</p>` : ""}
+    // 듣기 문제는 글자 없이 🔊만(음성이 안 되는 기기는 글자로, dom.listenBox)
+    const say = it.kind === "listen" ? listenBox(it.say) : it.qSay && it.say ? `<p class="q-say">${sayBtn(it.say)}</p>` : "";
+    return `${tag}<h1 class="q">${ruby(q)}</h1>${say}
       ${it.sentence ? sentenceBox(it.sentence) : ""}
       ${it.code ? codeBlock(it.code) : ""}`;
   }

@@ -133,7 +133,9 @@ def check(mods, words, all_ids, examples=None):
                     if not field:
                         errs.append("%s: answer %r is not the word %r" % (at, o[it["answer"]], w))
                         continue
-                    pool = {x[field]: x for x in by_ch[m["CHAPTER"]["id"]]}  # 오답은 이 레슨의 장 단어(겹치는 단어는 두 장에 있음)
+                    # 오답은 이 레슨의 장 단어(겹치는 단어는 두 장에 있음). 모의고사(단어 없는 장)는 앞 JLPT 장에서 옮겨 온 문제
+                    src = by_ch.get(m["CHAPTER"]["id"]) or [x for c, xs in by_ch.items() if c > 100 for x in xs]
+                    pool = {x[field]: x for x in src}
                     for d in o[:it["answer"]] + o[it["answer"] + 1:]:
                         x = pool.get(d)
                         if not x:
