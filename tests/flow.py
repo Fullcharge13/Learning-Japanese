@@ -1281,6 +1281,22 @@ def test_n5_complete_title_and_end():
         assert not a.errors, a.errors
 
 
+def test_settings_jlpt_more():
+    """설정 「JLPT N5」 목록: 앞 3장만, 「더보기」로 20장 전체, 「접기」로 다시 3장"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        _to_settings(a)
+        rows = lambda: a.js("() => [...document.querySelectorAll('.jlpt-course .course-chapters li')].filter((e) => e.offsetParent !== null).length")
+        assert rows() == 3, rows()
+        more = a.page.locator("#jlpt-more")
+        assert more.get_attribute("aria-expanded") == "false" and "더보기" in more.inner_text()
+        more.click()
+        assert rows() == 20 and more.get_attribute("aria-expanded") == "true" and "접기" in more.inner_text()
+        more.click()
+        assert rows() == 3
+        assert not a.errors, a.errors
+
+
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")

@@ -57,20 +57,36 @@ function courseCard(ctx) {
 }
 
 /** JLPT 학습 내용(JLPT 설계 §3-4): 장마다 끝낸 레슨 수. 펼치기 없이 한 줄씩 */
+const JLPT_SHOWN = 3; // 설정 JLPT 목록은 앞 3장만 보이고 나머지는 「더보기」
+
 function jlptCard(ctx) {
   const chs = ctx.jlptChapters;
   if (!chs.length) return "";
   const d = new Set(ctx.save.completed_lessons);
+  const more = chs.length - JLPT_SHOWN;
   return `<section class="panel course jlpt-course" aria-labelledby="jlpt-course-title">
     <h2 id="jlpt-course-title">JLPT N5</h2>
     <p class="course-sum">N5 단어 ${ctx.n5Total}개 중 <b>${ctx.n5Learned()}</b>개 배움</p>
-    <ul class="course-chapters">${chs.map((ch) => {
+    <ul class="course-chapters" id="jlpt-chapters">${chs.map((ch, i) => {
       const done = ch.lessons.filter((l) => d.has(l.id)).length;
-      return `<li><div class="ch-row static"><span class="ch-no">${chapterNo(ch.id)}</span>
+      return `<li${i >= JLPT_SHOWN ? " hidden" : ""}><div class="ch-row static"><span class="ch-no">${chapterNo(ch.id)}</span>
         <span class="ch-main"><b>${esc(ch.title.replace(/^N5 · \d+장 /, ""))}</b></span>
         <span class="ch-side"><span class="ch-count${done === ch.lessons.length ? " full" : ""}">${done}/${ch.lessons.length} 끝냄</span></span></div></li>`;
     }).join("")}</ul>
+    ${more > 0 ? `<button class="btn ghost wide" id="jlpt-more" aria-expanded="false" aria-controls="jlpt-chapters" data-more="${more}">더보기 (${more}장 더)</button>` : ""}
   </section>`;
+}
+
+/** 「더보기」 ↔ 「접기」: 앞 JLPT_SHOWN장 뒤의 줄을 펼치고 접음 */
+function bindJlptMore(root) {
+  const b = root.querySelector("#jlpt-more");
+  if (!b) return;
+  b.addEventListener("click", () => {
+    const open = b.getAttribute("aria-expanded") !== "true";
+    root.querySelectorAll("#jlpt-chapters li").forEach((li, i) => { if (i >= JLPT_SHOWN) li.hidden = !open; });
+    b.setAttribute("aria-expanded", String(open));
+    b.textContent = open ? "접기" : `더보기 (${b.dataset.more}장 더)`;
+  });
 }
 
 export function render(root, ctx) {
@@ -127,6 +143,7 @@ export function render(root, ctx) {
   bindTabs(root, ctx);
 
   // 학습 내용 펼치기
+  bindJlptMore(root);
   root.querySelectorAll(".ch-row").forEach((b) => b.addEventListener("click", () => {
     const open = b.getAttribute("aria-expanded") !== "true";
     b.setAttribute("aria-expanded", String(open));
