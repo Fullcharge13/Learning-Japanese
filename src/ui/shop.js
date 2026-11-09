@@ -165,6 +165,7 @@ function dayView(root, ctx, params) {
       <button class="btn ${ok ? "primary" : "coral"} wide" id="cont">계속</button>`;
     result.hidden = false;
     document.body.classList.add("result-open");
+    root.querySelector("#quit").disabled = true; // 「계속」 전에 나가면 이 손님 결과가 저장되지 않으므로
     const guard = performance.now() + GUARD_MS;
     const cont = result.querySelector("#cont");
     requestAnimationFrame(() => cont.focus({ preventScroll: true }));
@@ -177,7 +178,17 @@ function dayView(root, ctx, params) {
       ctx.show("shop", { view: "day", cut });
     });
   });
-  return () => document.body.classList.remove("result-open");
+  // 키보드(아이패드): 숫자 = 인사 카드·메뉴 고르기(개수는 누르기), Enter = 확인. 결과 창이 뜨면 초점이 「계속」에 있어 Enter가 그대로 눌린다
+  const result = root.querySelector("#result");
+  const onKey = (e) => {
+    if (!result.hidden || e.altKey || e.ctrlKey || e.metaKey) return;
+    const n = /^[1-9]$/.test(e.key) ? +e.key - 1 : -1;
+    const opts = root.querySelectorAll(run.step === "order" ? ".menu-card" : ".options .opt");
+    if (n >= 0 && opts[n]) { e.preventDefault(); opts[n].click(); return; }
+    if (e.key === "Enter" && !(document.activeElement instanceof HTMLButtonElement) && !act.disabled) { e.preventDefault(); act.click(); }
+  };
+  document.addEventListener("keydown", onKey);
+  return () => { document.removeEventListener("keydown", onKey); document.body.classList.remove("result-open"); };
 }
 
 function settle(ctx) {
