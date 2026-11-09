@@ -66,3 +66,37 @@ def test_grammar_built(built):
     assert ls[0]["id"] == "115-1" and ls[0]["title"] == "명사문 です" and ls[0]["cards"]
     cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
     assert cs["g5-01"]["chapter"] == 115 and cs["g5-01"]["name"].startswith("문법 · ")
+
+
+# ---- 한자 ----
+def test_kanji_all_79():
+    from make_lessons import load_kanji
+    ks = load_kanji()
+    v = json.load(open(os.path.join(ROOT, "vendor", "kanji", "n5.json"), encoding="utf-8"))
+    assert sorted(k["kanji"] for k in ks) == sorted(v) and len(ks) == 79
+    assert all(k["ko"].strip() and k["chapter"] in (118, 119) for k in ks)
+
+
+def test_kanji_words_found():
+    from make_lessons import load_kanji, kanji_words
+    ws = kanji_words()
+    for k in load_kanji():
+        assert ws.get(k["kanji"]), k["kanji"]
+
+
+def test_kanji_built(built):
+    seen = set()
+    for n in (118, 119):
+        ch = _js_const(built / ("ch%d.js" % n), "CHAPTER")
+        assert ch["title"] == "N5 · %d장 한자 %d" % (n - 100, n - 117)
+        for l in _js_const(built / ("ch%d.js" % n), "LESSONS"):
+            for it in l["items"]:
+                assert it["kind"] in ("kanji-read", "kanji-write"), it
+                o = it["options"]
+                assert len(o) == 4 and len(set(o)) == 4 and it["answer"] == 0, it  # distinct readings / spellings
+                if it["kind"] == "kanji-read":
+                    assert all(not BARE_KANJI.search(x) for x in o), o
+                seen.add(it["concept"])
+    assert len({c for c in seen if c.startswith("k5-")}) == 79
+    cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert cs["k5-日"]["name"] == "한자 · 日 날 일" and cs["k5-日"]["chapter"] == 118
