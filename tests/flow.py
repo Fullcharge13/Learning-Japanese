@@ -743,6 +743,153 @@ def test_fill_sentence_fits():
             assert m["sw"] <= m["cw"] + 1 and m["right"] <= m["vw"] + 1 and m["hsc"] <= m["vw"] + 1, m
 
 
+# ---------------------------------------------------------------- 다코야키 가게
+
+def _kana_done_save(**shop):
+    seed = {"saveVer": 2, "completed_lessons": _lesson_ids(range(1, 3)), "current_lesson": "3-1", "current_chapter": 3}
+    if shop:
+        seed["shop"] = {"v": 1, "day": 0, "money": 0, "upgrades": [], "stories": [], "xpToday": {"date": None, "n": 0}, "run": None, **shop}
+    return seed
+
+
+SHOP_ANSWER_JS = """() => { const c = window.__ria.ctx, R = c.shopRules, run = c.save.shop.run;
+  const g = R.dayCustomers(run)[run.idx], seed = run.seed + ':' + run.idx;
+  if (run.step === 'order') return { menu: g.menu, count: g.count, who: g.who, step: run.step, idx: run.idx };
+  return { i: R.greetCards(run.step === 'greet' ? 'enter' : 'leave', seed).answer, who: g.who, step: run.step, idx: run.idx }; }"""
+
+
+def _shop_answer(a):
+    """지금 단계의 정답 카드를 누르고 확인 → 결과 창 계속"""
+    ans = a.js(SHOP_ANSWER_JS)
+    if ans["step"] == "order":
+        a.page.click('.menu-card[data-menu="%s"]' % ans["menu"])
+        if a.page.query_selector(".count-card"):
+            a.page.click('.count-card[data-count="%d"]' % ans["count"])
+    else:
+        a.page.click('.options .opt[data-i="%d"]' % ans["i"])
+    a.page.click("#act")
+    a.page.wait_for_selector("#result:not([hidden])")
+    ok = "ok" in (a.page.get_attribute("#result", "class") or "")
+    a.page.wait_for_timeout(GUARD_WAIT)
+    a.page.click("#cont")
+    a.page.wait_for_timeout(120)
+    return ok
+
+
+def _shop_play_day(a):
+    oks = []
+    for _ in range(80):
+        if a.page.query_selector(".shop-settle"):
+            return oks
+        if a.page.query_selector(".shop-cut"):
+            a.page.click("#act")
+            a.page.wait_for_timeout(120)
+            continue
+        oks.append(_shop_answer(a))
+    raise AssertionError("day did not end")
+
+
+def test_shop_locked_then_open():
+    with App("iPhone 17") as a:
+        a.start()
+        assert a.page.is_disabled("#shop")
+        assert "가타카나 평가를 통과하면 열려요" in a.page.inner_text(".shop-card")
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        assert not a.page.is_disabled("#shop")
+        a.page.click("#shop")
+        a.page.wait_for_selector(".shop-front")
+        assert not a.errors, a.errors
+
+
+def test_shop_full_day():
+    """하루 6명을 모두 맞히면: 정산 매출 = 팁 포함 합계, XP +10, 1일째 이야기 컷"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        guests = a.js("() => window.__ria.ctx.shopRules.dayCustomers(window.__ria.ctx.save.shop.run)")
+        price = {"takoyaki": 400, "ocha": 150}  # 설계 §3-1 처음 메뉴 값, 팁 10%(1円 아래 버림)
+        expect = sum(price[g["menu"]] * g["count"] + price[g["menu"]] * g["count"] // 10 for g in guests)
+        oks = _shop_play_day(a)
+        assert oks == [True] * 18, oks
+        s = a.save()
+        print("    expect %d, saved money %d, xp %d" % (expect, s["shop"]["money"], s["xp"]))
+        assert s["shop"]["money"] == expect and s["shop"]["day"] == 1 and s["shop"]["run"] is None
+        assert s["xp"] == 10 and s["shop"]["stories"] == ["story-01"]
+        txt = a.page.inner_text(".screen.shop")
+        assert "6/6" in txt and "{:,}円".format(expect) in txt and "부모님과 인사!" in txt, txt
+        assert not a.errors, a.errors
+
+
+def test_shop_resume():
+    """3번째 손님 주문 단계에서 새로 고침 → 같은 손님·같은 단계"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        for _ in range(40):
+            if a.page.query_selector(".shop-cut"):
+                a.page.click("#act")
+                a.page.wait_for_timeout(120)
+                continue
+            st = a.js("() => window.__ria.ctx.save.shop.run")
+            if st["idx"] == 2 and st["step"] == "order":
+                break
+            _shop_answer(a)
+        name = a.page.inner_text(".guest-name")
+        a.page.reload()
+        a.page.wait_for_selector("#go")
+        a.start()
+        assert "이어서 장사" in a.page.inner_text("#shop")
+        a.page.click("#shop")
+        a.page.click("#start")
+        a.page.wait_for_selector(".guest-name")
+        print("    before %r, after %r" % (name, a.page.inner_text(".guest-name")))
+        assert a.page.inner_text(".guest-name") == name
+        assert a.page.query_selector(".menu-card") is not None, "still the order step"
+        assert not a.errors, a.errors
+
+
+def test_shop_upgrade_guests():
+    with App("iPhone 17", save=_kana_done_save(money=5000)) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#upgrades")
+        a.page.click('[data-up="plate2"]')
+        a.page.wait_for_timeout(200)
+        assert a.save()["shop"]["upgrades"] == ["plate2"] and a.save()["shop"]["money"] == 0
+        a.page.click("#back")
+        a.page.click("#start")
+        a.page.click("#act")  # 오픈 컷
+        a.page.wait_for_selector(".shop-progress")
+        assert "손님 1/7" in a.page.inner_text(".shop-progress")
+        assert not a.errors, a.errors
+
+
+def test_shop_screens_fit():
+    """가게 앞·인사·주문(개수 카드)·정산·키우기·일기: 기기 5종 넘침 없음, 터치 44px 이상"""
+    fails = []
+    for dev in DEVICES:
+        with App(dev, save=_kana_done_save(money=99999, day=8, stories=["story-01", "story-02"])) as a:
+            a.start()
+            a.page.click("#shop")
+            res = [measure(a, "shop-front")]
+            a.js("() => { const c = window.__ria.ctx; c.commit({ ...c.save, shop: c.shopRules.startRun(c.save.shop, { date: c.today(), doneCh: 12 }) }); c.show('shop', { view: 'day' }); }")
+            res.append(measure(a, "shop-greet"))
+            _shop_answer(a)
+            res.append(measure(a, "shop-order"))
+            a.shot("%s-shop-order.png" % slug(dev))
+            for v in ("upgrades", "diary"):
+                a.js("(v) => window.__ria.ctx.show('shop', { view: v })", v)
+                res.append(measure(a, "shop-" + v))
+            for r in res:
+                if r["problems"] or r["small"]:
+                    fails.append("%s/%s: %s %s" % (dev, r["screen"], r["problems"], r["small"]))
+            assert not a.errors, a.errors
+    assert not fails, fails
+
+
 def test_other_saves_coexist():
     """같은 github.io 주소의 리아·해치 앱 저장을 읽지도 바꾸지도 않음"""
     ria = json.dumps({"saveVer": 2, "xp": 777, "completed_lessons": ["1-1", "1-2"]})
