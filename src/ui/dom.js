@@ -83,7 +83,7 @@ export function dialog({ title, body = "", buttons }) {
 }
 
 /** 잠깐 뜨는 알림 */
-export function toast(msg, kind = "") {
+export function toast(msg, kind = "", ms = 4200) {
   let box = document.getElementById("toasts");
   if (!box) {
     box = el('<div id="toasts" class="toasts" role="status" aria-live="polite"></div>');
@@ -91,7 +91,7 @@ export function toast(msg, kind = "") {
   }
   const t = el(`<div class="toast ${kind}">${esc(msg)}</div>`);
   box.appendChild(t);
-  setTimeout(() => t.remove(), 4200);
+  setTimeout(() => t.remove(), ms);
 }
 
 /** 진행 막대 */

@@ -1081,11 +1081,32 @@ def test_old_items_refund_notice():
         assert "물건 값 360엔을 돌려드렸어요" in a.page.inner_text("#toasts"), a.page.inner_text("#toasts")
         sv = a.save()
         assert sv["bytes"] == 370 and "item_refund" not in sv and sv["items"] == ["none"], sv
+        a.page.wait_for_timeout(5500)
+        assert "돌려드렸어요" in a.js("() => document.getElementById('toasts').innerText"), "refund notice stays longer than ordinary toasts"
         a.page.reload()
         a.page.wait_for_selector(".screen.splash #go")
         a.page.wait_for_timeout(500)
         assert "돌려드렸어요" not in (a.js("() => document.getElementById('toasts')?.innerText || ''"))
         assert a.save()["bytes"] == 370
+        assert not a.errors, a.errors
+
+
+def test_import_old_save_refund():
+    """옛 물건이 든 저장 파일을 가져오면 그 자리에서 돌려준 엔 안내, 엔 증가"""
+    old = {"app": "sanada-japanese", "saveVer": 2, "bytes": 0, "items": ["none", "kimono"], "item": "kimono"}
+    path = os.path.join(OUT, "old-save.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(old, f)
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.set_input_files("#import", path)
+        a.page.get_by_role("button", name="바꾸기").click()
+        a.page.wait_for_selector(".screen.home")
+        a.page.wait_for_function("() => (document.getElementById('toasts') || {}).innerText?.includes('돌려드렸어요')")
+        assert "물건 값 300엔" in a.page.inner_text("#toasts")
+        sv = a.save()
+        assert sv["bytes"] == 300 and "item_refund" not in sv, sv
         assert not a.errors, a.errors
 
 

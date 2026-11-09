@@ -92,7 +92,7 @@ function noticeRefund() {
   const { save, refund } = takeRefund(app.save);
   if (!refund) return;
   commit(save);
-  toast(`보관함이 축제 의상으로 바뀌었어요. 가지고 있던 물건 값 ${refund}엔을 돌려드렸어요.`);
+  toast(`보관함이 축제 의상으로 바뀌었어요. 가지고 있던 물건 값 ${refund}엔을 돌려드렸어요.`, "", 8000); // 긴 안내라 더 오래
 }
 
 function commit(next) {
