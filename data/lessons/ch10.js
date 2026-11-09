@@ -124,7 +124,7 @@ export const LESSONS = [
      "か",
      "れ"
     ],
-    "explain": "彼{かれ} = 그 (남자)"
+    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요"
    },
    {
     "type": "choice",
@@ -137,7 +137,7 @@ export const LESSONS = [
      "그 (남자)"
     ],
     "answer": 0,
-    "explain": "彼女{かのじょ} = 그녀"
+    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요"
    },
    {
     "type": "check",
@@ -150,7 +150,7 @@ export const LESSONS = [
      "誰{だれ}"
     ],
     "answer": 0,
-    "explain": "彼女{かのじょ} = 그녀"
+    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요"
    }
   ]
  },
@@ -236,7 +236,7 @@ export const LESSONS = [
      "あ",
      "に"
     ],
-    "explain": "兄{あに} = 형·오빠"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
    },
    {
     "type": "choice",
@@ -249,7 +249,7 @@ export const LESSONS = [
      "아버지"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
    },
    {
     "type": "choice",
@@ -287,7 +287,7 @@ export const LESSONS = [
      "兄{あに}"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
    }
   ]
  },
@@ -311,7 +311,7 @@ export const LESSONS = [
      "여동생"
     ],
     "answer": 0,
-    "explain": "兄{あに} = 형·오빠"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
    },
    {
     "type": "choice",
@@ -334,7 +334,7 @@ export const LESSONS = [
      "か",
      "れ"
     ],
-    "explain": "彼{かれ} = 그 (남자)"
+    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요"
    },
    {
     "type": "choice",
@@ -383,7 +383,7 @@ export const LESSONS = [
      "아버지"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
    },
    {
     "type": "choice",
@@ -409,7 +409,7 @@ export const LESSONS = [
      "弟{おとうと}"
     ],
     "answer": 0,
-    "explain": "兄{あに} = 형·오빠"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
    }
   ]
  }

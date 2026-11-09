@@ -197,7 +197,7 @@ export const LESSONS = [
      "카드"
     ],
     "answer": 0,
-    "explain": "高{たか}い = 비싸요"
+    "explain": "高{たか}い = 비싸요 · 「높아요」라는 뜻도 있어요"
    },
    {
     "type": "choice",

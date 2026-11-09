@@ -65,7 +65,7 @@ export const LESSONS = [
      "예뻐요"
     ],
     "answer": 0,
-    "explain": "かわいい = 귀여워요"
+    "explain": "かわいい = 귀여워요 · 한국어 '예쁘다'에 가까운 경우도 많아요 (예쁜 물건 등)"
    },
    {
     "type": "choice",
@@ -116,7 +116,7 @@ export const LESSONS = [
      "寒{さむ}い"
     ],
     "answer": 0,
-    "explain": "楽{たの}しい = 즐거워요"
+    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요"
    },
    {
     "type": "order",
@@ -366,7 +366,7 @@ export const LESSONS = [
      "寒{さむ}い"
     ],
     "answer": 0,
-    "explain": "楽{たの}しい = 즐거워요"
+    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요"
    },
    {
     "type": "order",
