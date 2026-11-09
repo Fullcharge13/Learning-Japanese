@@ -31,6 +31,7 @@ CHAPTER_TITLES = {
 
 RUBY = re.compile(r"([㐀-鿿々〆ヶ]+)\{([^{}]+)\}")
 KANA = re.compile(r"^[ぁ-ゟ゠-ヿー]+$")
+BARE_KANJI = re.compile(r"[\u3400-\u9fff々]")
 SMALL = set("ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ")
 
 
@@ -79,10 +80,21 @@ def load_words(path):
                     raise ValueError("%s: reading must be kana: %r" % (at, m.group(2)))
             if "{" in RUBY.sub("", jp) or "}" in RUBY.sub("", jp):
                 raise ValueError("%s: unpaired braces in %r" % (at, jp))
+            note = (r.get("note") or "").strip()
+            for name, text in (("jp", jp), ("note", note)):
+                if BARE_KANJI.search(RUBY.sub("", text)):
+                    raise ValueError("%s: kanji without furigana in %s: %r" % (at, name, text))
+            try:
+                chapter, unit = int(r.get("chapter") or ""), int(r.get("unit") or "")
+            except ValueError:
+                raise ValueError("%s: chapter and unit must be numbers" % at) from None
+            pos = (r.get("pos") or "").strip()
+            if not pos:
+                raise ValueError("%s: empty pos" % at)
             if st == "hold":
                 continue
-            out.append({"id": r["id"], "chapter": int(r["chapter"]), "unit": int(r["unit"]), "seq": n,
-                        "jp": jp, "ko": ko, "pos": r["pos"].strip(), "note": (r.get("note") or "").strip()})
+            out.append({"id": r["id"], "chapter": chapter, "unit": unit, "seq": n, "jp": jp, "ko": ko, "pos": pos,
+                        "note": note, "twin": (r.get("twin") or "").strip()})
     return out
 
 
@@ -100,7 +112,8 @@ def _explain(w):
 
 def _twins(a, b):
     """보기로 함께 나오면 정답이 둘로 보이는 짝: 뜻(소리)이 같거나 표기·읽기가 같음"""
-    return sound_key(a["ko"]) == sound_key(b["ko"]) or plain(a["jp"]) == plain(b["jp"]) or kana(a["jp"]) == kana(b["jp"])
+    return (sound_key(a["ko"]) == sound_key(b["ko"]) or plain(a["jp"]) == plain(b["jp"]) or kana(a["jp"]) == kana(b["jp"])
+            or (a["twin"] != "" and a["twin"] == b["twin"]))  # twin: 뜻은 달라도 학습자가 헷갈리는 짝(words.csv twin 칸)
 
 
 def _options(w, pool, field, seed):

@@ -3,7 +3,7 @@
 
 - 레슨 칸 모양, 문제 종류는 choice·order·check만(입력 칸 없음)
 - choice·check: 보기 4개, 보기 글자 중복 없음, 정답 번호가 범위 안, 정답이 그 단어(뜻 또는 일본어)
-- 오답 보기가 정답과 같은 뜻·같은 소리(괄호 앞 비교)이거나 같은 표기·읽기가 아님(정답이 둘로 보이지 않게)
+- 오답 보기가 정답과 같은 뜻·같은 소리(괄호 앞 비교)·같은 표기·읽기·같은 twin 묶음이 아님(정답이 둘로 보이지 않게)
 - order: 2~6장 가나 카드, 이으면 그 단어 읽기
 - 질문 옆 🔊(qSay)는 단어 장의 일→한에만
 - 보류(hold) 단어는 어디에도 없고, 보류 아닌 단어는 모두 한 번 이상 문제에 나옴(성공 기준 1)
@@ -18,7 +18,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-from make_lessons import load_words, kana, plain, sound_key, KANA  # noqa: E402
+from make_lessons import load_words, kana, plain, KANA, _twins as twins  # noqa: E402
 
 DUMP = r"""
 const fs = await import("node:fs"); const path = await import("node:path"); const url = await import("node:url");
@@ -40,10 +40,6 @@ def load(lessons_dir):
     if r.returncode != 0:
         raise SystemExit(r.stderr)
     return json.loads(r.stdout)
-
-
-def twins(a, b):
-    return sound_key(a["ko"]) == sound_key(b["ko"]) or plain(a["jp"]) == plain(b["jp"]) or kana(a["jp"]) == kana(b["jp"])
 
 
 def check(mods, words, all_ids):

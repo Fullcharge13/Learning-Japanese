@@ -148,3 +148,28 @@ def test_items_carry_the_japanese_to_speak():
     for it in _items(_ch(3)):
         assert it.get("qSay", False) == it["q"].endswith("무슨 뜻일까요?"), it["q"]
     assert not any(it.get("qSay") for it in _items(_ch(1)))
+
+
+def test_twin_column_keeps_confusable_words_apart(tmp_path):
+    """twin 칸이 같은 단어끼리는 뜻이 달라도 서로 오답 보기로 나오지 않음(かわいい↔きれい 등)"""
+    rows = [HEAD.strip() + ",twin"] + ["c3-%03d,3,1,%s,%s,adj,ok,,%s" % (i + 1, jp, ko, tw) for i, (jp, ko, tw) in enumerate([
+        ("かわいい", "귀여워요", "a"), ("きれい", "예뻐요", "a"), ("高{たか}い", "비싸요", ""), ("安{やす}い", "싸요", ""),
+        ("寒{さむ}い", "추워요", ""), ("暑{あつ}い", "더워요", ""), ("楽{たの}しい", "즐거워요", "b"), ("おもしろい", "재미있어요", "b")])]
+    p = tmp_path / "w.csv"
+    p.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    words = load_words(str(p))
+    for it in [it for l in build_chapter(words, 3)["LESSONS"] for it in l["items"] if it["type"] != "order"]:
+        o = set(it["options"])
+        assert not ({"귀여워요", "예뻐요"} <= o or {"かわいい", "きれい"} <= o), it
+        assert not ({"즐거워요", "재미있어요"} <= o or {"楽{たの}しい", "おもしろい"} <= o), it
+
+
+@pytest.mark.parametrize("row, msg", [
+    ("c3-002,,1,学生{がくせい},학생,noun,ok,", "line 3: chapter and unit must be numbers"),
+    ("c3-002,3,1,学生{がくせい},학생,,ok,", "line 3: empty pos"),
+    ("c3-002,3,1,学生{がくせい},학생,noun,ok,学校の話", "line 3: kanji without furigana in note"),
+    ("c3-002,3,1,学生,학생,noun,ok,", "line 3: kanji without furigana in jp"),
+])
+def test_more_parse_errors(tmp_path, row, msg):
+    with pytest.raises(ValueError, match=msg):
+        load_words(_bad_csv(tmp_path, row))

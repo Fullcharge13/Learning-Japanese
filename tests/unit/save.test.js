@@ -12,6 +12,7 @@ function fakeStorage(initial = {}) {
 }
 
 const LEDGER_SHAPE = {
+  app: "sanada-japanese",
   saveVer: 2,
   current_chapter: 1, current_lesson: "1-1",
   completed_lessons: [],
@@ -283,10 +284,11 @@ test("range: xp/bytes/streak/stats are non-negative integers", () => {
 });
 
 test("range: weak_concepts keeps only finite numbers >= 0", () => {
-  assert.deepEqual(migrate({ weak_concepts: { a: "abc", b: 3 } }).weak_concepts, { b: 3 });
+  // 키는 이 앱의 단어 id(c3-001 …)여야 남는다
+  assert.deepEqual(migrate({ weak_concepts: { "c3-001": "abc", "c3-002": 3 } }).weak_concepts, { "c3-002": 3 });
   assert.deepEqual(
-    migrate({ weak_concepts: { a: -1, b: 0, c: Infinity, d: null, e: 2, f: "2" } }).weak_concepts,
-    { b: 0, e: 2 },
+    migrate({ weak_concepts: { "c3-001": -1, "c3-002": 0, "c3-003": Infinity, "c3-004": null, "c3-005": 2, "c3-006": "2" } }).weak_concepts,
+    { "c3-002": 0, "c3-005": 2 },
   );
 });
 
@@ -328,4 +330,17 @@ test("import guard: a 리아와 파이썬 export is not this app's save", () => 
   assert.equal(isOwnSave({ xp: 3 }), false, "needs this app's own item fields");
   assert.equal(isOwnSave(JSON.parse(JSON.stringify(newSave()))), true);
   for (const bad of [null, [], "x", 3]) assert.equal(isOwnSave(bad), false);
+});
+
+test("import guard: a 해치와 한국어 export (same shape, no app mark) is not this app's save", () => {
+  const haechi = { saveVer: 2, xp: 50, items: ["none", "janggu"], item: "janggu", completed_lessons: ["1-1"], review_queue: ["v01-c01-u01-001"] };
+  assert.equal(isOwnSave(haechi), false);
+  assert.equal(newSave().app, "sanada-japanese");
+  assert.equal(migrate({}).app, "sanada-japanese");
+});
+
+test("migrate drops review and weak entries for words this app does not have", () => {
+  const s = migrate({ review_queue: ["v01-c01-u01-001", "c3-001"], weak_concepts: { "v01-c01-u01-001": 2, "c3-002": 1 } });
+  assert.deepEqual(s.review_queue, ["c3-001"]);
+  assert.deepEqual(Object.keys(s.weak_concepts), ["c3-002"]);
 });

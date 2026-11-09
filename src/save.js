@@ -1,7 +1,11 @@
 // 저장: localStorage 한 칸에 JSON 하나. 옛 저장은 migrate로 새 형식에 맞춘다.
-// 리아와 파이썬과 같은 주소(github.io)에 올라가므로 저장 키를 따로 둔다(리아 저장은 읽지도 지우지도 않음).
+// 리아와 파이썬·해치와 한국어와 같은 주소(github.io)에 올라가므로 저장 키를 따로 둔다(다른 앱 저장은 읽지도 지우지도 않음).
+// 해치 앱 저장 파일은 모양이 같아서, 가져오기는 app 표시로 가린다(isOwnSave).
 import { ITEMS } from "../data/items.js";
 import { cleanSeenUpdates } from "./newcontent.js";
+import { CONCEPTS } from "../data/concepts.js";
+
+const WORD_IDS = new Set(CONCEPTS.map((c) => c.id));
 
 export const SAVE_KEY = "sanada-japanese.save";
 export const SAVE_VER = 2;
@@ -11,6 +15,7 @@ const BAD_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 
 export function newSave() {
   return {
+    app: "sanada-japanese",
     saveVer: SAVE_VER,
     current_chapter: 1, current_lesson: "1-1",
     completed_lessons: [],
@@ -110,6 +115,10 @@ export function migrate(raw) {
   const ver = typeof oldVer === "number" && Number.isFinite(oldVer) ? oldVer : 1; // saveVer 없음 = 첫 판(1)
   const s = clampRanges(fill(newSave(), structuredClone(raw)));
   cleanItems(s);
+  s.app = "sanada-japanese";
+  // 이 앱에 없는 단어(다른 앱 저장·지운 단어)는 복습·약한 단어에서 뺀다 — 복습 카드가 빈 채로 남지 않게
+  s.review_queue = s.review_queue.filter((id) => WORD_IDS.has(id));
+  s.weak_concepts = Object.fromEntries(Object.entries(s.weak_concepts).filter(([id]) => WORD_IDS.has(id)));
   s.saveVer = ver > SAVE_VER ? ver : SAVE_VER;
   return s;
 }
@@ -146,9 +155,9 @@ export function loadEx(storage) {
   return { save: migrate(raw), readFailed: false };
 }
 
-/** 가져온 파일이 이 앱의 저장인지: 물건 칸(items·item)이 있고 리아와 파이썬의 의상 칸(outfits)이 없음 */
+/** 가져온 파일이 이 앱의 저장인지: app 표시가 이 앱(해치 앱 저장은 모양이 같아 표시로 가림), 물건 칸이 있고 리아의 의상 칸이 없음 */
 export function isOwnSave(raw) {
-  return isPlainObject(raw) && Array.isArray(raw.items) && typeof raw.item === "string" && !("outfits" in raw);
+  return isPlainObject(raw) && raw.app === "sanada-japanese" && Array.isArray(raw.items) && typeof raw.item === "string" && !("outfits" in raw);
 }
 
 export function load(storage) {
