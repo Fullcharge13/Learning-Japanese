@@ -204,7 +204,10 @@ class App:
 
         def keyset(x):
             return sorted(plain(str(v)).strip() for v in (x.get("options") or x.get("chips") or x.get("lines") or []))
-        cands = [i for i, x in enumerate(items) if norm(plain(x.get("q"))) == norm(q) and keyset(x) == shown]
+        # 빈칸 문제는 질문·보기가 같을 수 있어 예문까지 본다
+        sent = self.page.eval_on_selector(".sent .sent-jp", SHOWN_JS) if self.page.query_selector(".sent .sent-jp") else None
+        cands = [i for i, x in enumerate(items) if norm(plain(x.get("q"))) == norm(q) and keyset(x) == shown
+                 and ((plain(x["sentence"]["jp"]) if x.get("sentence") else None) == sent)]
         if len(cands) > 1:
             cands = [i for i in cands if norm(items[i].get("code")) == norm(code)] or cands
         assert cands, "unknown item on screen: %r %r" % (q, shown)
@@ -571,14 +574,26 @@ def test_longest_meaning_fits():
         assert not a.errors, a.errors
 
 
+def _first_lesson_with(kind):
+    for n in range(3, 40):
+        path = os.path.join(ROOT, "data", "lessons", "ch%d.js" % n)
+        if not os.path.exists(path):
+            break
+        for l in json.loads(open(path, encoding="utf-8").read().split("export const LESSONS = ", 1)[1].rstrip().rstrip(";")):
+            if not l.get("isExam") and any(it["type"] == kind for it in l["items"]):
+                return l["id"]
+    raise AssertionError("no lesson with " + kind)
+
+
 def test_no_code_font():
-    """가나 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음 (가나 카드 문제가 있는 단어 레슨 3-1)"""
+    """가나 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음 (가나 카드 문제가 있는 첫 단어 레슨)"""
     q = "() => [...document.querySelectorAll('.mono')].filter(e => e.offsetParent).length"
+    lid = _first_lesson_with("order")
     with App("iPhone 17") as a:
         a.start()
-        a.js("(id) => window.__ria.ctx.show('lesson', { id })", "3-1")
+        a.js("(id) => window.__ria.ctx.show('lesson', { id })", lid)
         seen = []
-        items = a.lesson("3-1")["items"]
+        items = a.lesson(lid)["items"]
         for _ in range(40):
             a.page.wait_for_timeout(80)
             if a.page.query_selector(".screen.done"):
