@@ -124,6 +124,8 @@ def third_party_notices(inputs):
              "진도 참고: NHK WORLD-JAPAN 「일본말 첫걸음」 1~24과 순서만 참고(교재의 단어·대화·예문은 옮기지 않음). 이 앱은 NHK와 관련이 없습니다.", "",
              "JLPT 급수 목록: open-anki-jlpt-decks (MIT, Copyright (c) 2020 Jamie Sinclair) · 원본 tanos.co.uk (Jonathan Waller, CC BY)",
              "https://github.com/jamsinclair/open-anki-jlpt-decks  ·  단어·읽기·급수만 썼고 한국어 뜻과 예문은 새로 씀. JLPT 공식 목록이 아닌 추정 목록입니다.", "",
+             "한자 읽기: KANJIDIC — EDRDG, CC BY-SA 4.0 · via kanji-data (MIT, David Gouveia) — 음·훈 읽기만 씀, 한국어 훈음은 새로 씀",
+             "https://github.com/davidluzgouveia/kanji-data  ·  https://www.edrdg.org/wiki/index.php/KANJIDIC_Project", "",
              "이 앱에 묶어 넣은 오픈 소스는 아래와 같습니다. 만든 분들께 감사드립니다.", ""]
     for pkg in bundled_packages(inputs):
         d = os.path.join(ROOT, "node_modules", *pkg.split("/"))

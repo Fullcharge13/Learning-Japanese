@@ -38,7 +38,9 @@ CHAPTER_TITLES = {
 JLPT_TITLES = {101: ("숫자·조수사", "숫자"), 102: ("날짜·요일·시간", "날짜"), 103: ("사람·가족", "가족"), 104: ("몸·건강", "몸"),
                105: ("집·물건", "물건"), 106: ("음식·식사", "음식"), 107: ("거리·교통·장소", "거리"), 108: ("학교·일", "학교"),
                109: ("날씨·계절·자연", "날씨"), 110: ("い형용사 반대말", "い형용사"), 111: ("な형용사·색", "な형용사"),
-               112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말")}
+               112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말"),
+               115: ("문법 1", "문법"), 116: ("문법 2", "문법"), 117: ("문법 3", "문법"),
+               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("모의고사", "모의고사")}
 for _n, (_long, _short) in JLPT_TITLES.items():
     CHAPTER_TITLES[_n] = "N5 · %d장 %s" % (_n - 100, _long)
 
@@ -276,6 +278,175 @@ def build_chapter(words, chapter, examples=None):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
+# ---- N5 문법(115~117장, N5 완성 설계 §4): 원본 data/jlpt-n5-grammar.json, 항목 하나 = 레슨 하나 ----
+GRAMMAR_FILE = os.path.join(ROOT, "data", "jlpt-n5-grammar.json")
+
+
+def load_grammar(path=GRAMMAR_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)["points"]
+
+
+def _grammar_items(p):
+    out = []
+    for it in p["items"]:
+        if it["type"] == "fill":
+            full = it["pre"] + it["answer"] + it["post"]
+            out.append({"type": "choice", "kind": "grammar", "concept": p["id"], "q": "빈칸에 들어갈 말을 골라요",
+                        "sentence": {"jp": it["pre"] + "＿＿" + it["post"], "ko": it["ko"]}, "options": [it["answer"]] + it["wrong"],
+                        "answer": 0, "explain": "%s · %s" % (full, p["title"]), "say": full})
+        else:
+            full = "".join(it["lines"])
+            b = {"type": "order", "kind": "build", "concept": p["id"], "q": "카드를 순서대로 놓아 문장을 만들어요: 「%s」" % it["ko"],
+                 "lines": it["lines"], "explain": "%s = %s" % (full, it["ko"]), "say": full}
+            if it.get("accept"):
+                b["accept"] = it["accept"]  # 덩어리 순서를 바꿔도 맞는 문장(lesson.js orderOk)
+            out.append(b)
+    return out
+
+
+def build_grammar_chapter(points, chapter):
+    ps = [p for p in points if p["chapter"] == chapter]
+    title = CHAPTER_TITLES[chapter]
+    lessons, pool = [], []
+    for p in ps:
+        items = _grammar_items(p)
+        pool += items
+        ex = [i for i in items if i["type"] == "choice"][:3]
+        lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": p["title"],
+                        "goal": "문법: %s" % p["title"], "summary": [p["explain"]],
+                        "cards": [{"say": p["explain"], "words": [{"jp": i["say"], "ko": i["sentence"]["ko"]} for i in ex]}],
+                        "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 문법 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
+# ---- N5 한자(118~119장, N5 완성 설계 §5): 훈음 data/jlpt-n5-kanji.csv, 읽기 vendor/kanji/n5.json(KANJIDIC) ----
+KANJI_FILE = os.path.join(ROOT, "data", "jlpt-n5-kanji.csv")
+
+
+def load_kanji(path=KANJI_FILE):
+    with open(path, encoding="utf-8", newline="") as f:
+        return [{"kanji": r["kanji"], "ko": r["ko"], "chapter": int(r["chapter"]), "unit": int(r["unit"]), "on": r["on"], "kun": r["kun"]}
+                for r in csv.DictReader(f)]
+
+
+def kanji_words(words=None):
+    """한자 → 그 한자를 쓰는 JLPT 단어(짧은 것부터). 문제에 쓸 단어 후보"""
+    if words is None:
+        words = jlpt_words(load_words(os.path.join(ROOT, "data", "words.csv")))
+    # 읽기가 둘인 표기(一日 いちにち/ついたち, 九 きゅう/く)와 흔한 읽기가 따로 있는 말(一月 いちがつ)은 읽기 문제에 쓰지 않는다
+    readings = {}
+    for w in words:
+        readings.setdefault(plain(w["jp"]), set()).add(kana(w["jp"]))
+    skip = {p for p, r in readings.items() if len(r) > 1} | {"一月"}
+    out = {}
+    for k in load_kanji():
+        cands = [w for w in words if k["kanji"] in plain(w["jp"]) and w["pos"] != "kana" and KANA.match(kana(w["jp"]))
+                 and plain(w["jp"]) not in skip]
+        uniq = {}
+        # 조수사 말(三時·二本 …)은 다른 단어가 없을 때만(二本 にほん은 日本과 읽기가 같음)
+        for w in sorted(cands, key=lambda w: (w["pos"] == "num" and len(plain(w["jp"])) > 1, len(plain(w["jp"])), w["chapter"], w["seq"])):
+            uniq.setdefault(plain(w["jp"]), w)
+        out[k["kanji"]] = list(uniq.values())
+    return out
+
+
+def _kanji_readings(k):
+    """카드에 보일 N5 읽기: data/jlpt-n5-kanji.csv의 손으로 고른 칸(음 가타카나, 훈 오쿠리가나 괄호). KANJIDIC 앞 두 읽기는 드문 읽기가 섞여서"""
+    r = next(x for x in load_kanji() if x["kanji"] == k)
+    return [x for x in r["on"].split("·") if x != "-"], [x for x in r["kun"].split("·") if x != "-"]
+
+
+def _pick(answer, cands, seed):
+    """정답과 다르고 서로 다른 오답 3개(길이가 비슷한 것부터)"""
+    pool = sorted({c for c in cands if c != answer}, key=lambda c: (abs(len(c) - len(answer)), c))[:12]
+    random.Random(seed).shuffle(pool)
+    return [answer] + pool[:3] if len(pool) >= 3 else None
+
+
+def build_kanji_chapter(chapter, words=None):
+    ks = [k for k in load_kanji() if k["chapter"] == chapter]
+    kw = kanji_words(words)
+    title = CHAPTER_TITLES[chapter]
+    used = [w for k in ks for w in kw[k["kanji"]][:2]]
+    readings, spellings = [kana(w["jp"]) for w in used], [plain(w["jp"]) for w in used]
+    lessons, pool = [], []
+    for u in sorted({k["unit"] for k in ks}):
+        unit_ks, items, cards = [k for k in ks if k["unit"] == u], [], []
+        for k in unit_ks:
+            ws = kw[k["kanji"]]
+            a, b = ws[0], ws[1] if len(ws) > 1 else ws[0]
+            cid = "k5-" + k["kanji"]
+            why = lambda w: "%s = %s · %s %s" % (w["jp"], w["ko"], k["kanji"], k["ko"])
+            ro = _pick(kana(a["jp"]), readings, cid + ":r")
+            wo = _pick(plain(b["jp"]), spellings, cid + ":w")
+            if ro:
+                items.append({"type": "choice", "kind": "kanji-read", "concept": cid, "q": "「%s」 어떻게 읽을까요?" % plain(a["jp"]),
+                              "options": ro, "answer": 0, "explain": why(a), "say": a["jp"]})
+            if wo:
+                items.append({"type": "choice", "kind": "kanji-write", "concept": cid, "q": "「%s」 한자로 쓰면?" % kana(b["jp"]),
+                              "options": wo, "answer": 0, "explain": why(b), "say": b["jp"]})
+            on, kun = _kanji_readings(k["kanji"])
+            cards.append({"jp": k["kanji"], "ko": "%s · 음 %s · 훈 %s · 예: %s" % (k["ko"], "·".join(on) or "-", "·".join(kun) or "-", plain(a["jp"]))})
+        pool += items
+        lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": "한자 %d" % (len(lessons) + 1 + (8 if chapter == 119 else 0)),
+                        "goal": "새 한자 %d자" % len(unit_ks), "summary": ["%s %s" % (k["kanji"], k["ko"]) for k in unit_ks[:4]],
+                        "cards": [{"say": "새 한자를 만나 봐요!", "words": cards[i:i + 4]} for i in range(0, len(cards), 4)], "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 한자 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
+# ---- N5 모의고사(120장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
+MOCK_FILE = os.path.join(ROOT, "data", "jlpt-n5-mock.json")
+MOCK_MIX = (("kanji-read", 4), ("kanji-write", 3), ("context", 4), ("grammar", 4), ("build", 2))
+MOCK_ROUNDS = 3
+
+
+def load_mock(path=MOCK_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _mock_reading(p):
+    return [{"type": "choice", "kind": "reading", "concept": p["id"], "q": q["q"], "sentence": {"jp": p["text"], "ko": ""},
+             "options": q["options"], "answer": 0, "explain": p["ko"], "say": q["q"]} for q in p["questions"]]
+
+
+def _mock_listen(n, it):
+    meaning = it["ask"] == "meaning"
+    return {"type": "choice", "kind": "listen", "concept": "m5-l%02d" % n, "qSay": True,
+            "q": "잘 듣고 뜻을 골라요" if meaning else "잘 듣고 알맞은 대답을 골라요",
+            "options": it["options"], "answer": 0, "explain": "%s %s %s" % (it["jp"], "=" if meaning else "→", it["options"][0]), "say": it["jp"]}
+
+
+def mock_concepts(mock):
+    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 120} for n, p in enumerate(mock["reading"], 1)]
+            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 120} for n in range(1, len(mock["listening"]) + 1)])
+
+
+def build_mock_chapter(built, mock, chapter=120):
+    """built: 장 번호 → 만든 장(101~119). 꼴마다 문제를 한 번 섞어 회마다 다른 조각을 쓴다(겹침 없음)"""
+    src = [it for ch, d in built.items() if 100 < ch < chapter for l in d["LESSONS"] if not l.get("isExam") for it in l["items"]]
+    kind = lambda it: it.get("kind") or ("context" if it["type"] == "choice" and it.get("sentence") else None)
+    pools = {k: random.Random("mock:" + k).sample([it for it in src if kind(it) == k], k=len([it for it in src if kind(it) == k]))
+             for k, _ in MOCK_MIX}
+    listen = [_mock_listen(n, it) for n, it in enumerate(mock["listening"], 1)]
+    per = len(listen) // MOCK_ROUNDS
+    title = CHAPTER_TITLES[chapter]
+    lessons = []
+    for r in range(MOCK_ROUNDS):
+        items = [dict(it) for k, n in MOCK_MIX for it in pools[k][r * n:(r + 1) * n]]
+        items += _mock_reading(mock["reading"][r]) + listen[r * per:(r + 1) * per]
+        lessons.append({"id": "%d-%d" % (chapter, r + 1), "chapter": chapter, "title": "모의고사 %d" % (r + 1),
+                        "goal": "N5 시험 꼴로 풀어 보기", "summary": [], "isExam": True, "cards": [], "items": items})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
 HEADER = "// 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)\n"
 
 
@@ -304,8 +475,16 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     examples = load_examples(examples_file, words) if examples_file and os.path.exists(examples_file) else {}
     os.makedirs(out_dir, exist_ok=True)
     total = 0
-    for ch in sorted({w["chapter"] for w in words}):
-        data = build_chapter(words, ch, examples)
+    grammar = load_grammar() if jlpt else []
+    extra = {ch: (lambda ch=ch: build_grammar_chapter(grammar, ch)) for ch in sorted({p["chapter"] for p in grammar})}
+    if jlpt:
+        extra.update({ch: (lambda ch=ch: build_kanji_chapter(ch, words)) for ch in sorted({k["chapter"] for k in load_kanji()})})
+    mock = load_mock() if jlpt else None
+    if jlpt:
+        extra[120] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
+    made = {}
+    for ch in sorted({w["chapter"] for w in words} | set(extra)):
+        data = made[ch] = extra[ch]() if ch in extra else build_chapter(words, ch, examples)
         total += len(data["LESSONS"])
         with open(os.path.join(out_dir, "ch%d.js" % ch), "w", encoding="utf-8") as f:
             f.write(HEADER)
@@ -314,9 +493,13 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     # 복습·취약 단어 이름표(홈·배지 화면): concept id = 단어 id
     with open(concepts_file, "w", encoding="utf-8") as f:
         f.write(HEADER.replace("레슨", "단어 이름표"))
-        f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join(
-            "  " + json.dumps({"id": w["id"], "name": "%s · %s" % (w["jp"], w["ko"]), "chapter": w["chapter"]}, ensure_ascii=False)
-            for w in words if not w.get("shared")))  # 겹치는 단어는 회화 길의 원래 장으로 한 번만
+        names = [{"id": w["id"], "name": "%s · %s" % (w["jp"], w["ko"]), "chapter": w["chapter"]}
+                 for w in words if not w.get("shared")]  # 겹치는 단어는 회화 길의 원래 장으로 한 번만
+        names += [{"id": p["id"], "name": "문법 · %s" % p["title"], "chapter": p["chapter"]} for p in grammar]
+        if jlpt:
+            names += [{"id": "k5-" + k["kanji"], "name": "한자 · %s %s" % (k["kanji"], k["ko"]), "chapter": k["chapter"]} for k in load_kanji()]
+            names += mock_concepts(mock)
+        f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join("  " + json.dumps(n, ensure_ascii=False) for n in names))
     if jlpt:
         with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:
             f.write(HEADER.replace("레슨", "JLPT 단어 목록"))

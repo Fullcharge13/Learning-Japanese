@@ -37,6 +37,7 @@ export function render(root, ctx) {
   // 본 과정과 심화(v0.7)는 따로 센다
   const doneSet = new Set(s.completed_lessons || []);
   const mainDone = ctx.lessons.filter((l) => doneSet.has(l.id)).length;
+  const jlptDone = ctx.jlptLessons.filter((l) => doneSet.has(l.id)).length;
   const advIds = ctx.advancedIds ? ctx.advancedIds() : [];
   const advTotal = advIds.length;
   const advDone = advIds.filter((id) => doneSet.has(id)).length;
@@ -55,7 +56,7 @@ export function render(root, ctx) {
       <section class="panel">
         <h2>학습 기록</h2>
         <dl class="stat-grid">
-          <div><dt>끝낸 레슨</dt><dd>${n(mainDone)}<small>/${ctx.lessons.length}</small></dd></div>
+          <div><dt>끝낸 레슨</dt><dd>회화 ${n(mainDone)}<small>/${ctx.lessons.length}</small>${ctx.jlptLessons.length ? ` · JLPT ${n(jlptDone)}<small>/${ctx.jlptLessons.length}</small>` : ""}</dd></div>
           ${advTotal ? `<div><dt>끝낸 심화</dt><dd>${n(advDone)}<small>/${advTotal}</small></dd></div>` : ""}
           <div><dt>맞힌 문제</dt><dd>${n(st.items)}</dd></div>
           <div><dt>실수 없는 레슨</dt><dd>${n(st.perfect)}</dd></div>

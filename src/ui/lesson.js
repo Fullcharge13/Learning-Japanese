@@ -4,8 +4,8 @@ import { current, nextCard, answer, summary } from "../lessonflow.js";
 import { newSession, mark as markConcept, touchResult, logSubmit, finishInfo } from "../session.js";
 import { packResume, restoreSession, hasProgress } from "../resume.js";
 import { yukiImg } from "../yuki.js";
-import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn } from "./dom.js";
-import { ruby } from "../ruby.js";
+import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn, listenBox } from "./dom.js";
+import { ruby, plain } from "../ruby.js"; // 문장 만들기 카드도 후리가나(가나 카드는 그대로)
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
 import { shortLessonId } from "../track.js";
@@ -13,6 +13,12 @@ import { shortLessonId } from "../track.js";
 const GUARD_MS = 400;
 const WAIT_MS = 300;    // 장 파일이 이보다 늦으면 「준비 중」 (v0.3 작업 1)
 const LOAD_TIMEOUT_MS = 12000;  // 이보다 오래 걸리면 「준비 중」을 그만두고 안내
+/** 순서 문제 정답: 저장된 순서, 또는 accept에 적힌 다른 순서(일본어는 조사로 역할이 정해져 덩어리 순서가 자유로울 때가 있음). 글자로 비교해 같은 카드 둘도 괜찮음 */
+export function orderOk(it, lines) {
+  const key = (xs) => xs.join("\n");
+  return [it.lines, ...(it.accept || [])].some((a) => key(a) === key(lines));
+}
+
 export const OFFLINE_LINE = "이 레슨은 인터넷이 될 때 한 번 열어야 해요";
 export const STALE_LINE = "새 판이 나왔어요. 눌러서 새로 고쳐요";
 
@@ -83,7 +89,8 @@ async function askResume(ctx, lesson, S0) {
 /** 레슨 화면: 장 파일을 받은 뒤 run()으로. 늦으면 「준비 중」(학습 길로 나갈 수 있음), 12초 넘거나 실패하면 안내와 다시 시도 */
 export function render(root, ctx, params = {}) {
   const review = !!params.review;
-  const back = !review && params.id && ctx.trackOfLesson(params.id) === "jlpt" ? "jlpt" : "home"; // 나가면 그 레슨의 길로
+  // 나가면 시작한 화면(복습) 또는 그 레슨의 길로
+  const back = params.from || (!review && params.id && ctx.trackOfLesson(params.id) === "jlpt" ? "jlpt" : "home");
   let alive = true, timers = [], inner = null, token = 0;
   const clear = () => { timers.forEach(clearTimeout); timers = []; };
   function fail(kind, err) {
@@ -142,7 +149,7 @@ export function render(root, ctx, params = {}) {
     }
     if (!live()) return;
     try {
-      inner = run(root, ctx, lesson, review, resumed);
+      inner = run(root, ctx, lesson, review, resumed, back);
     } catch (e) {
       // 반쯤 그린 화면을 남기지 않음
       if (typeof inner === "function") { try { inner(); } catch { /* 무시 */ } }
@@ -160,7 +167,7 @@ export function render(root, ctx, params = {}) {
   };
 }
 
-function run(root, ctx, lesson, review, resumed = null) {
+function run(root, ctx, lesson, review, resumed = null, back = "home") {
   // 누적 결과는 session.js 함수로만 바꾼다(이어 하기 기록과 보상이 같은 값을 봄). 나머지 칸은 화면 전용
   const S = {
     ...(resumed ? resumed.S : newSession(lesson)),
@@ -281,7 +288,7 @@ function run(root, ctx, lesson, review, resumed = null) {
   // ---- 예문 빈칸 상자: 일본어 예문(빈칸 ＿＿, 후리가나) + 한국어 뜻 힌트 ----
   function sentenceBox(s) {
     const jp = String(s.jp || "").split("＿＿").map(ruby).join('<span class="blank">＿＿</span>');
-    return `<div class="sent"><p class="sent-jp" lang="ja">${jp}</p><p class="sent-hint">${esc(s.ko || "")}</p></div>`;
+    return `<div class="sent"><p class="sent-jp" lang="ja">${jp}</p>${s.ko ? `<p class="sent-hint">${esc(s.ko)}</p>` : ""}</div>`;
   }
 
   // ---- 문제 머리 ----
@@ -292,7 +299,9 @@ function run(root, ctx, lesson, review, resumed = null) {
       : review && it.from ? `<span class="tag">${esc(it.from)} 복습</span>` : "";
     const q = it.q || (it.type === "order" ? "가나 카드를 순서대로 눌러요." : "알맞은 답을 골라요.");
     // 질문 옆 🔊는 생성기가 qSay로 표시한 일→한 문제만(가나 소리·한→일은 들으면 답이 됨)
-    return `${tag}<h1 class="q">${ruby(q)}</h1>${it.qSay && it.say ? `<p class="q-say">${sayBtn(it.say)}</p>` : ""}
+    // 듣기 문제는 글자 없이 🔊만(음성이 안 되는 기기는 글자로, dom.listenBox)
+    const say = it.kind === "listen" ? listenBox(it.say) : it.qSay && it.say ? `<p class="q-say">${sayBtn(it.say)}</p>` : "";
+    return `${tag}<h1 class="q">${ruby(q)}</h1>${say}
       ${it.sentence ? sentenceBox(it.sentence) : ""}
       ${it.code ? codeBlock(it.code) : ""}`;
   }
@@ -327,13 +336,13 @@ function run(root, ctx, lesson, review, resumed = null) {
       <ol class="order-answer" id="oa" aria-label="고른 순서"></ol>
       <p class="ex-label">가나 카드 <small>(누른 순서대로 들어가요)</small></p>
       <div class="order-pool" id="op">${order.map((li) =>
-        `<button class="line" lang="ja" data-li="${li}">${esc(it.lines[li])}</button>`).join("")}</div>
+        `<button class="line" lang="ja" data-li="${li}">${ruby(it.lines[li])}</button>`).join("")}</div>
     </article>`;
     const act = footButton("확인", { disabled: true });
     const oa = body.querySelector("#oa");
     const paint = () => {
       oa.innerHTML = chosen.length ? chosen.map((li, k) =>
-        `<li><button class="line placed" lang="ja" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
+        `<li><button class="line placed" lang="ja" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${plain(it.lines[li])}`)}">${ruby(it.lines[li])}</button></li>`).join("")
         : `<li class="empty">아래 카드를 눌러요</li>`;
       body.querySelectorAll("#op .line").forEach((b) => {
         const used = chosen.includes(+b.dataset.li);
@@ -350,9 +359,8 @@ function run(root, ctx, lesson, review, resumed = null) {
     paint();
     act.addEventListener("click", () => {
       if (chosen.length !== it.lines.length) return;
-      // 순서 문제는 정답 순서가 하나뿐이라 저장된 순서와 비교한다(C23)
-      const ok = chosen.map((li) => it.lines[li]).join("\n") === it.lines.join("\n");
-      judged(cur, ok, `<p class="answer">정답: <span lang="ja">${esc(it.lines.join(""))}</span></p>`);
+      const ok = orderOk(it, chosen.map((li) => it.lines[li]));
+      judged(cur, ok, `<p class="answer">정답: <span lang="ja">${ruby(it.lines.join(""))}</span></p>`);
     });
   }
 
@@ -361,7 +369,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     if (!review && ctx.resume) ctx.resume.clear();
     const res = ctx.finish(finishInfo(S, lesson, review));
     ctx.sound.play("done");
-    ctx.show("done", { result: res, lesson: review ? null : lesson, sum });
+    ctx.show("done", { result: res, lesson: review ? null : lesson, sum, from: back });
   }
 
   function step() {
@@ -392,7 +400,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     });
     if (ok) {
       if (!review && ctx.resume) ctx.resume.clear();
-      ctx.show(!review && ctx.trackOfLesson(lesson.id) === "jlpt" ? "jlpt" : "home");
+      ctx.show(back);
     }
   });
 

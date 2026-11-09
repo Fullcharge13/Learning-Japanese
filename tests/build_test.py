@@ -827,6 +827,13 @@ def test_jlpt_credit():
     assert "open-anki-jlpt-decks" in lic and "tanos.co.uk" in lic and "Jonathan Waller" in lic and "CC BY" in lic
 
 
+def test_kanjidic_credit():
+    """한자 읽기 출처(KANJIDIC via kanji-data)가 오픈 소스 고지에"""
+    _build()
+    lic = _read(os.path.join(DIST, "licenses.txt"))
+    assert "KANJIDIC" in lic and "kanji-data" in lic and "EDRDG" in lic
+
+
 def test_attribution():
     """출처: 앱 설정 줄·licenses.txt·데이터 라이선스에 JMdict(CC BY-SA 4.0)와 NHK 진도 참고(내용 안 옮김)"""
     _build()

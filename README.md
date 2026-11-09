@@ -66,6 +66,7 @@ data/lessons/       1~26장 레슨 표(자동 생성)
 data/items.js       축제 의상 표 (data/old-items.js: 옛 물건 값, 돌려주기용)
 data/jlpt-n5.csv    JLPT N5 단어 표(장 101~114, 겹치는 단어는 id만) · data/jlpt.js: N5_IDS(생성물)
 vendor/jlpt/        JLPT N5 원본 목록(open-anki-jlpt-decks, MIT) · 정리 규칙 tools/jlpt_n5.py
+vendor/kanji/       N5 한자 79자 읽기(kanji-data, MIT · KANJIDIC CC BY-SA 4.0)
 vendor/jmdict/      읽기 대조표(JMdict 부분집합)
 tools/              레슨 생성, 읽기 대조, 그림 자르기, 개발 서버, 아이콘
 docs/superpowers/   설계서와 작업 계획
@@ -78,6 +79,7 @@ docs/review/        단어 뜻 교차 검토 기록
 - **단어**: 이 앱을 위해 새로 쓴 단어 표(`data/words.csv`)와 생성물은 **CC BY-SA 4.0**(`data/LICENSE-data.md`).
 - **읽기 대조**: [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html)(EDRDG, CC BY-SA 4.0). 사전 뜻은 쓰지 않고 읽기 확인에만 써요(`vendor/jmdict/`).
 - **JLPT 급수 목록**: [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks)(MIT) · 원본 tanos.co.uk(Jonathan Waller, CC BY). 단어·읽기·급수만 쓰고 한국어 뜻·예문은 새로 썼어요. JLPT는 공식 단어 목록이 없어 비공식 추정 목록이에요.
+- **한자 읽기**: KANJIDIC(EDRDG, CC BY-SA 4.0) via [kanji-data](https://github.com/davidluzgouveia/kanji-data)(MIT). 음·훈 읽기만 쓰고 한국어 훈음은 새로 썼어요. 문법 순서 참고: typed-japanese(MIT, 내용은 옮기지 않음).
 - **개발 도구**(앱에는 안 들어감): [kuroshiro](https://github.com/hexenq/kuroshiro)(MIT, 예문 후리가나), [yomiyasu](https://github.com/nanaism/yomiyasu)(MIT, 번역투 점검 목록 참고).
 - **진도 참고**: NHK WORLD-JAPAN 「일본말 첫걸음」 1~24과의 **순서와 주제만** 참고했어요. 교재의 단어 목록·대화·예문·제목은 옮기지 않았어요. 이 앱은 NHK와 관련이 없어요.
 - **코드**: MIT (`LICENSE`).

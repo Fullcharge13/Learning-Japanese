@@ -25,6 +25,7 @@ import datetime
 import functools
 import http.server
 import json
+import re
 import os
 import socketserver
 import subprocess
@@ -226,7 +227,7 @@ class App:
             lines = list(it["lines"]) if correct else list(it["lines"][1:]) + [it["lines"][0]]
             for line in lines:
                 for b in self.page.query_selector_all("#op .line:not([disabled])"):
-                    if b.inner_text().strip() == line.strip():
+                    if b.evaluate(SHOWN_JS).strip() == plain(line).strip():  # 문장 만들기 카드는 후리가나가 있음
                         b.click()
                         break
         self.page.click("#act")
@@ -1180,6 +1181,101 @@ def test_jlpt_lesson_quit_returns_to_jlpt():
         a.page.click("#quit")
         a.page.get_by_role("button", name="나가기", exact=True).click()
         a.page.wait_for_selector(".screen.jlpt")
+        assert not a.errors, a.errors
+
+
+def test_jlpt_review_returns_to_jlpt():
+    """JLPT 화면에서 시작한 복습은 나가면 JLPT 화면으로"""
+    seed = _kana_done_save()
+    seed["review_queue"] = ["c101-001", "c101-002", "c101-003"]
+    seed["completed_lessons"] = seed["completed_lessons"] + ["101-1"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click('[data-go="jlpt"]')
+        a.page.click("#review")
+        a.page.wait_for_selector(".screen.lesson")
+        a.page.click("#quit")
+        a.page.get_by_role("button", name="나가기", exact=True).click()
+        a.page.wait_for_selector(".screen.jlpt")
+        assert not a.errors, a.errors
+
+
+def test_badges_lessons_split():
+    """배지 화면 「끝낸 레슨」은 회화·JLPT를 따로"""
+    seed = _kana_done_save()
+    seed["completed_lessons"] = seed["completed_lessons"] + ["101-1"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click('[data-go="badges"]')
+        a.page.wait_for_selector(".screen.badges")
+        txt = a.page.inner_text(".screen.badges")
+        assert "회화" in txt and "JLPT 1/" in txt, txt
+        assert not a.errors, a.errors
+
+
+def test_jlpt_grammar_lesson():
+    """문법 레슨(115-1): 설명 카드, 빈칸 문제, 문장 만들기 카드에 후리가나, 끝까지 풀림"""
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        a.js("() => window.__ria.ctx.show('lesson', { id: '115-1' })")
+        a.page.wait_for_selector(".screen.lesson")
+        items = a.lesson("115-1")["items"]
+        saw_build_ruby = False
+        for _ in range(40):
+            a.page.wait_for_timeout(80)
+            if a.page.query_selector(".screen.done"):
+                break
+            if a.page.query_selector(".card-view"):
+                a.page.click("#act")
+                continue
+            if not a.page.query_selector("article.item"):
+                continue
+            it = items[a.which_item(items)]
+            if it["type"] == "order":
+                saw_build_ruby = saw_build_ruby or bool(a.page.query_selector("#op .line ruby"))
+            a.answer_touch(it)
+            a.page.wait_for_selector("#result:not([hidden])")
+            assert a.cont()
+        assert a.page.query_selector(".screen.done")
+        assert saw_build_ruby, "build cards show furigana"
+        assert not a.errors, a.errors
+
+
+def test_jlpt_listen_item():
+    """모의고사 듣기 문제: 질문에 일본어 글자가 없고 🔊 단추만(음성 되는 기기)"""
+    fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
+            "speak(u) { window.__said = u.text; } } }); window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
+    items = json.loads(open(os.path.join(ROOT, "data", "lessons", "ch120.js"), encoding="utf-8").read()
+                       .split("export const LESSONS = ", 1)[1].rstrip().rstrip(";"))[0]["items"]
+    idx = next(i for i, it in enumerate(items) if it.get("kind") == "listen")
+    with App("iPhone 17", init=fake) as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        it = _play_to_item(a, "120-1", idx)
+        assert it.get("kind") == "listen"
+        q = a.page.inner_text("article.item h1.q")
+        assert not re.search(r"[ぁ-ゟ゠-ヿ\u3400-\u9fff]", q), q
+        assert a.page.query_selector(".q-say.listen button")
+        assert not a.page.query_selector(".sent"), "no sentence box"
+        assert not a.errors, a.errors
+
+
+def test_n5_complete_title_and_end():
+    """JLPT 길 마지막(모의고사 3)을 처음 끝내면 「N5 완주!」, JLPT 화면 끝 문구 「N5를 모두 마쳤어요!」"""
+    seed = _kana_done_save()
+    seed["completed_lessons"] = seed["completed_lessons"] + _lesson_ids(range(101, 121))
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.js("""() => { const c = window.__ria.ctx; c.show('done', { lesson: c.lessonById('120-3'), result: { mode: 'lesson',
+            lessonId: '120-3', firstTime: true, xp: 10, lessonBytes: 5, questBytes: 0, finished: [], newBadges: [], accuracy: 1 } }); }""")
+        a.page.wait_for_selector(".screen.done")
+        assert a.page.inner_text(".done-hero h1") == "N5 완주!"
+        a.page.click('#home')
+        a.page.wait_for_selector(".screen.jlpt")
+        assert "N5를 모두 마쳤어요!" in a.page.inner_text(".path-end")
         assert not a.errors, a.errors
 
 

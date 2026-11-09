@@ -45,12 +45,12 @@ export function render(root, ctx) {
       </section>
       ${reviewCard(save)}
       ${sections || '<p class="panel">레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.</p>'}
-      <p class="path-end">${allDone ? "N5 단어를 모두 마쳤어요! N4는 다음 업데이트에 열려요" : "N5 · 14장까지 있어요. N4는 다음 업데이트에 열려요"}</p>
+      <p class="path-end">${allDone ? "N5를 모두 마쳤어요! N4는 다음 업데이트에 열려요" : "N5 · 20장 모의고사까지 있어요. N4는 다음 업데이트에 열려요"}</p>
     </main>
     ${tabBar("jlpt")}
   </div>`;
   bindTabs(root, ctx);
   const go = root.querySelector("#jlpt-continue");
   if (go) go.addEventListener("click", () => ctx.show("lesson", { id: currentId }));
-  bindPath(root, ctx);
+  bindPath(root, ctx, "jlpt");
 }
