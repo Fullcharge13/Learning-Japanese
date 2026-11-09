@@ -121,7 +121,7 @@ def third_party_notices(inputs):
              "https://creativecommons.org/licenses/by-sa/4.0/", "",
              "읽기 대조: JMdict — Electronic Dictionary Research and Development Group (EDRDG), CC BY-SA 4.0",
              "https://www.edrdg.org/jmdict/j_jmdict.html  ·  https://www.edrdg.org/edrdg/licence.html", "",
-             "진도 참고: NHK WORLD-JAPAN 「일본말 첫걸음」 1~12과 순서만 참고(교재의 단어·대화·예문은 옮기지 않음). 이 앱은 NHK와 관련이 없습니다.", "",
+             "진도 참고: NHK WORLD-JAPAN 「일본말 첫걸음」 1~24과 순서만 참고(교재의 단어·대화·예문은 옮기지 않음). 이 앱은 NHK와 관련이 없습니다.", "",
              "이 앱에 묶어 넣은 오픈 소스는 아래와 같습니다. 만든 분들께 감사드립니다.", ""]
     for pkg in bundled_packages(inputs):
         d = os.path.join(ROOT, "node_modules", *pkg.split("/"))

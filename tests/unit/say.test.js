@@ -186,8 +186,8 @@ test("deterministic: 같은 씨앗 → 같은 결과", () => {
   assert.deepEqual(a, b);
 });
 
-test("course_done mentions the 12 lessons", () => {
-  assert.ok(LINES.course_done.some((l) => l.text.includes("12과")));
+test("course_done mentions the 24 lessons", () => {
+  assert.ok(LINES.course_done.some((l) => l.text.includes("24과")));
 });
 
 test("wrong: 7 lines, 2 of them Osaka dialect with an angry or pout face", () => {

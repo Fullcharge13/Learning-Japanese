@@ -60,7 +60,7 @@ export const LINES = {
     { text: "레슨 하나 끝! 다음 레슨도 준비해 뒀어요.", face: "cheer" },
   ],
   course_done: [
-    { text: "{name} 씨, 가나부터 12과까지 전부 끝냈어요! 정말 자랑스러워요!", face: "sparkle" },
+    { text: "{name} 씨, 가나부터 24과까지 전부 끝냈어요! 정말 자랑스러워요!", face: "sparkle" },
     { text: "모든 레슨 완료! 이제 일본어로 인사할 수 있어요.", face: "done" },
     { text: "끝까지 왔어요. もう立派{りっぱ}な学習者{がくしゅうしゃ}!(이제 어엿한 학습자!)", face: "cheer" },
   ],

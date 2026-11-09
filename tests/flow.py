@@ -636,6 +636,24 @@ def test_words_open_after_kana():
         assert not a.errors, a.errors
 
 
+def test_lesson13_opens_after_lesson12():
+    """1~12과(앱 1~14장)를 끝내면 13과(앱 15장)가 열리고 풀 수 있다"""
+    done = _lesson_ids(range(1, 15))
+    seed = {"saveVer": 2, "xp": 3000, "completed_lessons": done, "current_lesson": "15-1", "current_chapter": 15}
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        btn = a.page.inner_text("#continue")
+        titles = a.js("() => [...document.querySelectorAll('.chapter-title')].map(e => e.innerText)")
+        print("    continue %r" % btn)
+        assert "15-1" in btn and "이어서 배우기" in btn, btn
+        assert any("13과 · 하고 싶은 것" in t for t in titles), titles
+        a.page.click("#continue")
+        a.play("15-1")
+        assert "15-1" in a.save()["completed_lessons"]
+        a.dismiss()
+        assert not a.errors, a.errors
+
+
 def test_other_saves_coexist():
     """같은 github.io 주소의 리아·해치 앱 저장을 읽지도 바꾸지도 않음"""
     ria = json.dumps({"saveVer": 2, "xp": 777, "completed_lessons": ["1-1", "1-2"]})
