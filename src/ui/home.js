@@ -3,6 +3,7 @@ import { ruby } from "../ruby.js";
 import { QUESTS } from "../../data/quests.js";
 import { CONCEPTS } from "../../data/concepts.js";
 import { yukiImg, greetFace } from "../yuki.js";
+import { shopOpen } from "../shop/rules.js";
 import { esc, icon, bar, riaSays, dialog, toast } from "./dom.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 import { pathEndText } from "../curriculum.js";
@@ -82,6 +83,17 @@ function questCard(save) {
     <ul class="quest-list">${rows}</ul>
     <p class="chest${opened ? " open" : ""}">${icon(opened ? "chestOpen" : "chest")}
       <span>${opened ? "보물 상자를 열었어요 (+10엔)" : "퀘스트 3개를 끝내면 보물 상자 +10엔"}</span></p>
+  </section>`;
+}
+
+function shopCard(ctx) {
+  const save = ctx.save;
+  const open = shopOpen(ctx.examIds(), save.completed_lessons);
+  const s = save.shop;
+  return `<section class="panel shop-card${open ? "" : " locked"}">
+    <img src="img/shop/flow-01.png" width="72" height="72" alt="">
+    <div><h2>유키의 다코야키 가게</h2><p class="muted">${open ? (s.run ? `${s.run.dayNo}일째 장사 중` : `${s.day}일 장사함 · 금고 ${s.money.toLocaleString("ko-KR")}円`) : "가타카나 평가를 통과하면 열려요"}</p></div>
+    <button class="btn ${open ? "sun" : "ghost"}" id="shop"${open ? "" : " disabled"}>${open ? (s.run ? "이어서 장사" : "가게로") : icon("lock")}</button>
   </section>`;
 }
 
@@ -166,6 +178,7 @@ export function render(root, ctx) {
       </section>
       ${reviewCard(save)}
       ${questCard(save)}
+      ${shopCard(ctx)}
       ${sections || '<p class="panel">레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.</p>'}
       <p class="path-end">${esc(pathEndText({ chapters: ctx.chapters, completed: save.completed_lessons }))}</p>
     </main>
@@ -174,6 +187,8 @@ export function render(root, ctx) {
   bindTabs(root, ctx);
   const go = root.querySelector("#continue");
   if (go) go.addEventListener("click", () => ctx.show("lesson", { id: currentId }));
+  const sh = root.querySelector("#shop");
+  if (sh) sh.addEventListener("click", () => ctx.show("shop"));
   const rv = root.querySelector("#review");
   if (rv) rv.addEventListener("click", () => ctx.show("lesson", { review: true }));
   root.querySelectorAll("[data-lesson]").forEach((b) => b.addEventListener("click", async () => {
