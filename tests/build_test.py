@@ -105,17 +105,17 @@ def test_html_static():
     assert '<link rel="manifest" href="manifest.webmanifest">' in html
     assert 'rel="apple-touch-icon"' in html
     assert 'name="apple-mobile-web-app-capable"' in html
-    # 단어 자료 출처(CC BY-SA 3.0)는 설정 화면에 표시
-    assert "github.com/Amulopapa67/open-yonsei-korean-vocabulary" in html and "CC BY-SA 3.0" in html
+    # 단어 표·읽기 대조 출처(CC BY-SA 4.0)는 설정 화면에 표시
+    assert "edrdg.org/jmdict" in html and "CC BY-SA 4.0" in html
 
 
 def test_manifest_and_icons():
     _build()
     with open(os.path.join(DIST, "manifest.webmanifest"), encoding="utf-8") as f:
         m = json.load(f)
-    assert m["name"] == "獬豸老师教韩语"
-    assert m["lang"] == "zh-Hans", m.get("lang")
-    assert m["short_name"] == "獬豸韩语"
+    assert m["name"] == "사나다 일본어"
+    assert m["lang"] == "ko", m.get("lang")
+    assert m["short_name"] == "사나다 일본어"
     assert m["display"] == "standalone"
     assert m["start_url"] and m["scope"]
     for k in ("theme_color", "background_color"):
@@ -136,7 +136,7 @@ def test_sw_static():
     _build()
     sw = _read(os.path.join(DIST, "sw.js"))
     assert "pyodide" not in sw.lower()
-    assert '"haechi-game-' in sw and "ria-" not in sw, "own cache prefix so Ria's caches on the same origin survive"
+    assert '"sanada-game-' in sw and "ria-" not in sw and "haechi-" not in sw, "own cache prefix so Haechi's and Ria's caches on the same origin survive"
     assert "__RIA_" not in sw, "placeholders left in sw.js"
     assert APP_VERSION in sw
     assert "NETWORK_TIMEOUT_MS = 4000" in sw
@@ -262,7 +262,7 @@ class _Browser:
             device["locale"] = locale
         self.context = self.browser.new_context(service_workers=service_workers, **device)
         if init_save is not None:
-            self.context.add_init_script("if (!sessionStorage.getItem('seeded')) { localStorage.setItem('haechi-korean.save', %s); sessionStorage.setItem('seeded', '1'); }"
+            self.context.add_init_script("if (!sessionStorage.getItem('seeded')) { localStorage.setItem('sanada-japanese.save', %s); sessionStorage.setItem('seeded', '1'); }"
                                          % json.dumps(json.dumps(init_save)))
         self.page = self.context.new_page()
         self.errors = []
@@ -358,7 +358,7 @@ def test_cache_rotation():
         b.page.goto(b.url)
         b.home()
         b.wait_controlled()
-        old = [k for k in b.cache_keys() if k.startswith("haechi-game-")]
+        old = [k for k in b.cache_keys() if k.startswith("sanada-game-")]
         assert len(old) == 1, old
         r = _run_build("--out", folder, "--build-id", "B")
         assert r.returncode == 0, r.stdout + r.stderr
@@ -366,7 +366,7 @@ def test_cache_rotation():
         # wait_for_function은 async 판정을 기다리지 않으므로 직접 되풀이해 본다
         deadline = time.monotonic() + 30
         while True:
-            new = [k for k in b.cache_keys() if k.startswith("haechi-game-")]
+            new = [k for k in b.cache_keys() if k.startswith("sanada-game-")]
             if old[0] not in new and new or time.monotonic() > deadline:
                 break
             b.page.wait_for_timeout(200)
@@ -537,7 +537,7 @@ def test_chapter_blocked_retry():
         pg.evaluate("() => window.__ria.ctx.show('lesson', { id: '2-1' })")
         pg.wait_for_selector(".lesson-wait[data-state=error]", timeout=15_000)
         txt = pg.inner_text(".lesson-wait")
-        assert "这一课需要在有网络时打开一次" in txt, txt
+        assert "이 레슨은 인터넷이 될 때 한 번 열어야 해요" in txt, txt
         assert pg.is_visible("#retry") and pg.is_visible("#to-home")
         pg.screenshot(path=os.path.join(OUT, "build_chapter_blocked.png"))
         pg.click("#to-home")
@@ -555,7 +555,7 @@ def test_chapter_blocked_retry():
         # 느린 장 파일: 0.3초 넘으면 「준비 중」
         _Handler.STATE["slow_chapter_s"] = 1.5
         pg.evaluate("() => window.__ria.ctx.show('lesson', { id: '3-1' })")
-        pg.wait_for_selector(".lesson-wait[data-state=wait]:has-text('准备中')", timeout=5_000)
+        pg.wait_for_selector(".lesson-wait[data-state=wait]:has-text('준비 중')", timeout=5_000)
         pg.wait_for_selector(".card-view", timeout=15_000)
         _Handler.STATE["slow_chapter_s"] = 0
         assert not [e for e in b.errors if e.startswith("pageerror")], b.errors
@@ -585,7 +585,7 @@ def test_chapter_cache_rotation():
         b.wait_controlled()
         old_table = b.page.evaluate("() => window.RIA_CHAPTER_FILES")
         assert not _wait_chapters_cached(b, list(old_table.values()))
-        old_game = [k for k in b.cache_keys() if k.startswith("haechi-game-")]
+        old_game = [k for k in b.cache_keys() if k.startswith("sanada-game-")]
         r = _run_build("--out", folder, "--lessons-dir", _snapshot())
         assert r.returncode == 0, r.stdout + r.stderr
         new_files = _chapter_files(folder)
@@ -595,7 +595,7 @@ def test_chapter_cache_rotation():
         b.page.evaluate("async () => { const r = await navigator.serviceWorker.getRegistration(); await r.update(); }")
         deadline = time.monotonic() + 30
         while True:
-            keys = [k for k in b.cache_keys() if k.startswith("haechi-game-")]
+            keys = [k for k in b.cache_keys() if k.startswith("sanada-game-")]
             if (keys and old_game[0] not in keys) or time.monotonic() > deadline:
                 break
             b.page.wait_for_timeout(200)
@@ -612,7 +612,7 @@ def test_chapter_cache_rotation():
 
 def test_review_lazy():
     folder = _dev_split()
-    seed = {"saveVer": 1, "review_queue": ["v01-c02-u01-001", "v01-c05-u01-001"], "completed_lessons": ["1-1"]}
+    seed = {"saveVer": 1, "review_queue": ["c2-001", "c5-001"], "completed_lessons": ["1-1"]}
     b = _Browser(folder, service_workers="block", init_save=seed)
     try:
         pg = b.page
@@ -624,12 +624,12 @@ def test_review_lazy():
         assert asked == [], "home must not load chapter files: %r" % asked
         pg.click("#review")
         pg.wait_for_selector("article.item", timeout=15_000)
-        need = pg.evaluate("() => window.__ria.ctx.chaptersForConcepts(['v01-c02-u01-001', 'v01-c05-u01-001'])")
+        need = pg.evaluate("() => window.__ria.ctx.chaptersForConcepts(['c2-001', 'c5-001'])")
         assert 0 < len(need) < len(table), need
         want = sorted(table[str(k)].rsplit("/", 1)[-1] for k in need)
         assert sorted(asked) == want, (asked, want)
         tag = pg.inner_text(".tag")
-        m = re.match(r"^(\d+)-\d+ 复习$", tag.strip())
+        m = re.match(r"^(\d+)-\d+ 복습$", tag.strip())
         assert m and int(m.group(1)) in need, tag
         n = pg.evaluate("() => document.querySelectorAll('.lesson-tag').length")
         assert n == 1
@@ -697,7 +697,7 @@ def test_chapter_wait_timeout():
         _Handler.STATE["slow_chapter_s"] = 60
         t0 = time.monotonic()
         pg.evaluate("() => window.__ria.ctx.show('lesson', { id: '2-1' })")
-        pg.wait_for_selector(".lesson-wait[data-state=wait]:has-text('准备中')", timeout=5_000)
+        pg.wait_for_selector(".lesson-wait[data-state=wait]:has-text('준비 중')", timeout=5_000)
         assert pg.is_visible("#to-home"), "waiting screen needs a way back"
         pg.wait_for_selector(".lesson-wait[data-state=error]", timeout=20_000)
         dt = time.monotonic() - t0
@@ -729,7 +729,7 @@ def test_chapter_404_reload():
         pg.evaluate("() => { window.__marker = 1; window.__ria.ctx.show('lesson', { id: '2-1' }); }")
         pg.wait_for_selector(".lesson-wait[data-state=error]", timeout=15_000)
         txt = pg.inner_text(".lesson-wait")
-        assert "有新版本了，点一下刷新" in txt, txt
+        assert "새 판이 나왔어요. 눌러서 새로 고쳐요" in txt, txt
         _Handler.STATE["chapter_404"] = False
         with pg.expect_navigation(timeout=15_000):
             pg.click("#retry")
@@ -789,182 +789,31 @@ def test_third_party_notices():
     assert os.path.exists(path), "dist/licenses.txt missing"
     txt = _read(path)
     assert "pyodide" not in txt.lower() and "codemirror" not in txt.lower(), "no code runner or editor is shipped"
-    assert txt.startswith("獬豸老师教韩语"), txt[:60]
-    assert not re.search("[\uac00-\ud7a3]", txt), "licenses page is shown to Chinese users"
+    assert txt.startswith("사나다 일본어"), txt[:60]
     assert "esbuild" not in txt, "build tool is not shipped, keep it out"
     sw = _read(os.path.join(DIST, "sw.js"))
     assert '"licenses.txt"' in sw, "licenses.txt must be precached for offline"
     html = _read(os.path.join(DIST, "index.html"))
     assert "licenses.txt" in html, "settings must link to licenses.txt"
 
-HANT = os.path.join(DIST, "zh-hant")
-CJK = re.compile(r"[㐀-鿿豈-﫿]")
-
-
-def _opencc(cfg):
-    import opencc
-    return opencc.OpenCC(cfg)
-
-
-def test_hant_files():
+def test_attribution():
+    """출처: 앱 설정 줄·licenses.txt·데이터 라이선스에 JMdict(CC BY-SA 4.0)와 NHK 진도 참고(내용 안 옮김)"""
     _build()
-    for f in ("index.html", "manifest.webmanifest", "sw.js", "licenses.txt"):
-        assert os.path.isfile(os.path.join(HANT, f)), f
-    m = json.loads(_read(os.path.join(HANT, "manifest.webmanifest")))
-    assert m["name"] == "獬豸老師教韓語" and m["lang"] == "zh-Hant", m
-    chs = lambda d: sorted(CHAPTER_FILE.match(f).group(1) for f in os.listdir(os.path.join(d, "lessons")))
-    assert chs(HANT) == chs(DIST)  # 이름의 지문은 판마다 자기 내용(test_hant_own_hashes)
-    assert len(os.listdir(os.path.join(HANT, "lessons"))) == 20
-    for d in ("img", "icons"):
-        assert sorted(os.listdir(os.path.join(HANT, d))) == sorted(os.listdir(os.path.join(DIST, d))), d
-    assert len(_read(os.path.join(HANT, "index.html")).encode()) <= MAX_RAW
-
-
-def _hant_texts():
-    yield "index.html", _read(os.path.join(HANT, "index.html")), _read(os.path.join(DIST, "index.html"))
-    by_ch = lambda d: {CHAPTER_FILE.match(f).group(1): f for f in os.listdir(os.path.join(d, "lessons"))}
-    hant, hans = by_ch(HANT), by_ch(DIST)
-    for n in sorted(hant, key=int):
-        yield hant[n], _read(os.path.join(HANT, "lessons", hant[n])), _read(os.path.join(DIST, "lessons", hans[n]))
-
-
-def test_hant_is_traditional():
-    _build()
-    # 간체 전용 글자가 남았으면 한 번 더 s2twp 했을 때 바뀜. (s2t는 吃→喫 같은 옛 글자를 골라 대만 기준과 다름)
-    s2twp = _opencc("s2twp")
-    import csv
-    with open(os.path.join(ROOT, "data", "zh-hant-overrides.csv"), encoding="utf-8", newline="") as f:
-        chosen = [r["to"] for r in csv.DictReader(f) if r["to"]]  # 사람이 고른 말은 s2twp 기준에서 뺌
-    for name, hant, _ in _hant_texts():
-        for w in chosen:
-            hant = hant.replace(w, " ")
-        runs = re.findall(r"[\u3400-\u9fff\uf900-\ufaff]+", hant)  # 한자 덩어리마다(덩어리끼리 이어 붙이면 없는 낱말이 생김)
-        bad = [r for r in runs if s2twp.convert(r) != r]
-        assert not bad, (name, bad[:5])
-
-
-def test_hant_only_cjk_changed():
-    _build()
-    for name, hant, hans in _hant_texts():
-        names = lambda s: re.sub(r"(ch\d+)-[0-9a-f]{8}\.json", r"\1.json", s)  # 장 파일 지문은 판마다 다름
-        back = names(CJK.sub("", hant)).replace("haechi-hant-game-", "haechi-game-").replace("zh-Hant", "zh-Hans")
-        assert back == names(CJK.sub("", hans)), name
-
-
-def test_hant_cache_prefix():
-    _build()
-    for f in ("index.html", "sw.js"):
-        t = _read(os.path.join(HANT, f))
-        assert "haechi-hant-game-" in t and '"haechi-game-' not in t, f
-    sw = _read(os.path.join(DIST, "sw.js"))
-    assert 'key.startsWith(GAME_PREFIX)' in sw and 'startsWith("haechi-")' not in sw
-
-
-def test_hant_overrides():
-    out = os.path.join(OUT, "dist-overrides")
-    table = os.path.join(OUT, "hant-overrides-test.csv")
-    os.makedirs(OUT, exist_ok=True)
-    with open(table, "w", encoding="utf-8") as f:
-        f.write("from,to\n繼續學習,接著學習\n")
-    r = _run_build("--out", out, env=dict(os.environ, HAECHI_HANT_OVERRIDES=table))
-    assert r.returncode == 0, r.stdout + r.stderr
-    t = _read(os.path.join(out, "zh-hant", "index.html"))
-    assert "接著學習" in t and "繼續學習" not in t
-
-
-def test_hant_offline_and_caches_coexist():
-    _build("--out", DEV_OUT)
-    b = _Browser(DEV_OUT)
-    try:
-        pg = b.page
-        pg.goto(b.url)
-        b.home()
-        b.wait_controlled()
-        pg.evaluate("localStorage.setItem('haechi-korean.lang', 'hant')")
-        pg.goto(b.url + "zh-hant/")
-        pg.wait_for_selector(".screen.splash #go", timeout=20_000)
-        pg.wait_for_function("() => navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.includes('/zh-hant/')",
-                             timeout=30_000)
-        pg.wait_for_function("""async () => { const k = await caches.keys();
-            return k.some((n) => n.startsWith('haechi-game-')) && k.some((n) => n.startsWith('haechi-hant-game-')); }""",
-                             timeout=30_000)
-        b.context.set_offline(True)
-        resp = pg.reload()
-        assert resp is not None and resp.from_service_worker
-        pg.wait_for_selector(".screen.splash #go", timeout=20_000)
-        assert pg.evaluate("document.documentElement.lang") == "zh-Hant"
-        assert "獬豸老師" in pg.inner_text("body")
-        b.context.set_offline(False)
-        assert b.errors == [], b.errors
-    finally:
-        b.close()
-
-
-def test_hant_manifest_scope():
-    """번체판 홈 화면 앱이 간체판(../)으로 바꿔도 앱 범위 안에 있게"""
-    _build()
-    m = json.loads(_read(os.path.join(HANT, "manifest.webmanifest")))
-    assert (m["scope"], m["start_url"]) == ("../", "./"), m
-
-
-def test_hant_own_hashes():
-    """번체판 장 파일 이름·저장본 이름은 번체 내용으로 정해짐(고칠 말 표만 바뀌어도 새 판이 퍼짐)"""
-    _build()
-    for f in os.listdir(os.path.join(HANT, "lessons")):
-        m = CHAPTER_FILE.match(f)
-        body = open(os.path.join(HANT, "lessons", f), "rb").read()
-        assert m and hashlib.sha256(body).hexdigest()[:8] == m.group(2), f
-    hant_idx = _read(os.path.join(HANT, "index.html"))
-    for f in os.listdir(os.path.join(HANT, "lessons")):
-        assert "lessons/" + f in hant_idx, f
-    cache = lambda d: re.search(r'GAME_PREFIX \+ "([^"]+)"', _read(os.path.join(d, "sw.js"))).group(1)
-    assert cache(HANT) != cache(DIST), "hant cache name must hash hant content"
-
-
-def test_hant_offline_no_loop():
-    """간체판만 설치된 채 오프라인에서 번체판을 열어도 /zh-hant/zh-hant/… 고리가 없음"""
-    _build("--out", DEV_OUT)
-    b = _Browser(DEV_OUT)
-    try:
-        pg = b.page
-        pg.goto(b.url)
-        b.home()
-        b.wait_controlled()
-        pg.evaluate("localStorage.setItem('haechi-korean.lang', 'hant')")
-        navs = []
-        pg.on("framenavigated", lambda fr: navs.append(fr.url) if fr == pg.main_frame else None)
-        b.context.set_offline(True)
-        try:
-            pg.goto(b.url + "zh-hant/", timeout=10_000)
-        except Exception:  # noqa: BLE001  오프라인이라 열리지 않는 것은 괜찮음(설계서 3.3)
-            pass
-        pg.wait_for_timeout(3000)
-        b.context.set_offline(False)
-        print("    navigations: %d, last %s" % (len(navs), navs[-1:] if navs else None))
-        assert not any("zh-hant/zh-hant" in u for u in navs), navs[:5]
-        assert len(navs) <= 3, len(navs)
-    finally:
-        b.close()
-
-
-def test_ci_checks_hant():
-    ci = _read(os.path.join(ROOT, ".github", "workflows", "deploy.yml"))
-    assert "opencc-python-reimplemented==0.1.7" in ci
-    for name in ("test_hant_files", "test_hant_is_traditional", "test_hant_only_cjk_changed", "test_hant_cache_prefix"):
-        assert name in ci, name
-
-
-def test_dictionary_attribution():
-    """국립국어원 한국어기초사전(CC BY-SA 2.0 KR) 출처: 앱 설정 줄·licenses.txt·제3자 고지 사본"""
-    _build()
-    for d in (DIST, HANT):
-        lic = _read(os.path.join(d, "licenses.txt"))
-        assert "韩国语基础词典" in lic or "韓國語基礎詞典" in lic, d
-        assert "CC BY-SA 2.0 KR" in lic and "https://krdict.korean.go.kr/" in lic, d
-    assert "韩国语基础词典" in _read(os.path.join(ROOT, "src", "ui", "settings.js"))
-    assert os.path.isfile(os.path.join(ROOT, "vendor", "open-yonsei", "THIRD_PARTY_NOTICES.md"))
+    lic = _read(os.path.join(DIST, "licenses.txt"))
+    assert "JMdict" in lic and "CC BY-SA 4.0" in lic and "https://www.edrdg.org/" in lic
+    assert "NHK" in lic and "옮기지 않음" in lic
+    st = _read(os.path.join(ROOT, "src", "ui", "settings.js"))
+    assert "JMdict" in st and "NHK와 관련이 없어요" in st
+    assert os.path.isfile(os.path.join(ROOT, "vendor", "jmdict", "LICENSE.md"))
     for f in ("README.md", os.path.join("data", "LICENSE-data.md")):
-        assert "한국어기초사전" in _read(os.path.join(ROOT, f)), f
+        assert "JMdict" in _read(os.path.join(ROOT, f)), f
+
+
+def test_ci_runs_all_checks():
+    ci = _read(os.path.join(ROOT, ".github", "workflows", "deploy.yml"))
+    assert "opencc" not in ci
+    for cmd in ("npm test", "python build.py", "python -m pytest tests -q", "python tests/content.py"):
+        assert cmd in ci, cmd
 
 
 def main():

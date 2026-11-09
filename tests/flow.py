@@ -12,8 +12,9 @@
 - test_touch_targets: 화면마다 보이는 버튼 44×44 CSS px 이상
 - test_ipad_zoomed: 아이패드(폭 700px 이상)는 html zoom 1.3, 아이폰은 1
 - test_no_text_inputs: 레슨 화면에 입력창(input·textarea·contenteditable)이 하나도 없음
-- test_longest_meaning_fits: 가장 긴 중국어 뜻이 보기 카드 안에서 줄바꿈되고 넘치지 않음
-- test_ria_save_coexists: 같은 주소의 리아와 파이썬 저장(ria-python.save)을 읽지도 바꾸지도 않음
+- test_longest_meaning_fits: 가장 긴 보기(뜻·일본어)가 보기 카드 안에서 줄바꿈되고 넘치지 않음
+- test_furigana_and_speak: 단어 레슨에 후리가나(rt)가 보이고 🔊 단추가 44px 이상, 누르면 읽기를 기기 음성에 넘김
+- test_other_saves_coexist: 같은 주소의 리아·해치 앱 저장(ria-python.save, haechi-korean.save)을 읽지도 바꾸지도 않음
 - test_first_lesson: 새 저장 → 1-1 전부 정답 → 완료 화면 XP +15, completed_lessons ["1-1"]
 - test_wrong_then_retry: 한 문제 틀림 → 본 문제 끝에 다시 나옴 → 완료 화면은 실수 없음 아님
 - test_status_after_milestone: 연속 6일(어제 달성) → 레슨 완료로 7일 축하 창이 떠 있는 동안 상태 줄 7일
@@ -31,10 +32,17 @@ import sys
 import threading
 import time
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+from make_lessons import plain  # noqa: E402
+
+# 화면 글자에서 후리가나(rt)·🔊 단추를 뺀 것 = 데이터 표기의 plain()
+SHOWN_JS = "(e) => { const c = e.cloneNode(true); c.querySelectorAll('rt, .say-btn').forEach((r) => r.remove()); return c.textContent; }"
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "tests", "out", "flow")
 DIST = os.path.join(OUT, "dist")
-SAVE_KEY = "haechi-korean.save"
+SAVE_KEY = "sanada-japanese.save"
+HAECHI_KEY = "haechi-korean.save"
 RIA_KEY = "ria-python.save"
 GUARD_WAIT = 450          # 결과 창 입력 보호(400ms)보다 조금 길게
 
@@ -117,7 +125,7 @@ def today(n=0):
 class App:
     """기기 하나 + 새 저장소의 앱 한 판."""
 
-    def __init__(self, device="iPhone 17", save=None, reduced=False, url=None, extra=None, locale=None):
+    def __init__(self, device="iPhone 17", save=None, reduced=False, url=None, extra=None, locale=None, init=None):
         e = env()
         opts = device_opts(device)
         if reduced:
@@ -135,6 +143,8 @@ class App:
             self.page.add_init_script(
                 "if (!sessionStorage.getItem('flow-seeded')) { localStorage.setItem(%s, %s); sessionStorage.setItem('flow-seeded', '1'); }"
                 % (json.dumps(SAVE_KEY), json.dumps(json.dumps(save))))
+        if init:
+            self.page.add_init_script(init)
         for k, v in (extra or {}).items():
             self.page.add_init_script("if (!localStorage.getItem(%s)) localStorage.setItem(%s, %s);" % (json.dumps(k), json.dumps(k), json.dumps(v)))
         self.page.goto(url or e["url"])
@@ -187,14 +197,14 @@ class App:
     def which_item(self, items):
         """지금 화면의 문제가 레슨 items의 몇 번인지 (보기 순서가 섞여 있어도 글자 묶음으로 찾음)"""
         norm = lambda v: " ".join(str(v or "").split())
-        q = self.page.inner_text("h1.q")
+        q = self.page.eval_on_selector("h1.q", SHOWN_JS)
         shown = sorted(t.strip() for t in self.page.eval_on_selector_all(
-            ".opt .opt-text, .chip, #op .line", "es => es.map(e => e.innerText)"))
+            ".opt .opt-text, .chip, #op .line", "es => es.map(%s)" % SHOWN_JS))
         code = self.page.eval_on_selector_all("article.item > pre.code", "es => es.map(e => e.innerText).join('')")
 
         def keyset(x):
-            return sorted(str(v).strip() for v in (x.get("options") or x.get("chips") or x.get("lines") or []))
-        cands = [i for i, x in enumerate(items) if norm(x.get("q")) == norm(q) and keyset(x) == shown]
+            return sorted(plain(str(v)).strip() for v in (x.get("options") or x.get("chips") or x.get("lines") or []))
+        cands = [i for i, x in enumerate(items) if norm(plain(x.get("q"))) == norm(q) and keyset(x) == shown]
         if len(cands) > 1:
             cands = [i for i in cands if norm(items[i].get("code")) == norm(code)] or cands
         assert cands, "unknown item on screen: %r %r" % (q, shown)
@@ -206,7 +216,7 @@ class App:
             right = it["options"][it["answer"]]
             target = right if correct else next(o for o in it["options"] if o != right)
             for b in self.page.query_selector_all(".opt"):
-                if b.query_selector(".opt-text").inner_text().strip() == target:
+                if b.query_selector(".opt-text").evaluate(SHOWN_JS).strip() == plain(target):
                     b.click()
                     break
         elif t == "order":
@@ -396,7 +406,7 @@ def _n_items(a, lid):
 def test_first_lesson():
     with App("iPhone 17") as a:
         a.start()
-        assert "开始第一课" in a.page.inner_text("#continue")
+        assert "첫 레슨 시작" in a.page.inner_text("#continue")
         a.page.click("#continue")
         seq = a.play("1-1")
         n = _n_items(a, "1-1")
@@ -428,7 +438,7 @@ def test_wrong_then_retry():
         assert seq == [str(i) for i in range(n - 1)] + ["0r", str(n - 1)], seq
         assert r["perfect"] is False and r["xp"] == 10, r
         assert acc != "100%", acc
-        assert "无失误完成" not in a.page.inner_text(".screen.done")
+        assert "실수 없이 끝냄" not in a.page.inner_text(".screen.done")
         s = a.save()
         assert s["grading_results"]["1-1"]["perfect"] is False, s["grading_results"]
         a.dismiss()
@@ -517,7 +527,7 @@ def test_no_text_inputs():
 
 
 def _longest_meaning_lesson():
-    """가장 긴 중국어 보기가 든 레슨 id와 그 보기"""
+    """가장 긴 보기가 든 레슨 id와 그 보기(화면 글자: 후리가나 뺀 표기)"""
     best = (0, None, None)
     for f in sorted(os.listdir(os.path.join(ROOT, "data", "lessons"))):
         text = open(os.path.join(ROOT, "data", "lessons", f), encoding="utf-8").read()
@@ -526,14 +536,14 @@ def _longest_meaning_lesson():
             for it in l["items"]:
                 for o in it.get("options", []):
                     if len(o) > best[0]:
-                        best = (len(o), l["id"], o)
+                        best = (len(o), l["id"], plain(o))
     return best[1], best[2]
 
 
 def test_longest_meaning_fits():
     lid, text = _longest_meaning_lesson()
-    fits = """(t) => [...document.querySelectorAll('.opt')].filter(b => b.innerText.includes(t))
-        .map(b => ({ sw: b.scrollWidth, cw: b.clientWidth, right: b.getBoundingClientRect().right, vw: innerWidth }))"""
+    fits = """(t) => { const SHOWN = %s; return [...document.querySelectorAll('.opt')].filter(b => SHOWN(b).includes(t))
+        .map(b => ({ sw: b.scrollWidth, cw: b.clientWidth, right: b.getBoundingClientRect().right, vw: innerWidth })); }""" % SHOWN_JS
     with App("iPhone 17e") as a:
         a.start()
         a.js("(id) => window.__ria.ctx.show('lesson', { id })", lid)
@@ -562,13 +572,13 @@ def test_longest_meaning_fits():
 
 
 def test_no_code_font():
-    """음절 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음"""
+    """가나 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음 (가나 카드 문제가 있는 단어 레슨 3-1)"""
     q = "() => [...document.querySelectorAll('.mono')].filter(e => e.offsetParent).length"
     with App("iPhone 17") as a:
         a.start()
-        a.page.click("#continue")
+        a.js("(id) => window.__ria.ctx.show('lesson', { id })", "3-1")
         seen = []
-        items = a.lesson("1-1")["items"]
+        items = a.lesson("3-1")["items"]
         for _ in range(40):
             a.page.wait_for_timeout(80)
             if a.page.query_selector(".screen.done"):
@@ -608,178 +618,66 @@ def _lesson_ids(chapters):
     return ids
 
 
-def test_vol2_opens_after_vol1():
-    done = _lesson_ids(range(1, 11))
-    seed = {"saveVer": 2, "xp": 3000, "completed_lessons": done, "current_lesson": "11-1", "current_chapter": 11}
+def test_words_open_after_kana():
+    """히라가나·가타카나 장을 끝내면 1과(앱 3장)가 열리고 풀 수 있다"""
+    done = _lesson_ids(range(1, 3))
+    seed = {"saveVer": 2, "xp": 600, "completed_lessons": done, "current_lesson": "3-1", "current_chapter": 3}
     with App("iPhone 17", save=seed) as a:
         a.start()
         btn = a.page.inner_text("#continue")
         titles = a.js("() => [...document.querySelectorAll('.chapter-title')].map(e => e.innerText)")
         print("    continue %r, chapter titles shown %s" % (btn, titles))
-        assert "11-1" in btn and "继续学习" in btn, btn
-        assert any("第二册 第1课" in t for t in titles), titles
+        assert "3-1" in btn and "이어서 배우기" in btn, btn
+        assert any("1과 · 장소 묻기" in t for t in titles), titles
         a.page.click("#continue")
-        a.play("11-1")
-        assert "11-1" in a.save()["completed_lessons"]
+        a.play("3-1")
+        assert "3-1" in a.save()["completed_lessons"]
         a.dismiss()
         assert not a.errors, a.errors
 
 
-def test_ria_save_coexists():
+def test_other_saves_coexist():
+    """같은 github.io 주소의 리아·해치 앱 저장을 읽지도 바꾸지도 않음"""
     ria = json.dumps({"saveVer": 2, "xp": 777, "completed_lessons": ["1-1", "1-2"]})
-    with App("iPhone 17", extra={RIA_KEY: ria}) as a:
+    haechi = json.dumps({"saveVer": 2, "xp": 555, "completed_lessons": ["1-1"], "items": ["none", "janggu"]})
+    with App("iPhone 17", extra={RIA_KEY: ria, HAECHI_KEY: haechi}) as a:
         a.start()
-        assert a.page.inner_text(".status .stat.xp b") == "0", "Ria XP leaked into haechi app"
+        assert a.page.inner_text(".status .stat.xp b") == "0", "another app's XP leaked into this app"
         a.page.click("#continue")
         a.play("1-1")
         a.dismiss()
         a.page.click("#home")
         a.page.wait_for_selector(".screen.home")
-        after = a.js("(k) => localStorage.getItem(k)", RIA_KEY)
-        assert after == ria, after
+        assert a.js("(k) => localStorage.getItem(k)", RIA_KEY) == ria
+        assert a.js("(k) => localStorage.getItem(k)", HAECHI_KEY) == haechi
         assert a.save()["completed_lessons"] == ["1-1"]
+
+
+def test_furigana_and_speak():
+    """단어 레슨: 새 단어 카드·보기에 후리가나(rt)가 보이고, 🔊 단추는 44px 이상이며 누르면 읽기(가나)를 넘긴다"""
+    fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
+            "speak(u) { (window.__said = window.__said || []).push([u.text, u.lang]); } } });"
+            "window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
+    for dev in ("iPhone 17e", "iPad Pro 11"):
+        with App(dev, init=fake) as a:
+            a.start()
+            a.js("(id) => window.__ria.ctx.show('lesson', { id })", "4-1")
+            a.page.wait_for_selector(".card-view")
+            rts = a.js("() => [...document.querySelectorAll('.word-list rt')].map(r => r.getBoundingClientRect().height)")
+            btns = a.js("() => [...document.querySelectorAll('.word-list .say-btn')].map(b => { const r = b.getBoundingClientRect(); return [r.width, r.height]; })")
+            print("    %s: rt heights %s, speak buttons %s" % (dev, rts[:3], btns[:2]))
+            assert rts and all(h > 4 for h in rts), rts
+            assert btns and all(w >= 44 and h >= 44 for w, h in btns), btns
+            a.page.locator(".word-list .say-btn").nth(1).click()
+            said = a.js("() => window.__said")
+            assert said and said[-1][1] == "ja-JP" and "{" not in said[-1][0], said
+            a.shot("furigana-%s.png" % slug(dev))
+            assert not a.errors, a.errors
 
 
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")
-
-
-def test_zh_tw_opens_hant():
-    with App("iPhone 17", locale="zh-TW") as a:
-        assert a.page.url.endswith("/zh-hant/"), a.page.url
-        assert a.js("document.documentElement.lang") == "zh-Hant"
-        a.start()
-        assert "開始第一課" in a.page.inner_text("#continue"), a.page.inner_text("#continue")
-        a.shot("hant-home.png")
-        assert not a.errors, a.errors
-
-
-def test_lang_buttons():
-    with App("iPhone 17", locale="zh-TW") as a:
-        a.start()
-        _to_settings(a)
-        btns = a.js("""() => [...document.querySelectorAll('[role=radiogroup] [data-lang]')].map(b => {
-            const r = b.getBoundingClientRect();
-            return { lang: b.dataset.lang, text: b.innerText.trim(), on: b.getAttribute('aria-checked'), w: r.width, h: r.height }; })""")
-        print("    lang buttons %s" % btns)
-        assert [b["lang"] for b in btns] == ["hans", "hant"], btns
-        assert [b["text"] for b in btns] == ["簡體", "繁體"], btns  # 번체판은 빌드 변환으로 简体→簡體
-        assert [b["on"] for b in btns] == ["false", "true"], btns
-        assert all(b["w"] >= 44 and b["h"] >= 44 for b in btns), btns
-        a.shot("hant-settings.png")
-
-
-def test_switch_back_to_hans_keeps_progress():
-    seed = {"saveVer": 2, "xp": 120, "completed_lessons": _lesson_ids([1]), "current_lesson": "2-1", "current_chapter": 2}
-    with App("iPhone 17", save=seed, locale="zh-TW") as a:
-        base = env()["url"]
-        assert a.page.url.endswith("/zh-hant/"), a.page.url
-        a.start()
-        assert a.page.inner_text(".status .stat.xp b") == "120"
-        _to_settings(a)
-        a.page.click('[data-lang="hans"]')
-        a.page.wait_for_url(base)
-        a.page.wait_for_selector(".screen.splash #go")
-        a.start()
-        assert a.js("document.documentElement.lang") == "zh-Hans"
-        btn = a.page.inner_text("#continue")
-        assert "继续学习" in btn and "2-1" in btn, btn
-        assert a.page.inner_text(".status .stat.xp b") == "120"
-        a.page.goto(base)
-        a.page.wait_for_selector(".screen.splash #go")
-        assert a.page.url == base and a.js("document.documentElement.lang") == "zh-Hans", a.page.url
-        assert not a.errors, a.errors
-
-
-def test_hant_lesson_playable():
-    with App("iPhone 17", locale="zh-TW") as a:
-        assert a.page.url.endswith("/zh-hant/"), a.page.url
-        a.start()
-        a.page.click("#continue")
-        a.play("1-1")
-        assert a.save()["completed_lessons"] == ["1-1"]
-        a.dismiss()
-        assert not a.errors, a.errors
-
-
-def _fill_lesson(longest=False):
-    """예문 빈칸 문제가 있는 일반 레슨 (lesson_id, 문제 번호). longest면 예문이 가장 긴 것"""
-    best = None
-    for n in range(1, 21):
-        text = open(os.path.join(ROOT, "data", "lessons", "ch%d.js" % n), encoding="utf-8").read()
-        for l in json.loads(text.split("export const LESSONS = ", 1)[1].rstrip().rstrip(";")):
-            if l.get("isExam"):
-                continue
-            for i, it in enumerate(l["items"]):
-                if "sentence" in it:
-                    if not longest:
-                        return l["id"], i
-                    if best is None or len(it["sentence"]["ko"]) > best[2]:
-                        best = (l["id"], i, len(it["sentence"]["ko"]))
-    return best[:2]
-
-
-def _walk_to(a, lid, idx):
-    """레슨을 열고 idx번 문제가 화면에 나올 때까지 카드·앞 문제를 넘긴다. 그 문제(앱이 받은 장 파일 기준)를 돌려줌"""
-    a.js("(id) => window.__ria.ctx.show('lesson', { id })", lid)
-    items = a.lesson(lid)["items"]
-    for _ in range(60):
-        a.page.wait_for_timeout(80)
-        if a.page.query_selector(".card-view"):
-            a.page.click("#act")
-            continue
-        if not a.page.query_selector("article.item"):
-            continue
-        if a.which_item(items) == idx:
-            return items[idx]
-        a.answer_touch(items[a.which_item(items)])
-        a.page.wait_for_selector("#result:not([hidden])")
-        a.cont()
-    raise AssertionError("fill item %s #%d never shown" % (lid, idx))
-
-
-def test_fill_item_shows_sentence():
-    lid, idx = _fill_lesson()
-    with App("iPhone 17") as a:
-        a.start()
-        it = _walk_to(a, lid, idx)
-        ko = a.page.inner_text(".sent .sent-ko")
-        print("    %s #%d: %r / %r" % (lid, idx, ko, a.page.inner_text(".sent .sent-zh")))
-        assert ko == it["sentence"]["ko"], ko
-        assert len(a.page.query_selector_all(".sent .blank")) == 1
-        assert a.page.inner_text(".sent .sent-zh") == it["sentence"]["zh"]
-        a.shot("fill-item.png")
-        a.answer_touch(it)
-        a.page.wait_for_selector("#result:not([hidden])")
-        assert not a.errors, a.errors
-
-
-def test_fill_sentence_fits():
-    lid, idx = _fill_lesson(longest=True)
-    fits = """() => [...document.querySelectorAll('.sent, .sent p, .opt')].map(e => ({ sw: e.scrollWidth, cw: e.clientWidth,
-        right: e.getBoundingClientRect().right, vw: innerWidth }))"""
-    for dev in ("iPhone 17e", "iPad Pro 11 landscape"):
-        with App(dev) as a:
-            a.start()
-            _walk_to(a, lid, idx)
-            got = a.js(fits)
-            a.shot("fill-longest-%s.png" % slug(dev))
-            assert a.page.query_selector(".sent .sent-ko"), "sentence box missing on " + dev
-            assert got and all(f["sw"] <= f["cw"] + 1 and f["right"] <= f["vw"] + 1 for f in got), (dev, got)
-
-
-def test_fill_in_hant():
-    import opencc
-    s2twp = opencc.OpenCC("s2twp")
-    lid, idx = _fill_lesson()
-    with App("iPhone 17", locale="zh-TW") as a:
-        a.start()
-        _walk_to(a, lid, idx)
-        zh = a.page.inner_text(".sent .sent-zh")
-        print("    hant: %r" % zh)
-        assert zh and s2twp.convert(zh) == zh, zh
-        assert not a.errors, a.errors
 
 
 def main():
