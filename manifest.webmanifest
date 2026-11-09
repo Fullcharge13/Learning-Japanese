@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "사나다 일본어",
+  "short_name": "사나다 일본어",
+  "description": "사나다 유키 선생님과 하루 10분, 휴대폰으로 일본어 가나와 단어 익히기",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#FBF6EA",
+  "background_color": "#FBF6EA",
+  "categories": ["education"],
+  "icons": [
+    { "src": "icons/icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
