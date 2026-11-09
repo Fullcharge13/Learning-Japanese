@@ -84,3 +84,17 @@ def test_new_words_in_jmdict():
     pairs = {tuple(p) for p in json.load(open(os.path.join(ROOT, "vendor", "jmdict", "subset.json"), encoding="utf-8"))["pairs"]}
     bad = [r["jp"] for r in load_jlpt() if not r["shared"] and r["pos"] != "num" and not any(c in pairs for c in candidates(r["jp"]))]
     assert not bad, bad
+
+
+# ---- 빈칸 예문 (Task 3) ----
+from make_lessons import load_examples, load_words  # noqa: E402
+CONTEXT_POS = {"verb", "adv", "pron", "expr", "particle"}
+
+
+def test_context_words_have_examples():
+    new = [r for r in load_jlpt() if not r["shared"]]
+    words = load_words(os.path.join(ROOT, "data", "words.csv")) + [
+        {"id": r["id"], "jp": r["jp"], "ko": r["ko"], "pos": r["pos"]} for r in new]
+    ex = load_examples(os.path.join(ROOT, "data", "examples.csv"), words)  # 형식·빈칸·후리가나 검사 포함
+    miss = [r["jp"] for r in new if r["pos"] in CONTEXT_POS and r["id"] not in ex]
+    assert not miss, "%d words without example: %s" % (len(miss), miss[:20])
