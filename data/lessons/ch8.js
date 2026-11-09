@@ -61,7 +61,9 @@ export const LESSONS = [
      "승강장"
     ],
     "answer": 0,
-    "explain": "電車{でんしゃ} = 전철"
+    "explain": "電車{でんしゃ} = 전철",
+    "say": "電車{でんしゃ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -74,7 +76,8 @@ export const LESSONS = [
      "次{つぎ}"
     ],
     "answer": 0,
-    "explain": "地下鉄{ちかてつ} = 지하철"
+    "explain": "地下鉄{ちかてつ} = 지하철",
+    "say": "地下鉄{ちかてつ}"
    },
    {
     "type": "order",
@@ -84,7 +87,8 @@ export const LESSONS = [
      "バ",
      "ス"
     ],
-    "explain": "バス = 버스"
+    "explain": "バス = 버스",
+    "say": "バス"
    },
    {
     "type": "choice",
@@ -97,7 +101,9 @@ export const LESSONS = [
      "버스"
     ],
     "answer": 0,
-    "explain": "タクシー = 택시"
+    "explain": "タクシー = 택시",
+    "say": "タクシー",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -110,7 +116,8 @@ export const LESSONS = [
      "地下鉄{ちかてつ}"
     ],
     "answer": 0,
-    "explain": "切符{きっぷ} = 표"
+    "explain": "切符{きっぷ} = 표",
+    "say": "切符{きっぷ}"
    },
    {
     "type": "order",
@@ -121,7 +128,8 @@ export const LESSONS = [
      "ー",
      "ム"
     ],
-    "explain": "ホーム = 승강장"
+    "explain": "ホーム = 승강장",
+    "say": "ホーム"
    },
    {
     "type": "check",
@@ -134,7 +142,9 @@ export const LESSONS = [
      "전철"
     ],
     "answer": 0,
-    "explain": "ホーム = 승강장"
+    "explain": "ホーム = 승강장",
+    "say": "ホーム",
+    "qSay": true
    }
   ]
  },
@@ -197,7 +207,9 @@ export const LESSONS = [
      "택시"
     ],
     "answer": 0,
-    "explain": "空港{くうこう} = 공항"
+    "explain": "空港{くうこう} = 공항",
+    "say": "空港{くうこう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -210,7 +222,8 @@ export const LESSONS = [
      "電車{でんしゃ}"
     ],
     "answer": 0,
-    "explain": "次{つぎ} = 다음"
+    "explain": "次{つぎ} = 다음",
+    "say": "次{つぎ}"
    },
    {
     "type": "order",
@@ -222,7 +235,8 @@ export const LESSONS = [
      "ま",
      "す"
     ],
-    "explain": "乗{の}ります = 탑니다"
+    "explain": "乗{の}ります = 탑니다",
+    "say": "乗{の}ります"
    },
    {
     "type": "choice",
@@ -235,7 +249,9 @@ export const LESSONS = [
      "승강장"
     ],
     "answer": 0,
-    "explain": "降{お}ります = 내립니다"
+    "explain": "降{お}ります = 내립니다",
+    "say": "降{お}ります",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -248,7 +264,8 @@ export const LESSONS = [
      "ホーム"
     ],
     "answer": 0,
-    "explain": "行{い}きます = 갑니다"
+    "explain": "行{い}きます = 갑니다",
+    "say": "行{い}きます"
    },
    {
     "type": "order",
@@ -258,7 +275,8 @@ export const LESSONS = [
      "ま",
      "で"
     ],
-    "explain": "まで = ~까지"
+    "explain": "まで = ~까지",
+    "say": "まで"
    },
    {
     "type": "check",
@@ -271,7 +289,8 @@ export const LESSONS = [
      "次{つぎ}"
     ],
     "answer": 0,
-    "explain": "降{お}ります = 내립니다"
+    "explain": "降{お}ります = 내립니다",
+    "say": "降{お}ります"
    }
   ]
  },
@@ -295,7 +314,9 @@ export const LESSONS = [
      "전철"
     ],
     "answer": 0,
-    "explain": "乗{の}ります = 탑니다"
+    "explain": "乗{の}ります = 탑니다",
+    "say": "乗{の}ります",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -308,7 +329,8 @@ export const LESSONS = [
      "タクシー"
     ],
     "answer": 0,
-    "explain": "まで = ~까지"
+    "explain": "まで = ~까지",
+    "say": "まで"
    },
    {
     "type": "order",
@@ -320,7 +342,8 @@ export const LESSONS = [
      "ま",
      "す"
     ],
-    "explain": "行{い}きます = 갑니다"
+    "explain": "行{い}きます = 갑니다",
+    "say": "行{い}きます"
    },
    {
     "type": "choice",
@@ -333,7 +356,9 @@ export const LESSONS = [
      "전철"
     ],
     "answer": 0,
-    "explain": "ホーム = 승강장"
+    "explain": "ホーム = 승강장",
+    "say": "ホーム",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -346,7 +371,8 @@ export const LESSONS = [
      "次{つぎ}"
     ],
     "answer": 0,
-    "explain": "地下鉄{ちかてつ} = 지하철"
+    "explain": "地下鉄{ちかてつ} = 지하철",
+    "say": "地下鉄{ちかてつ}"
    },
    {
     "type": "order",
@@ -358,7 +384,8 @@ export const LESSONS = [
      "こ",
      "う"
     ],
-    "explain": "空港{くうこう} = 공항"
+    "explain": "空港{くうこう} = 공항",
+    "say": "空港{くうこう}"
    },
    {
     "type": "choice",
@@ -371,7 +398,9 @@ export const LESSONS = [
      "승강장"
     ],
     "answer": 0,
-    "explain": "降{お}ります = 내립니다"
+    "explain": "降{お}ります = 내립니다",
+    "say": "降{お}ります",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -384,7 +413,8 @@ export const LESSONS = [
      "電車{でんしゃ}"
     ],
     "answer": 0,
-    "explain": "次{つぎ} = 다음"
+    "explain": "次{つぎ} = 다음",
+    "say": "次{つぎ}"
    },
    {
     "type": "check",
@@ -397,7 +427,8 @@ export const LESSONS = [
      "まで"
     ],
     "answer": 0,
-    "explain": "乗{の}ります = 탑니다"
+    "explain": "乗{の}ります = 탑니다",
+    "say": "乗{の}ります"
    }
   ]
  }

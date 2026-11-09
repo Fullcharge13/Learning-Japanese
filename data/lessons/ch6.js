@@ -65,7 +65,9 @@ export const LESSONS = [
      "일"
     ],
     "answer": 0,
-    "explain": "大学{だいがく} = 대학교"
+    "explain": "大学{だいがく} = 대학교",
+    "say": "大学{だいがく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "大学{だいがく}"
     ],
     "answer": 0,
-    "explain": "日本語{にほんご} = 일본어"
+    "explain": "日本語{にほんご} = 일본어",
+    "say": "日本語{にほんご}"
    },
    {
     "type": "order",
@@ -91,7 +94,8 @@ export const LESSONS = [
      "く",
      "ご"
     ],
-    "explain": "韓国語{かんこくご} = 한국어"
+    "explain": "韓国語{かんこくご} = 한국어",
+    "say": "韓国語{かんこくご}"
    },
    {
     "type": "choice",
@@ -104,7 +108,9 @@ export const LESSONS = [
      "대학교"
     ],
     "answer": 0,
-    "explain": "英語{えいご} = 영어"
+    "explain": "英語{えいご} = 영어",
+    "say": "英語{えいご}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -117,7 +123,8 @@ export const LESSONS = [
      "日本語{にほんご}"
     ],
     "answer": 0,
-    "explain": "勉強{べんきょう} = 공부"
+    "explain": "勉強{べんきょう} = 공부",
+    "say": "勉強{べんきょう}"
    },
    {
     "type": "order",
@@ -128,7 +135,8 @@ export const LESSONS = [
      "き",
      "し"
     ],
-    "explain": "歴史{れきし} = 역사"
+    "explain": "歴史{れきし} = 역사",
+    "say": "歴史{れきし}"
    },
    {
     "type": "choice",
@@ -141,7 +149,9 @@ export const LESSONS = [
      "영어"
     ],
     "answer": 0,
-    "explain": "音楽{おんがく} = 음악"
+    "explain": "音楽{おんがく} = 음악",
+    "say": "音楽{おんがく}",
+    "qSay": true
    },
    {
     "type": "check",
@@ -154,7 +164,9 @@ export const LESSONS = [
      "한국어"
     ],
     "answer": 0,
-    "explain": "歴史{れきし} = 역사"
+    "explain": "歴史{れきし} = 역사",
+    "say": "歴史{れきし}",
+    "qSay": true
    }
   ]
  },
@@ -217,7 +229,9 @@ export const LESSONS = [
      "공부"
     ],
     "answer": 0,
-    "explain": "仕事{しごと} = 일"
+    "explain": "仕事{しごと} = 일",
+    "say": "仕事{しごと}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -230,7 +244,8 @@ export const LESSONS = [
      "音楽{おんがく}"
     ],
     "answer": 0,
-    "explain": "会社{かいしゃ} = 회사"
+    "explain": "会社{かいしゃ} = 회사",
+    "say": "会社{かいしゃ}"
    },
    {
     "type": "order",
@@ -242,7 +257,8 @@ export const LESSONS = [
      "に",
      "ち"
     ],
-    "explain": "毎日{まいにち} = 매일"
+    "explain": "毎日{まいにち} = 매일",
+    "say": "毎日{まいにち}"
    },
    {
     "type": "choice",
@@ -255,7 +271,9 @@ export const LESSONS = [
      "일"
     ],
     "answer": 0,
-    "explain": "します = 합니다"
+    "explain": "します = 합니다",
+    "say": "します",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -268,7 +286,8 @@ export const LESSONS = [
      "歴史{れきし}"
     ],
     "answer": 0,
-    "explain": "勉強{べんきょう}します = 공부합니다"
+    "explain": "勉強{べんきょう}します = 공부합니다",
+    "say": "勉強{べんきょう}します"
    },
    {
     "type": "order",
@@ -282,7 +301,8 @@ export const LESSONS = [
      "ま",
      "す"
     ],
-    "explain": "働{はたら}きます = 일합니다"
+    "explain": "働{はたら}きます = 일합니다",
+    "say": "働{はたら}きます"
    },
    {
     "type": "check",
@@ -295,7 +315,9 @@ export const LESSONS = [
      "음악"
     ],
     "answer": 0,
-    "explain": "勉強{べんきょう}します = 공부합니다"
+    "explain": "勉強{べんきょう}します = 공부합니다",
+    "say": "勉強{べんきょう}します",
+    "qSay": true
    }
   ]
  },
@@ -319,7 +341,9 @@ export const LESSONS = [
      "한국어"
     ],
     "answer": 0,
-    "explain": "毎日{まいにち} = 매일"
+    "explain": "毎日{まいにち} = 매일",
+    "say": "毎日{まいにち}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -332,7 +356,8 @@ export const LESSONS = [
      "歴史{れきし}"
     ],
     "answer": 0,
-    "explain": "勉強{べんきょう}します = 공부합니다"
+    "explain": "勉強{べんきょう}します = 공부합니다",
+    "say": "勉強{べんきょう}します"
    },
    {
     "type": "order",
@@ -345,7 +370,8 @@ export const LESSONS = [
      "く",
      "ご"
     ],
-    "explain": "韓国語{かんこくご} = 한국어"
+    "explain": "韓国語{かんこくご} = 한국어",
+    "say": "韓国語{かんこくご}"
    },
    {
     "type": "choice",
@@ -358,7 +384,9 @@ export const LESSONS = [
      "영어"
     ],
     "answer": 0,
-    "explain": "音楽{おんがく} = 음악"
+    "explain": "音楽{おんがく} = 음악",
+    "say": "音楽{おんがく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -371,7 +399,8 @@ export const LESSONS = [
      "仕事{しごと}"
     ],
     "answer": 0,
-    "explain": "歴史{れきし} = 역사"
+    "explain": "歴史{れきし} = 역사",
+    "say": "歴史{れきし}"
    },
    {
     "type": "order",
@@ -383,7 +412,8 @@ export const LESSONS = [
      "きょ",
      "う"
     ],
-    "explain": "勉強{べんきょう} = 공부"
+    "explain": "勉強{べんきょう} = 공부",
+    "say": "勉強{べんきょう}"
    },
    {
     "type": "choice",
@@ -396,7 +426,9 @@ export const LESSONS = [
      "일"
     ],
     "answer": 0,
-    "explain": "大学{だいがく} = 대학교"
+    "explain": "大学{だいがく} = 대학교",
+    "say": "大学{だいがく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -409,7 +441,8 @@ export const LESSONS = [
      "勉強{べんきょう}"
     ],
     "answer": 0,
-    "explain": "働{はたら}きます = 일합니다"
+    "explain": "働{はたら}きます = 일합니다",
+    "say": "働{はたら}きます"
    },
    {
     "type": "check",
@@ -422,7 +455,8 @@ export const LESSONS = [
      "日本語{にほんご}"
     ],
     "answer": 0,
-    "explain": "毎日{まいにち} = 매일"
+    "explain": "毎日{まいにち} = 매일",
+    "say": "毎日{まいにち}"
    }
   ]
  }

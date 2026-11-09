@@ -4,7 +4,8 @@ import { current, nextCard, answer, summary } from "../lessonflow.js";
 import { newSession, mark as markConcept, touchResult, logSubmit, finishInfo } from "../session.js";
 import { packResume, restoreSession, hasProgress } from "../resume.js";
 import { yukiImg } from "../yuki.js";
-import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample } from "./dom.js";
+import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample, sayBtn } from "./dom.js";
+import { ruby } from "../ruby.js";
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
 
@@ -194,7 +195,7 @@ function run(root, ctx, lesson, review, resumed = null) {
   const mark = (index, concept, outcome) => markConcept(S, index, concept, outcome);
 
   // ---- 결과 패널 ----
-  function openResult({ ok, flowCorrect, title, text, answerHTML = "", situation, sfx, onContinue }) {
+  function openResult({ ok, flowCorrect, title, text, answerHTML = "", situation, sfx, onContinue, say = "" }) {
     const line = ctx.say(situation);
     result.className = "result " + (ok ? "ok" : "bad");
     result.innerHTML = `<div class="result-scroll">
@@ -203,10 +204,10 @@ function run(root, ctx, lesson, review, resumed = null) {
         <h2>${esc(title)}</h2>
       </div>
       ${answerHTML}
-      ${text ? `<p class="result-explain">${esc(text)}</p>` : ""}
+      ${text ? `<p class="result-explain">${ruby(text)}${sayBtn(say)}</p>` : ""}
       <div class="ria-row small">
         <div class="ria-wrap${ok ? " jump" : ""}">${yukiImg({ face: line.face, size: 64 })}<span class="sfx" aria-hidden="true">${esc(sfx)}</span></div>
-        <p class="bubble">${esc(line.text)}</p>
+        <p class="bubble">${ruby(line.text)}</p>
       </div>
     </div>
     <button class="btn ${ok ? "primary" : "coral"} wide" id="cont">계속</button>`;
@@ -246,6 +247,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       answerHTML: ok ? "" : answerHTML,
       situation: ok ? (combo ? "combo" : "correct") : "wrong",
       sfx: ok ? (combo ? "すごい!" : "ピンポン!") : "あれ?",
+      say: it.say || "",
     });
   }
 
@@ -263,7 +265,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       <h1 class="lesson-title">${esc(lesson.title)}</h1>
       <div class="ria-row">
         <div class="ria-wrap">${yukiImg({ face: first ? "smile" : "think", size: 84 })}</div>
-        <p class="bubble">${esc(c.say)}</p>
+        <p class="bubble">${ruby(c.say)}</p>
       </div>
       ${cardExample(c)}
     </article>`;
@@ -283,7 +285,9 @@ function run(root, ctx, lesson, review, resumed = null) {
     const tag = cur.retry ? `<span class="tag retry">${icon("review")}다시 한 번</span>`
       : it.type === "check" ? `<span class="tag check">이해 확인</span>`
       : review && it.from ? `<span class="tag">${esc(it.from)} 복습</span>` : "";
-    return `${tag}<h1 class="q">${esc(it.q || (it.type === "order" ? "가나 카드를 순서대로 눌러요." : "알맞은 답을 골라요."))}</h1>
+    const q = it.q || (it.type === "order" ? "가나 카드를 순서대로 눌러요." : "알맞은 답을 골라요.");
+    // 질문 옆 🔊는 생성기가 qSay로 표시한 일→한 문제만(가나 소리·한→일은 들으면 답이 됨)
+    return `${tag}<h1 class="q">${ruby(q)}</h1>${it.qSay && it.say ? `<p class="q-say">${sayBtn(it.say)}</p>` : ""}
       ${it.sentence ? sentenceBox(it.sentence) : ""}
       ${it.code ? codeBlock(it.code) : ""}`;
   }
@@ -295,7 +299,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     let pick = -1;
     body.innerHTML = `<article class="item">${itemHead(cur)}
       <div class="options" role="radiogroup" aria-label="보기">${it.options.map((o, i) =>
-        `<button class="opt" role="radio" aria-checked="false" data-i="${i}"><span class="opt-key" aria-hidden="true">${i + 1}</span><span class="opt-text">${esc(o)}</span></button>`).join("")}</div>
+        `<button class="opt" role="radio" aria-checked="false" data-i="${i}"><span class="opt-key" aria-hidden="true">${i + 1}</span><span class="opt-text">${ruby(o)}</span></button>`).join("")}</div>
     </article>`;
     const act = footButton("확인", { disabled: true });
     body.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
@@ -305,7 +309,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     }));
     act.addEventListener("click", () => {
       if (pick < 0) return;
-      judged(cur, pick === it.answer, `<p class="answer">정답: <span>${esc(it.options[it.answer])}</span></p>`);
+      judged(cur, pick === it.answer, `<p class="answer">정답: <span>${ruby(it.options[it.answer])}</span></p>`);
     });
   }
 
@@ -318,13 +322,13 @@ function run(root, ctx, lesson, review, resumed = null) {
       <ol class="order-answer" id="oa" aria-label="고른 순서"></ol>
       <p class="ex-label">가나 카드 <small>(누른 순서대로 들어가요)</small></p>
       <div class="order-pool" id="op">${order.map((li) =>
-        `<button class="line" lang="ko" data-li="${li}">${esc(it.lines[li])}</button>`).join("")}</div>
+        `<button class="line" lang="ja" data-li="${li}">${esc(it.lines[li])}</button>`).join("")}</div>
     </article>`;
     const act = footButton("확인", { disabled: true });
     const oa = body.querySelector("#oa");
     const paint = () => {
       oa.innerHTML = chosen.length ? chosen.map((li, k) =>
-        `<li><button class="line placed" lang="ko" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
+        `<li><button class="line placed" lang="ja" data-k="${k}" aria-label="${esc(`${k + 1}번째 빼기: ${it.lines[li]}`)}">${esc(it.lines[li])}</button></li>`).join("")
         : `<li class="empty">아래 카드를 눌러요</li>`;
       body.querySelectorAll("#op .line").forEach((b) => {
         const used = chosen.includes(+b.dataset.li);
@@ -343,7 +347,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       if (chosen.length !== it.lines.length) return;
       // 순서 문제는 정답 순서가 하나뿐이라 저장된 순서와 비교한다(C23)
       const ok = chosen.map((li) => it.lines[li]).join("\n") === it.lines.join("\n");
-      judged(cur, ok, `<p class="answer">정답: <span lang="ko">${esc(it.lines.join(""))}</span></p>`);
+      judged(cur, ok, `<p class="answer">정답: <span lang="ja">${esc(it.lines.join(""))}</span></p>`);
     });
   }
 

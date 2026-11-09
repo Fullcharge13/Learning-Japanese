@@ -65,7 +65,9 @@ export const LESSONS = [
      "작아요"
     ],
     "answer": 0,
-    "explain": "あります = 있습니다 (물건)"
+    "explain": "あります = 있습니다 (물건)",
+    "say": "あります",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "シャツ"
     ],
     "answer": 0,
-    "explain": "います = 있습니다 (사람·동물)"
+    "explain": "います = 있습니다 (사람·동물)",
+    "say": "います"
    },
    {
     "type": "order",
@@ -91,7 +94,8 @@ export const LESSONS = [
      "せ",
      "ん"
     ],
-    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」"
+    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」",
+    "say": "ありません"
    },
    {
     "type": "choice",
@@ -104,7 +108,9 @@ export const LESSONS = [
      "셔츠"
     ],
     "answer": 0,
-    "explain": "売{う}り場{ば} = 매장"
+    "explain": "売{う}り場{ば} = 매장",
+    "say": "売{う}り場{ば}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -117,7 +123,8 @@ export const LESSONS = [
      "売{う}り場{ば}"
     ],
     "answer": 0,
-    "explain": "帽子{ぼうし} = 모자"
+    "explain": "帽子{ぼうし} = 모자",
+    "say": "帽子{ぼうし}"
    },
    {
     "type": "order",
@@ -127,7 +134,8 @@ export const LESSONS = [
      "く",
      "つ"
     ],
-    "explain": "靴{くつ} = 신발"
+    "explain": "靴{くつ} = 신발",
+    "say": "靴{くつ}"
    },
    {
     "type": "choice",
@@ -140,7 +148,9 @@ export const LESSONS = [
      "신발"
     ],
     "answer": 0,
-    "explain": "服{ふく} = 옷"
+    "explain": "服{ふく} = 옷",
+    "say": "服{ふく}",
+    "qSay": true
    },
    {
     "type": "check",
@@ -153,7 +163,9 @@ export const LESSONS = [
      "커요"
     ],
     "answer": 0,
-    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」"
+    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」",
+    "say": "ありません",
+    "qSay": true
    }
   ]
  },
@@ -216,7 +228,9 @@ export const LESSONS = [
      "매장"
     ],
     "answer": 0,
-    "explain": "シャツ = 셔츠"
+    "explain": "シャツ = 셔츠",
+    "say": "シャツ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -229,7 +243,8 @@ export const LESSONS = [
      "売{う}り場{ば}"
     ],
     "answer": 0,
-    "explain": "手袋{てぶくろ} = 장갑"
+    "explain": "手袋{てぶくろ} = 장갑",
+    "say": "手袋{てぶくろ}"
    },
    {
     "type": "order",
@@ -240,7 +255,8 @@ export const LESSONS = [
      "か",
      "い"
     ],
-    "explain": "赤{あか}い = 빨개요"
+    "explain": "赤{あか}い = 빨개요",
+    "say": "赤{あか}い"
    },
    {
     "type": "choice",
@@ -253,7 +269,9 @@ export const LESSONS = [
      "빨개요"
     ],
     "answer": 0,
-    "explain": "白{しろ}い = 하얘요"
+    "explain": "白{しろ}い = 하얘요",
+    "say": "白{しろ}い",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -266,7 +284,8 @@ export const LESSONS = [
      "小{ちい}さい"
     ],
     "answer": 0,
-    "explain": "大{おお}きい = 커요"
+    "explain": "大{おお}きい = 커요",
+    "say": "大{おお}きい"
    },
    {
     "type": "order",
@@ -278,7 +297,8 @@ export const LESSONS = [
      "さ",
      "い"
     ],
-    "explain": "小{ちい}さい = 작아요"
+    "explain": "小{ちい}さい = 작아요",
+    "say": "小{ちい}さい"
    },
    {
     "type": "check",
@@ -291,7 +311,8 @@ export const LESSONS = [
      "赤{あか}い"
     ],
     "answer": 0,
-    "explain": "白{しろ}い = 하얘요"
+    "explain": "白{しろ}い = 하얘요",
+    "say": "白{しろ}い"
    }
   ]
  },
@@ -315,7 +336,9 @@ export const LESSONS = [
      "옷"
     ],
     "answer": 0,
-    "explain": "靴{くつ} = 신발"
+    "explain": "靴{くつ} = 신발",
+    "say": "靴{くつ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -328,7 +351,8 @@ export const LESSONS = [
      "靴{くつ}"
     ],
     "answer": 0,
-    "explain": "売{う}り場{ば} = 매장"
+    "explain": "売{う}り場{ば} = 매장",
+    "say": "売{う}り場{ば}"
    },
    {
     "type": "order",
@@ -339,7 +363,8 @@ export const LESSONS = [
      "う",
      "し"
     ],
-    "explain": "帽子{ぼうし} = 모자"
+    "explain": "帽子{ぼうし} = 모자",
+    "say": "帽子{ぼうし}"
    },
    {
     "type": "choice",
@@ -352,7 +377,9 @@ export const LESSONS = [
      "모자"
     ],
     "answer": 0,
-    "explain": "手袋{てぶくろ} = 장갑"
+    "explain": "手袋{てぶくろ} = 장갑",
+    "say": "手袋{てぶくろ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -365,7 +392,8 @@ export const LESSONS = [
      "服{ふく}"
     ],
     "answer": 0,
-    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」"
+    "explain": "ありません = 없습니다 (물건) · 사람·동물은 「いません」",
+    "say": "ありません"
    },
    {
     "type": "order",
@@ -376,7 +404,8 @@ export const LESSONS = [
      "ろ",
      "い"
     ],
-    "explain": "白{しろ}い = 하얘요"
+    "explain": "白{しろ}い = 하얘요",
+    "say": "白{しろ}い"
    },
    {
     "type": "choice",
@@ -389,7 +418,9 @@ export const LESSONS = [
      "빨개요"
     ],
     "answer": 0,
-    "explain": "小{ちい}さい = 작아요"
+    "explain": "小{ちい}さい = 작아요",
+    "say": "小{ちい}さい",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -402,7 +433,8 @@ export const LESSONS = [
      "シャツ"
     ],
     "answer": 0,
-    "explain": "います = 있습니다 (사람·동물)"
+    "explain": "います = 있습니다 (사람·동물)",
+    "say": "います"
    },
    {
     "type": "check",
@@ -415,7 +447,9 @@ export const LESSONS = [
      "셔츠"
     ],
     "answer": 0,
-    "explain": "売{う}り場{ば} = 매장"
+    "explain": "売{う}り場{ば} = 매장",
+    "say": "売{う}り場{ば}",
+    "qSay": true
    }
   ]
  }

@@ -1,4 +1,5 @@
 // 배지 진열장 + 학습 통계
+import { ruby } from "../ruby.js";
 import { BADGES } from "../../data/badges.js";
 import { CONCEPTS } from "../../data/concepts.js";
 import { esc } from "./dom.js";
@@ -63,7 +64,7 @@ export function render(root, ctx) {
           <div><dt>누적 XP</dt><dd>${n(s.xp)}</dd></div>
         </dl>
         <h3>자주 틀린 단어</h3>
-        ${weak.length ? `<ol class="weak">${weak.map(([id]) => `<li>${esc((CONCEPTS.find((c) => c.id === id) || { name: id }).name)}</li>`).join("")}</ol>`
+        ${weak.length ? `<ol class="weak">${weak.map(([id]) => `<li>${ruby((CONCEPTS.find((c) => c.id === id) || { name: id }).name)}</li>`).join("")}</ol>`
           : `<p class="muted">아직 없어요. 틀린 단어가 여기에 모여요.</p>`}
       </section>
     </main>

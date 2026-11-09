@@ -65,7 +65,9 @@ export const LESSONS = [
      "여기"
     ],
     "answer": 0,
-    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요"
+    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요",
+    "say": "すみません",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "こっち"
     ],
     "answer": 0,
-    "explain": "どこ = 어디"
+    "explain": "どこ = 어디",
+    "say": "どこ"
    },
    {
     "type": "order",
@@ -88,7 +91,8 @@ export const LESSONS = [
      "こ",
      "こ"
     ],
-    "explain": "ここ = 여기"
+    "explain": "ここ = 여기",
+    "say": "ここ"
    },
    {
     "type": "choice",
@@ -101,7 +105,9 @@ export const LESSONS = [
      "저기"
     ],
     "answer": 0,
-    "explain": "そこ = 거기"
+    "explain": "そこ = 거기",
+    "say": "そこ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -114,7 +120,8 @@ export const LESSONS = [
      "そこ"
     ],
     "answer": 0,
-    "explain": "あそこ = 저기"
+    "explain": "あそこ = 저기",
+    "say": "あそこ"
    },
    {
     "type": "order",
@@ -125,7 +132,8 @@ export const LESSONS = [
      "っ",
      "ち"
     ],
-    "explain": "こっち = 이쪽 · 「こちら」의 편한 말"
+    "explain": "こっち = 이쪽 · 「こちら」의 편한 말",
+    "say": "こっち"
    },
    {
     "type": "choice",
@@ -138,7 +146,9 @@ export const LESSONS = [
      "은행"
     ],
     "answer": 0,
-    "explain": "近{ちか}く = 근처"
+    "explain": "近{ちか}く = 근처",
+    "say": "近{ちか}く",
+    "qSay": true
    },
    {
     "type": "check",
@@ -151,7 +161,9 @@ export const LESSONS = [
      "거기"
     ],
     "answer": 0,
-    "explain": "こっち = 이쪽 · 「こちら」의 편한 말"
+    "explain": "こっち = 이쪽 · 「こちら」의 편한 말",
+    "say": "こっち",
+    "qSay": true
    }
   ]
  },
@@ -222,7 +234,9 @@ export const LESSONS = [
      "은행"
     ],
     "answer": 0,
-    "explain": "駅{えき} = 역"
+    "explain": "駅{えき} = 역",
+    "say": "駅{えき}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -235,7 +249,8 @@ export const LESSONS = [
      "銀行{ぎんこう}"
     ],
     "answer": 0,
-    "explain": "トイレ = 화장실"
+    "explain": "トイレ = 화장실",
+    "say": "トイレ"
    },
    {
     "type": "order",
@@ -247,7 +262,8 @@ export const LESSONS = [
      "ビ",
      "ニ"
     ],
-    "explain": "コンビニ = 편의점"
+    "explain": "コンビニ = 편의점",
+    "say": "コンビニ"
    },
    {
     "type": "choice",
@@ -260,7 +276,9 @@ export const LESSONS = [
      "편의점"
     ],
     "answer": 0,
-    "explain": "銀行{ぎんこう} = 은행"
+    "explain": "銀行{ぎんこう} = 은행",
+    "say": "銀行{ぎんこう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -273,7 +291,8 @@ export const LESSONS = [
      "トイレ"
     ],
     "answer": 0,
-    "explain": "病院{びょういん} = 병원"
+    "explain": "病院{びょういん} = 병원",
+    "say": "病院{びょういん}"
    },
    {
     "type": "order",
@@ -284,7 +303,8 @@ export const LESSONS = [
      "テ",
      "ル"
     ],
-    "explain": "ホテル = 호텔"
+    "explain": "ホテル = 호텔",
+    "say": "ホテル"
    },
    {
     "type": "choice",
@@ -297,7 +317,9 @@ export const LESSONS = [
      "근처"
     ],
     "answer": 0,
-    "explain": "はい = 네"
+    "explain": "はい = 네",
+    "say": "はい",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -310,7 +332,8 @@ export const LESSONS = [
      "どこ"
     ],
     "answer": 0,
-    "explain": "ありがとうございます = 고맙습니다 · 친구끼리는 「ありがとう」"
+    "explain": "ありがとうございます = 고맙습니다 · 친구끼리는 「ありがとう」",
+    "say": "ありがとうございます"
    },
    {
     "type": "check",
@@ -323,7 +346,8 @@ export const LESSONS = [
      "病院{びょういん}"
     ],
     "answer": 0,
-    "explain": "はい = 네"
+    "explain": "はい = 네",
+    "say": "はい"
    }
   ]
  },
@@ -347,7 +371,9 @@ export const LESSONS = [
      "은행"
     ],
     "answer": 0,
-    "explain": "近{ちか}く = 근처"
+    "explain": "近{ちか}く = 근처",
+    "say": "近{ちか}く",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -360,7 +386,8 @@ export const LESSONS = [
      "どこ"
     ],
     "answer": 0,
-    "explain": "ありがとうございます = 고맙습니다 · 친구끼리는 「ありがとう」"
+    "explain": "ありがとうございます = 고맙습니다 · 친구끼리는 「ありがとう」",
+    "say": "ありがとうございます"
    },
    {
     "type": "order",
@@ -370,7 +397,8 @@ export const LESSONS = [
      "え",
      "き"
     ],
-    "explain": "駅{えき} = 역"
+    "explain": "駅{えき} = 역",
+    "say": "駅{えき}"
    },
    {
     "type": "choice",
@@ -383,7 +411,9 @@ export const LESSONS = [
      "여기"
     ],
     "answer": 0,
-    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요"
+    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요",
+    "say": "すみません",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -396,7 +426,8 @@ export const LESSONS = [
      "銀行{ぎんこう}"
     ],
     "answer": 0,
-    "explain": "トイレ = 화장실"
+    "explain": "トイレ = 화장실",
+    "say": "トイレ"
    },
    {
     "type": "order",
@@ -407,7 +438,8 @@ export const LESSONS = [
      "そ",
      "こ"
     ],
-    "explain": "あそこ = 저기"
+    "explain": "あそこ = 저기",
+    "say": "あそこ"
    },
    {
     "type": "choice",
@@ -420,7 +452,9 @@ export const LESSONS = [
      "거기"
     ],
     "answer": 0,
-    "explain": "どこ = 어디"
+    "explain": "どこ = 어디",
+    "say": "どこ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -433,7 +467,8 @@ export const LESSONS = [
      "あそこ"
     ],
     "answer": 0,
-    "explain": "ここ = 여기"
+    "explain": "ここ = 여기",
+    "say": "ここ"
    },
    {
     "type": "check",
@@ -446,7 +481,8 @@ export const LESSONS = [
      "近{ちか}く"
     ],
     "answer": 0,
-    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요"
+    "explain": "すみません = 저기요·죄송합니다 · 말을 걸 때도, 사과할 때도 써요",
+    "say": "すみません"
    }
   ]
  }

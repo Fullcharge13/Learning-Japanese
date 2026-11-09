@@ -1,5 +1,7 @@
 // 화면 공용 도우미: 글자 이스케이프, 요소 만들기, 리아 말풍선, 아이콘, 창(modal)
 import { yukiImg } from "../yuki.js";
+import { ruby } from "../ruby.js";
+import { canSpeak } from "../speak.js";
 
 export function esc(v) {
   return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -18,7 +20,7 @@ export const $$ = (root, sel) => Array.from(root.querySelectorAll(sel));
 export function riaSays({ item, face, text, size = 96, sfx = "", cls = "" }) {
   return `<div class="ria-row ${cls}">
     <div class="ria-wrap">${yukiImg({ face, item, size })}${sfx ? `<span class="sfx" aria-hidden="true">${esc(sfx)}</span>` : ""}</div>
-    <p class="bubble">${esc(text)}</p>
+    <p class="bubble">${ruby(text)}</p>
   </div>`;
 }
 
@@ -37,6 +39,7 @@ const P = {
   gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1"/>',
   chest: '<rect x="3.5" y="9.5" width="17" height="10" rx="1.5"/><path d="M3.5 9.5c0-3 2-5 8.5-5s8.5 2 8.5 5M3.5 13h17M10.5 12v3h3v-3"/>',
   chestOpen: '<rect x="3.5" y="11" width="17" height="8.5" rx="1.5"/><path d="M3.5 11l2-6.5h13l2 6.5M10.5 13.5v3h3v-3M12 2v1.5M7.5 2.8l.8 1.2M16.5 2.8l-.8 1.2"/>',
+  speaker: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
   bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
   eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
   play: '<path d="M7 4.5v15l12.5-7.5z"/>',
@@ -102,11 +105,17 @@ export function codeBlock(code, cls = "") {
   return `<pre class="code ${cls}"><code>${esc(code)}</code></pre>`;
 }
 
-/** 새 단어 카드: 「한국어 — 中文 (汉字)」 줄 목록 */
-export function cardExample(c) {
+/** 🔊 발음 단추(누르면 app.js가 data-say를 읽음). 기기에 음성이 없으면 빈 글자 */
+export function sayBtn(jp, win = globalThis) {
+  if (!jp || !canSpeak(win)) return "";
+  return `<button type="button" class="say-btn" data-say="${esc(jp)}" aria-label="발음 듣기">${icon("speaker")}</button>`;
+}
+
+/** 새 단어 카드: 「일본어(후리가나) 🔊 — 한국어」 줄 목록 */
+export function cardExample(c, win = globalThis) {
   if (!c || !Array.isArray(c.words) || !c.words.length) return "";
-  return `<ul class="word-list">${c.words.map((w) => `<li><span class="ko" lang="ko">${esc(w.ko)}</span>`
-    + `<span class="zh">${esc(w.zh)}${w.hanja ? ` <small>${esc(w.hanja)}</small>` : ""}</span></li>`).join("")}</ul>`;
+  return `<ul class="word-list">${c.words.map((w) => `<li><span class="jp" lang="ja">${ruby(w.jp)}</span>${sayBtn(w.jp, win)}`
+    + `<span class="ko">${esc(w.ko)}</span></li>`).join("")}</ul>`;
 }
 
 export const MILESTONE_REWARD = {

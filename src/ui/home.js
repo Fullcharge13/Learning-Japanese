@@ -1,4 +1,5 @@
 // 홈(학습 길): 상태 줄, 리아 인사와 이어 하기, 복습, 오늘의 퀘스트, 뱀처럼 이어지는 레슨 길
+import { ruby } from "../ruby.js";
 import { QUESTS } from "../../data/quests.js";
 import { CONCEPTS } from "../../data/concepts.js";
 import { yukiImg } from "../yuki.js";
@@ -91,7 +92,7 @@ function reviewCard(save) {
   return `<section class="panel review">
     <div class="review-text">
       <h2>복습할 단어 ${queue.length}개</h2>
-      <p>${esc(names.join(", "))}${queue.length > 3 ? " 등" : ""}</p>
+      <p>${ruby(names.join(", "))}${queue.length > 3 ? " 등" : ""}</p>
     </div>
     <button class="btn sun" id="review">${icon("review")}복습 5문제</button>
   </section>`;

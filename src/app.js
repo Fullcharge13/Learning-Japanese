@@ -12,6 +12,7 @@ import { createLessonData, chaptersForConcepts } from "./lessondata.js";
 import { advancedState, advancedIds, isAdvancedId } from "./advanced.js";
 import { loadDevChapters } from "./lessondev.js";
 import { createSound } from "./sound.js";
+import { speak } from "./speak.js";
 import { toast } from "./ui/dom.js";
 import { statusBar } from "./ui/nav.js";
 import { installHintKind, isIOS, isInAppBrowser, INSTALL_HINT_KEY } from "./install.js";
@@ -24,7 +25,7 @@ import * as badges from "./ui/badges.js";
 import * as closet from "./ui/closet.js";
 import * as settings from "./ui/settings.js";
 
-export const VERSION = "v0.4.0";
+export const VERSION = "v0.1.0";
 const SCREENS = { splash, home, lesson, done, badges, closet, settings };
 
 // ---- 저장소 (사파리 사생활 보호 모드 등에서 localStorage 접근이 막혀도 앱은 돈다) ----
@@ -253,6 +254,11 @@ async function boot() {
     dayStart();
     const after = app.save.quests.date + "|" + app.save.streak.lastGoalDate;
     if (app.screen === "home" && (before !== after || app.greetOverride)) show("home");
+  });
+  // 🔊 발음 단추(dom.js sayBtn): 어느 화면이든 data-say를 기기 음성으로 읽는다
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest("[data-say]");
+    if (b) speak(b.dataset.say);
   });
   root.removeAttribute("aria-busy");
   // 시험 도구가 상태를 볼 수 있게

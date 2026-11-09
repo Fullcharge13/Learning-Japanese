@@ -1,4 +1,5 @@
 // 보관함: 전통 물건 10개 미리보기, 바이트로 사기, 해치 옆에 두기(한 번에 1개), 기록 보호권
+import { ruby, plain } from "../ruby.js";
 import { ITEMS } from "../../data/items.js";
 import { buy, place } from "../shop.js";
 import { buyFreeze, FREEZE_PRICE, FREEZE_MAX } from "../rules.js";
@@ -7,7 +8,7 @@ import { yukiImg } from "../yuki.js";
 import { esc, icon, toast } from "./dom.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 
-const nameOf = (o) => `${o.ko} · ${o.zh}`;
+const nameOf = (o) => `${o.ko} · ${o.jp}`;
 
 export function render(root, ctx, params = {}) {
   let sel = params.sel || ctx.save.item;
@@ -31,17 +32,17 @@ export function render(root, ctx, params = {}) {
         <section class="stage">
           <div class="ria-wrap big">${yukiImg({ face: placed ? "smile" : "sparkle", item: o.id, size: 170 })}</div>
           <div class="stage-info">
-            <h2><span lang="ko">${esc(o.ko)}</span> · ${esc(o.zh)}</h2>
-            ${line ? `<p class="bubble">${esc(line)}</p>` : ""}
+            <h2>${esc(o.ko)} · <span lang="ja">${ruby(o.jp)}</span></h2>
+            ${line ? `<p class="bubble">${ruby(line)}</p>` : ""}
             ${action}
           </div>
         </section>
         <ul class="outfit-grid" aria-label="물건 목록">${ITEMS.map((x) => {
           const owned = s.items.includes(x.id);
           const tag = s.item === x.id ? "옆에" : owned ? "가짐" : x.price == null ? "30일 보상" : `${x.price}엔`;
-          return `<li><button class="outfit${x.id === sel ? " sel" : ""}${owned ? " owned" : ""}" data-o="${x.id}" aria-pressed="${x.id === sel}" aria-label="${esc(`${nameOf(x)}, ${tag}`)}">
+          return `<li><button class="outfit${x.id === sel ? " sel" : ""}${owned ? " owned" : ""}" data-o="${x.id}" aria-pressed="${x.id === sel}" aria-label="${esc(`${plain(nameOf(x))}, ${tag}`)}">
             ${x.id === "none" ? yukiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/items/${x.id}.png" width="74" height="74" alt="">`}
-            <span class="o-name"><span lang="ko">${esc(x.ko)}</span><br>${esc(x.zh)}</span>
+            <span class="o-name">${esc(x.ko)}<br><span lang="ja">${ruby(x.jp)}</span></span>
             <span class="o-tag${owned ? " own" : ""}">${!owned && x.price == null ? icon("lock") : ""}${esc(tag)}</span>
           </button></li>`;
         }).join("")}</ul>

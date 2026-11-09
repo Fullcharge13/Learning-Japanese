@@ -4,7 +4,7 @@
     python3 tools/icon.py --update-docs-icons  # docs/img/ 복사본도 갱신
     python3 tools/icon.py --out DIR            # DIR/icons/ 에 씀
 
-- 해치 얼굴(src/img/haechi/smile.png, tools/cut_sheets.py가 자른 그림)의 윗부분을 쓴다.
+- 유키 얼굴(src/img/yuki/smile.png, tools/cut_sheets.py가 자른 그림)의 윗부분을 쓴다.
 - 배경: 크림색 종이(--paper) 위에 청록(--teal) 원.
   - icon-180 / icon-192 / icon-512: 모서리가 둥근 사각형(바깥은 투명)
   - apple-touch-icon(180): 꽉 찬 사각형(iOS가 모서리를 직접 깎고, 투명한 곳은 검게 칠하기 때문)
@@ -33,8 +33,8 @@ ICONS = {
 DOC_COPIES = ("icon-180.png", "icon-512.png", "icon-maskable-512.png")
 
 
-def haechi_head_img():
-    data = base64.b64encode((ROOT / "src" / "img" / "haechi" / "smile.png").read_bytes()).decode()
+def yuki_head_img():
+    data = base64.b64encode((ROOT / "src" / "img" / "yuki" / "smile.png").read_bytes()).decode()
     # 그림 윗부분(머리)이 원 안에 오게: 위쪽 기준으로 크게 보여 줌
     return '<img src="data:image/png;base64,%s" style="width:100%%;height:100%%;object-fit:cover;object-position:50%% 8%%;border-radius:50%%">' % data
 
@@ -60,7 +60,7 @@ def render(out_dir, update_docs=False):
     out_dir = pathlib.Path(out_dir)
     icons = out_dir / "icons"
     icons.mkdir(parents=True, exist_ok=True)
-    svg = haechi_head_img()
+    svg = yuki_head_img()
     with sync_playwright() as pw:
         b = pw.chromium.launch()
         try:

@@ -137,3 +137,14 @@ def test_main_writes_files(tmp_path):
     assert sorted(os.listdir(out)) == ["ch1.js", "ch3.js"]
     c = concepts.read_text(encoding="utf-8")
     assert '"name": "駅{えき} · 역"' in c and "c3-015" not in c
+
+
+def test_items_carry_the_japanese_to_speak():
+    words = {w["id"]: w for w in load_words(WORDS)}
+    for n in (1, 3):
+        for it in _items(_ch(n)):
+            assert it["say"] == words[it["concept"]]["jp"]
+    # 질문 옆 🔊는 듣고도 답이 드러나지 않는 일→한(단어 장)만. 가나 장은 소리가 곧 답이라 없음
+    for it in _items(_ch(3)):
+        assert it.get("qSay", False) == it["q"].endswith("무슨 뜻일까요?"), it["q"]
+    assert not any(it.get("qSay") for it in _items(_ch(1)))

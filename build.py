@@ -15,7 +15,7 @@
                           장 파일에 ADVANCED(심화 레슨, v0.7)가 있으면 함께 넣고, 목록에는 그 stub을 장의 advanced 칸에
   manifest.webmanifest    홈 화면 앱 설명
   sw.js                   서비스 작업자(판 번호·내용 지문을 채움)
-  icons/*.png             리아 얼굴 아이콘(tools/icon.py)
+  icons/*.png             유키 얼굴 아이콘(tools/icon.py)
 
 합치는 방법
 - src/app.js → esbuild로 묶고 줄임(IIFE). src/lessondev.js(개발판의 data/lessons import)는 빈 모듈로 바꿔 끼워
@@ -100,7 +100,7 @@ process.stdout.write(JSON.stringify({ index, files, contents, tasks }));
 """
 
 
-OWNED = ("index.html", "manifest.webmanifest", "sw.js", "icons", "img", "lessons", "licenses.txt", "zh-hant")
+OWNED = ("index.html", "manifest.webmanifest", "sw.js", "icons", "img", "lessons", "licenses.txt", "zh-hant")  # zh-hant: 바탕 앱의 옛 결과물도 지움
 
 
 
@@ -116,12 +116,13 @@ def bundled_packages(inputs):
 
 def third_party_notices(inputs):
     """판정 C43: 묶어 넣은 꾸러미의 라이선스 전문."""
-    parts = ["獬豸老师教韩语 — 使用的开源软件与许可 (Third-party notices)", "",
-             "本应用包含以下开源软件。感谢各位作者。", "",
-             "单词数据：Open Yonsei Korean Vocabulary（CC BY-SA 3.0）",
-             "https://github.com/Amulopapa67/open-yonsei-korean-vocabulary", "",
-             "词典资料（词性、汉字词来源等）：韩国国立国语院《韩国语基础词典》（CC BY-SA 2.0 KR）",
-             "https://krdict.korean.go.kr/  ·  https://creativecommons.org/licenses/by-sa/2.0/kr/", ""]
+    parts = ["사나다 일본어 — 쓰인 자료와 오픈 소스 (Third-party notices)", "",
+             "단어 표(data/words.csv)와 레슨: 이 앱을 위해 새로 씀, CC BY-SA 4.0",
+             "https://creativecommons.org/licenses/by-sa/4.0/", "",
+             "읽기 대조: JMdict — Electronic Dictionary Research and Development Group (EDRDG), CC BY-SA 4.0",
+             "https://www.edrdg.org/jmdict/j_jmdict.html  ·  https://www.edrdg.org/edrdg/licence.html", "",
+             "진도 참고: NHK WORLD-JAPAN 「일본말 첫걸음」 1~12과 순서만 참고(교재의 단어·대화·예문은 옮기지 않음). 이 앱은 NHK와 관련이 없습니다.", "",
+             "이 앱에 묶어 넣은 오픈 소스는 아래와 같습니다. 만든 분들께 감사드립니다.", ""]
     for pkg in bundled_packages(inputs):
         d = os.path.join(ROOT, "node_modules", *pkg.split("/"))
         with open(os.path.join(d, "package.json"), encoding="utf-8") as f:
@@ -262,8 +263,6 @@ def build(out, update_docs_icons=False, build_id="", lessons_dir=None):
     with open(os.path.join(SRC, "index.html"), encoding="utf-8") as f:
         html = f.read()
 
-    with open(os.path.join(SRC, "lang.js"), encoding="utf-8") as f:
-        html = replace_block(html, "LANG", "<script>" + inline_script(f.read()) + "</script>")
     html = replace_block(html, "STYLE", "<style>" + b["css"].replace("</", "<\\/") + "</style>")
     html = html.replace("</title>\n", "</title>\n" + HEAD_LINKS.format(
         version=version, build_meta=('\n<meta name="ria-build" content="%s">' % html_attr(build_id)) if build_id else ""), 1)
@@ -334,78 +333,6 @@ def build(out, update_docs_icons=False, build_id="", lessons_dir=None):
         print("  %s %.1f KB" % (name, sz / 1024))
     if raw > MAX_RAW:
         raise SystemExit("build: index.html is over %d KB" % (MAX_RAW // 1024))
-    build_hant(out)
-
-
-HANT_DIR = "zh-hant"
-HANT_TEXT = ("index.html", "manifest.webmanifest", "sw.js", "licenses.txt")
-HANT_OVERRIDES = os.path.join(ROOT, "data", "zh-hant-overrides.csv")
-
-
-def to_hant(text, overrides=()):
-    """간체판 글자 → 대만식 번체판 글자: OpenCC s2twp, 고칠 말 표, 저장본 접두, 언어 표시."""
-    import opencc
-    out = opencc.OpenCC("s2twp").convert(text)
-    for a, b in overrides:
-        out = out.replace(a, b)
-    return out.replace("haechi-game-", "haechi-hant-game-").replace("zh-Hans", "zh-Hant")
-
-
-def _hant_overrides():
-    import csv
-    path = os.environ.get("HAECHI_HANT_OVERRIDES") or HANT_OVERRIDES
-    with open(path, encoding="utf-8", newline="") as f:
-        return [(r["from"], r["to"]) for r in csv.DictReader(f) if r["from"]]
-
-
-def _hant_rename(dst):
-    """번체판 장 파일 이름·저장본 이름의 지문을 번체 내용으로 다시 만든다(고칠 말 표만 바뀌어도 새 판이 퍼지게)."""
-    lessons = os.path.join(dst, "lessons")
-    names = {}
-    for old in sorted(os.listdir(lessons)):
-        with open(os.path.join(lessons, old), "rb") as f:
-            digest = hashlib.sha256(f.read()).hexdigest()
-        new = re.sub(r"-[0-9a-f]{8}\.json$", "-%s.json" % digest[:8], old)
-        os.rename(os.path.join(lessons, old), os.path.join(lessons, new))
-        names["lessons/" + old] = "lessons/" + new
-    texts = {}
-    for rel in ("index.html", "sw.js"):
-        with open(os.path.join(dst, rel), encoding="utf-8") as f:
-            text = f.read()
-        for a, b in names.items():
-            text = text.replace(a, b)
-        texts[rel] = text
-    h = hashlib.sha256(texts["index.html"].encode("utf-8"))
-    for rel in ["manifest.webmanifest", "licenses.txt"] + sorted(names.values()):
-        with open(os.path.join(dst, rel), "rb") as f:
-            h.update(f.read())
-    texts["sw.js"] = re.sub(r'(GAME_PREFIX \+ "[^"]*-)[0-9a-f]{10}(")', lambda m: m.group(1) + h.hexdigest()[:10] + m.group(2), texts["sw.js"], count=1)
-    for rel, text in texts.items():
-        with open(os.path.join(dst, rel), "w", encoding="utf-8") as f:
-            f.write(text)
-
-
-def build_hant(out):
-    """간체판 결과(out/)를 변환해 out/zh-hant/에 번체판을 쓴다. 그림·아이콘은 복사(묶음 JS 경로를 고치지 않게)."""
-    dst = os.path.join(out, HANT_DIR)
-    os.makedirs(os.path.join(dst, "lessons"))
-    ov = _hant_overrides()
-    for rel in HANT_TEXT + tuple("lessons/" + n for n in sorted(os.listdir(os.path.join(out, "lessons")))):
-        with open(os.path.join(out, rel), encoding="utf-8") as f:
-            text = to_hant(f.read(), ov)
-        if rel == "manifest.webmanifest":  # 번체판 홈 화면 앱이 간체판(../)으로 바꿔도 앱 범위 안에 있게
-            m = json.loads(text)
-            m["scope"] = "../"
-            text = json.dumps(m, ensure_ascii=False, indent=2) + "\n"
-        with open(os.path.join(dst, rel), "w", encoding="utf-8") as f:
-            f.write(text)
-    for d in ("img", "icons"):
-        shutil.copytree(os.path.join(out, d), os.path.join(dst, d))
-    _hant_rename(dst)
-    raw = os.path.getsize(os.path.join(dst, "index.html"))
-    print("zh-hant/index.html raw %.1f KB" % (raw / 1024))
-    if raw > MAX_RAW:
-        raise SystemExit("build: zh-hant/index.html is over %d KB" % (MAX_RAW // 1024))
 
 
 def main():

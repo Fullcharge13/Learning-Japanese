@@ -61,7 +61,9 @@ export const LESSONS = [
      "부탁합니다"
     ],
     "answer": 0,
-    "explain": "ゆっくり = 천천히"
+    "explain": "ゆっくり = 천천히",
+    "say": "ゆっくり",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -74,7 +76,8 @@ export const LESSONS = [
      "ください"
     ],
     "answer": 0,
-    "explain": "もう一度{いちど} = 한 번 더"
+    "explain": "もう一度{いちど} = 한 번 더",
+    "say": "もう一度{いちど}"
    },
    {
     "type": "order",
@@ -85,7 +88,8 @@ export const LESSONS = [
      "っ",
      "と"
     ],
-    "explain": "ちょっと = 조금·잠깐"
+    "explain": "ちょっと = 조금·잠깐",
+    "say": "ちょっと"
    },
    {
     "type": "choice",
@@ -98,7 +102,9 @@ export const LESSONS = [
      "한 번 더"
     ],
     "answer": 0,
-    "explain": "話{はな}します = 말합니다"
+    "explain": "話{はな}します = 말합니다",
+    "say": "話{はな}します",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -111,7 +117,8 @@ export const LESSONS = [
      "写真{しゃしん}"
     ],
     "answer": 0,
-    "explain": "書{か}きます = 씁니다"
+    "explain": "書{か}きます = 씁니다",
+    "say": "書{か}きます"
    },
    {
     "type": "order",
@@ -123,7 +130,8 @@ export const LESSONS = [
      "ま",
      "す"
     ],
-    "explain": "待{ま}ちます = 기다립니다"
+    "explain": "待{ま}ちます = 기다립니다",
+    "say": "待{ま}ちます"
    },
    {
     "type": "check",
@@ -136,7 +144,9 @@ export const LESSONS = [
      "부탁합니다"
     ],
     "answer": 0,
-    "explain": "書{か}きます = 씁니다"
+    "explain": "書{か}きます = 씁니다",
+    "say": "書{か}きます",
+    "qSay": true
    }
   ]
  },
@@ -199,7 +209,9 @@ export const LESSONS = [
      "메뉴"
     ],
     "answer": 0,
-    "explain": "ください = 주세요"
+    "explain": "ください = 주세요",
+    "say": "ください",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -212,7 +224,8 @@ export const LESSONS = [
      "メニュー"
     ],
     "answer": 0,
-    "explain": "お願{ねが}いします = 부탁합니다"
+    "explain": "お願{ねが}いします = 부탁합니다",
+    "say": "お願{ねが}いします"
    },
    {
     "type": "order",
@@ -226,7 +239,8 @@ export const LESSONS = [
      "し",
      "た"
     ],
-    "explain": "わかりました = 알겠습니다"
+    "explain": "わかりました = 알겠습니다",
+    "say": "わかりました"
    },
    {
     "type": "choice",
@@ -239,7 +253,9 @@ export const LESSONS = [
      "부탁합니다"
     ],
     "answer": 0,
-    "explain": "メニュー = 메뉴"
+    "explain": "メニュー = 메뉴",
+    "say": "メニュー",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -252,7 +268,8 @@ export const LESSONS = [
      "わかりました"
     ],
     "answer": 0,
-    "explain": "水{みず} = 물"
+    "explain": "水{みず} = 물",
+    "say": "水{みず}"
    },
    {
     "type": "order",
@@ -263,7 +280,8 @@ export const LESSONS = [
      "し",
      "ん"
     ],
-    "explain": "写真{しゃしん} = 사진"
+    "explain": "写真{しゃしん} = 사진",
+    "say": "写真{しゃしん}"
    },
    {
     "type": "check",
@@ -276,7 +294,9 @@ export const LESSONS = [
      "말합니다"
     ],
     "answer": 0,
-    "explain": "わかりました = 알겠습니다"
+    "explain": "わかりました = 알겠습니다",
+    "say": "わかりました",
+    "qSay": true
    }
   ]
  },
@@ -300,7 +320,9 @@ export const LESSONS = [
      "조금·잠깐"
     ],
     "answer": 0,
-    "explain": "待{ま}ちます = 기다립니다"
+    "explain": "待{ま}ちます = 기다립니다",
+    "say": "待{ま}ちます",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -313,7 +335,8 @@ export const LESSONS = [
      "ください"
     ],
     "answer": 0,
-    "explain": "もう一度{いちど} = 한 번 더"
+    "explain": "もう一度{いちど} = 한 번 더",
+    "say": "もう一度{いちど}"
    },
    {
     "type": "order",
@@ -327,7 +350,8 @@ export const LESSONS = [
      "し",
      "た"
     ],
-    "explain": "わかりました = 알겠습니다"
+    "explain": "わかりました = 알겠습니다",
+    "say": "わかりました"
    },
    {
     "type": "choice",
@@ -340,7 +364,9 @@ export const LESSONS = [
      "부탁합니다"
     ],
     "answer": 0,
-    "explain": "ゆっくり = 천천히"
+    "explain": "ゆっくり = 천천히",
+    "say": "ゆっくり",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -353,7 +379,8 @@ export const LESSONS = [
      "ちょっと"
     ],
     "answer": 0,
-    "explain": "写真{しゃしん} = 사진"
+    "explain": "写真{しゃしん} = 사진",
+    "say": "写真{しゃしん}"
    },
    {
     "type": "choice",
@@ -366,7 +393,9 @@ export const LESSONS = [
      "조금·잠깐"
     ],
     "answer": 0,
-    "explain": "お願{ねが}いします = 부탁합니다"
+    "explain": "お願{ねが}いします = 부탁합니다",
+    "say": "お願{ねが}いします",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -379,7 +408,9 @@ export const LESSONS = [
      "사진"
     ],
     "answer": 0,
-    "explain": "ちょっと = 조금·잠깐"
+    "explain": "ちょっと = 조금·잠깐",
+    "say": "ちょっと",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -392,7 +423,8 @@ export const LESSONS = [
      "写真{しゃしん}"
     ],
     "answer": 0,
-    "explain": "書{か}きます = 씁니다"
+    "explain": "書{か}きます = 씁니다",
+    "say": "書{か}きます"
    },
    {
     "type": "check",
@@ -405,7 +437,9 @@ export const LESSONS = [
      "물"
     ],
     "answer": 0,
-    "explain": "もう一度{いちど} = 한 번 더"
+    "explain": "もう一度{いちど} = 한 번 더",
+    "say": "もう一度{いちど}",
+    "qSay": true
    }
   ]
  }

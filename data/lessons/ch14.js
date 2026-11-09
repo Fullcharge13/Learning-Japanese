@@ -65,7 +65,9 @@ export const LESSONS = [
      "예뻐요"
     ],
     "answer": 0,
-    "explain": "かわいい = 귀여워요 · 한국어 '예쁘다'에 가까운 경우도 많아요 (예쁜 물건 등)"
+    "explain": "かわいい = 귀여워요 · 한국어 '예쁘다'에 가까운 경우도 많아요 (예쁜 물건 등)",
+    "say": "かわいい",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "すごい"
     ],
     "answer": 0,
-    "explain": "きれい = 예뻐요 · 「깨끗해요」라는 뜻도 있어요"
+    "explain": "きれい = 예뻐요 · 「깨끗해요」라는 뜻도 있어요",
+    "say": "きれい"
    },
    {
     "type": "order",
@@ -90,7 +93,8 @@ export const LESSONS = [
      "し",
      "い"
     ],
-    "explain": "おいしい = 맛있어요"
+    "explain": "おいしい = 맛있어요",
+    "say": "おいしい"
    },
    {
     "type": "choice",
@@ -103,7 +107,9 @@ export const LESSONS = [
      "더워요"
     ],
     "answer": 0,
-    "explain": "すごい = 대단해요"
+    "explain": "すごい = 대단해요",
+    "say": "すごい",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -116,7 +122,8 @@ export const LESSONS = [
      "寒{さむ}い"
     ],
     "answer": 0,
-    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요"
+    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요",
+    "say": "楽{たの}しい"
    },
    {
     "type": "order",
@@ -129,7 +136,8 @@ export const LESSONS = [
      "ろ",
      "い"
     ],
-    "explain": "おもしろい = 재미있어요"
+    "explain": "おもしろい = 재미있어요",
+    "say": "おもしろい"
    },
    {
     "type": "choice",
@@ -142,7 +150,9 @@ export const LESSONS = [
      "눈 (내리는 눈)"
     ],
     "answer": 0,
-    "explain": "とても = 아주"
+    "explain": "とても = 아주",
+    "say": "とても",
+    "qSay": true
    },
    {
     "type": "check",
@@ -155,7 +165,8 @@ export const LESSONS = [
      "おもしろい"
     ],
     "answer": 0,
-    "explain": "とても = 아주"
+    "explain": "とても = 아주",
+    "say": "とても"
    }
   ]
  },
@@ -218,7 +229,9 @@ export const LESSONS = [
      "귀여워요"
     ],
     "answer": 0,
-    "explain": "好{す}き = 좋아해요"
+    "explain": "好{す}き = 좋아해요",
+    "say": "好{す}き",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -231,7 +244,8 @@ export const LESSONS = [
      "暑{あつ}い"
     ],
     "answer": 0,
-    "explain": "嫌{きら}い = 싫어해요"
+    "explain": "嫌{きら}い = 싫어해요",
+    "say": "嫌{きら}い"
    },
    {
     "type": "order",
@@ -242,7 +256,8 @@ export const LESSONS = [
      "む",
      "い"
     ],
-    "explain": "寒{さむ}い = 추워요"
+    "explain": "寒{さむ}い = 추워요",
+    "say": "寒{さむ}い"
    },
    {
     "type": "choice",
@@ -255,7 +270,9 @@ export const LESSONS = [
      "즐거워요"
     ],
     "answer": 0,
-    "explain": "暑{あつ}い = 더워요"
+    "explain": "暑{あつ}い = 더워요",
+    "say": "暑{あつ}い",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -268,7 +285,8 @@ export const LESSONS = [
      "好{す}き"
     ],
     "answer": 0,
-    "explain": "雪{ゆき} = 눈 (내리는 눈)"
+    "explain": "雪{ゆき} = 눈 (내리는 눈)",
+    "say": "雪{ゆき}"
    },
    {
     "type": "order",
@@ -278,7 +296,8 @@ export const LESSONS = [
      "は",
      "な"
     ],
-    "explain": "花{はな} = 꽃"
+    "explain": "花{はな} = 꽃",
+    "say": "花{はな}"
    },
    {
     "type": "check",
@@ -291,7 +310,9 @@ export const LESSONS = [
      "예뻐요"
     ],
     "answer": 0,
-    "explain": "寒{さむ}い = 추워요"
+    "explain": "寒{さむ}い = 추워요",
+    "say": "寒{さむ}い",
+    "qSay": true
    }
   ]
  },
@@ -315,7 +336,9 @@ export const LESSONS = [
      "눈 (내리는 눈)"
     ],
     "answer": 0,
-    "explain": "とても = 아주"
+    "explain": "とても = 아주",
+    "say": "とても",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -328,7 +351,8 @@ export const LESSONS = [
      "暑{あつ}い"
     ],
     "answer": 0,
-    "explain": "おもしろい = 재미있어요"
+    "explain": "おもしろい = 재미있어요",
+    "say": "おもしろい"
    },
    {
     "type": "order",
@@ -340,7 +364,8 @@ export const LESSONS = [
      "し",
      "い"
     ],
-    "explain": "おいしい = 맛있어요"
+    "explain": "おいしい = 맛있어요",
+    "say": "おいしい"
    },
    {
     "type": "choice",
@@ -353,7 +378,9 @@ export const LESSONS = [
      "더워요"
     ],
     "answer": 0,
-    "explain": "花{はな} = 꽃"
+    "explain": "花{はな} = 꽃",
+    "say": "花{はな}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -366,7 +393,8 @@ export const LESSONS = [
      "寒{さむ}い"
     ],
     "answer": 0,
-    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요"
+    "explain": "楽{たの}しい = 즐거워요 · 「재미있어요」는 おもしろい. 楽しい는 '즐겁다'에 가까워요",
+    "say": "楽{たの}しい"
    },
    {
     "type": "order",
@@ -377,7 +405,8 @@ export const LESSONS = [
      "れ",
      "い"
     ],
-    "explain": "きれい = 예뻐요 · 「깨끗해요」라는 뜻도 있어요"
+    "explain": "きれい = 예뻐요 · 「깨끗해요」라는 뜻도 있어요",
+    "say": "きれい"
    },
    {
     "type": "choice",
@@ -390,7 +419,9 @@ export const LESSONS = [
      "더워요"
     ],
     "answer": 0,
-    "explain": "雪{ゆき} = 눈 (내리는 눈)"
+    "explain": "雪{ゆき} = 눈 (내리는 눈)",
+    "say": "雪{ゆき}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -403,7 +434,8 @@ export const LESSONS = [
      "寒{さむ}い"
     ],
     "answer": 0,
-    "explain": "好{す}き = 좋아해요"
+    "explain": "好{す}き = 좋아해요",
+    "say": "好{す}き"
    },
    {
     "type": "check",
@@ -416,7 +448,8 @@ export const LESSONS = [
      "好{す}き"
     ],
     "answer": 0,
-    "explain": "雪{ゆき} = 눈 (내리는 눈)"
+    "explain": "雪{ゆき} = 눈 (내리는 눈)",
+    "say": "雪{ゆき}"
    }
   ]
  }

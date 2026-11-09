@@ -65,7 +65,9 @@ export const LESSONS = [
      "안녕히 가세요"
     ],
     "answer": 0,
-    "explain": "はじめまして = 처음 뵙겠습니다"
+    "explain": "はじめまして = 처음 뵙겠습니다",
+    "say": "はじめまして",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "留学生{りゅうがくせい}"
     ],
     "answer": 0,
-    "explain": "私{わたし} = 저"
+    "explain": "私{わたし} = 저",
+    "say": "私{わたし}"
    },
    {
     "type": "order",
@@ -89,7 +92,8 @@ export const LESSONS = [
      "ま",
      "え"
     ],
-    "explain": "名前{なまえ} = 이름"
+    "explain": "名前{なまえ} = 이름",
+    "say": "名前{なまえ}"
    },
    {
     "type": "choice",
@@ -102,7 +106,9 @@ export const LESSONS = [
      "유학생"
     ],
     "answer": 0,
-    "explain": "学生{がくせい} = 학생"
+    "explain": "学生{がくせい} = 학생",
+    "say": "学生{がくせい}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -115,7 +121,8 @@ export const LESSONS = [
      "会社員{かいしゃいん}"
     ],
     "answer": 0,
-    "explain": "留学生{りゅうがくせい} = 유학생"
+    "explain": "留学生{りゅうがくせい} = 유학생",
+    "say": "留学生{りゅうがくせい}"
    },
    {
     "type": "order",
@@ -128,7 +135,8 @@ export const LESSONS = [
      "い",
      "ん"
     ],
-    "explain": "会社員{かいしゃいん} = 회사원"
+    "explain": "会社員{かいしゃいん} = 회사원",
+    "say": "会社員{かいしゃいん}"
    },
    {
     "type": "choice",
@@ -141,7 +149,9 @@ export const LESSONS = [
      "학생"
     ],
     "answer": 0,
-    "explain": "先生{せんせい} = 선생님"
+    "explain": "先生{せんせい} = 선생님",
+    "say": "先生{せんせい}",
+    "qSay": true
    },
    {
     "type": "check",
@@ -154,7 +164,9 @@ export const LESSONS = [
      "학생"
     ],
     "answer": 0,
-    "explain": "会社員{かいしゃいん} = 회사원"
+    "explain": "会社員{かいしゃいん} = 회사원",
+    "say": "会社員{かいしゃいん}",
+    "qSay": true
    }
   ]
  },
@@ -217,7 +229,9 @@ export const LESSONS = [
      "안녕하세요 (낮)"
     ],
     "answer": 0,
-    "explain": "よろしくお願{ねが}いします = 잘 부탁드립니다"
+    "explain": "よろしくお願{ねが}いします = 잘 부탁드립니다",
+    "say": "よろしくお願{ねが}いします",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -230,7 +244,8 @@ export const LESSONS = [
      "はじめまして"
     ],
     "answer": 0,
-    "explain": "おはようございます = 안녕하세요 (아침)"
+    "explain": "おはようございます = 안녕하세요 (아침)",
+    "say": "おはようございます"
    },
    {
     "type": "order",
@@ -243,7 +258,8 @@ export const LESSONS = [
      "ち",
      "は"
     ],
-    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요"
+    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요",
+    "say": "こんにちは"
    },
    {
     "type": "choice",
@@ -256,7 +272,9 @@ export const LESSONS = [
      "안녕히 가세요"
     ],
     "answer": 0,
-    "explain": "こんばんは = 안녕하세요 (밤) · 「は」는 「와」로 읽어요"
+    "explain": "こんばんは = 안녕하세요 (밤) · 「は」는 「와」로 읽어요",
+    "say": "こんばんは",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -269,7 +287,8 @@ export const LESSONS = [
      "よろしくお願{ねが}いします"
     ],
     "answer": 0,
-    "explain": "さようなら = 안녕히 가세요 · 헤어질 때 인사. 매일 보는 사이에는 잘 안 써요"
+    "explain": "さようなら = 안녕히 가세요 · 헤어질 때 인사. 매일 보는 사이에는 잘 안 써요",
+    "say": "さようなら"
    },
    {
     "type": "order",
@@ -279,7 +298,8 @@ export const LESSONS = [
      "さ",
      "ん"
     ],
-    "explain": "さん = ~씨 · 이름 뒤에 붙여요. 자기 이름에는 안 붙여요"
+    "explain": "さん = ~씨 · 이름 뒤에 붙여요. 자기 이름에는 안 붙여요",
+    "say": "さん"
    },
    {
     "type": "check",
@@ -292,7 +312,9 @@ export const LESSONS = [
      "처음 뵙겠습니다"
     ],
     "answer": 0,
-    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요"
+    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요",
+    "say": "こんにちは",
+    "qSay": true
    }
   ]
  },
@@ -316,7 +338,9 @@ export const LESSONS = [
      "학생"
     ],
     "answer": 0,
-    "explain": "先生{せんせい} = 선생님"
+    "explain": "先生{せんせい} = 선생님",
+    "say": "先生{せんせい}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -329,7 +353,8 @@ export const LESSONS = [
      "はじめまして"
     ],
     "answer": 0,
-    "explain": "よろしくお願{ねが}いします = 잘 부탁드립니다"
+    "explain": "よろしくお願{ねが}いします = 잘 부탁드립니다",
+    "say": "よろしくお願{ねが}いします"
    },
    {
     "type": "order",
@@ -342,7 +367,8 @@ export const LESSONS = [
      "ち",
      "は"
     ],
-    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요"
+    "explain": "こんにちは = 안녕하세요 (낮) · 「は」는 「와」로 읽어요",
+    "say": "こんにちは"
    },
    {
     "type": "choice",
@@ -355,7 +381,9 @@ export const LESSONS = [
      "유학생"
     ],
     "answer": 0,
-    "explain": "名前{なまえ} = 이름"
+    "explain": "名前{なまえ} = 이름",
+    "say": "名前{なまえ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -368,7 +396,8 @@ export const LESSONS = [
      "留学生{りゅうがくせい}"
     ],
     "answer": 0,
-    "explain": "私{わたし} = 저"
+    "explain": "私{わたし} = 저",
+    "say": "私{わたし}"
    },
    {
     "type": "choice",
@@ -381,7 +410,9 @@ export const LESSONS = [
      "안녕히 가세요"
     ],
     "answer": 0,
-    "explain": "おはようございます = 안녕하세요 (아침)"
+    "explain": "おはようございます = 안녕하세요 (아침)",
+    "say": "おはようございます",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -394,7 +425,9 @@ export const LESSONS = [
      "유학생"
     ],
     "answer": 0,
-    "explain": "学生{がくせい} = 학생"
+    "explain": "学生{がくせい} = 학생",
+    "say": "学生{がくせい}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -407,7 +440,8 @@ export const LESSONS = [
      "名前{なまえ}"
     ],
     "answer": 0,
-    "explain": "さん = ~씨 · 이름 뒤에 붙여요. 자기 이름에는 안 붙여요"
+    "explain": "さん = ~씨 · 이름 뒤에 붙여요. 자기 이름에는 안 붙여요",
+    "say": "さん"
    },
    {
     "type": "check",
@@ -420,7 +454,9 @@ export const LESSONS = [
      "선생님"
     ],
     "answer": 0,
-    "explain": "私{わたし} = 저"
+    "explain": "私{わたし} = 저",
+    "say": "私{わたし}",
+    "qSay": true
    }
   ]
  }

@@ -10,7 +10,7 @@
 //   저장본 접두는 GAME_PREFIX만 지운다(같은 주소의 리아와 파이썬 저장본, 다른 글자판 저장본을 지우지 않게).
 
 const VERSION = "__RIA_VERSION__";
-const GAME_PREFIX = "sanada-game-"; // 번체판(zh-hant/)은 빌드가 haechi-hant-game-으로 바꿈
+const GAME_PREFIX = "sanada-game-"; // 같은 주소의 해치·리아 앱 저장본과 섞이지 않게
 const GAME_CACHE = GAME_PREFIX + "__RIA_VERSION__-__RIA_HASH__";
 const GAME_FILES = __RIA_GAME_FILES__;
 const CHAPTER_FILES = __RIA_CHAPTER_FILES__;
@@ -88,10 +88,6 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  // 간체판 작업자(범위 /…/)는 번체판(/…/zh-hant/) 요청을 건드리지 않는다. 번체판 작업자가 설치되기 전,
-  // 간체 저장본을 /zh-hant/ 주소에 주면 글자판이 섞이고 넘어가기 고리가 생긴다.
-  const scope = new URL(self.registration.scope).pathname;
-  if (!scope.endsWith("/zh-hant/") && url.pathname.startsWith(scope + "zh-hant/")) return;
   if (CHAPTER_RE.test(url.pathname)) {
     event.respondWith(chapterFirst(req));
     return;

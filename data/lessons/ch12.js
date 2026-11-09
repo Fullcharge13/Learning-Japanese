@@ -61,7 +61,9 @@ export const LESSONS = [
      "가게"
     ],
     "answer": 0,
-    "explain": "いくら = 얼마"
+    "explain": "いくら = 얼마",
+    "say": "いくら",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -74,7 +76,8 @@ export const LESSONS = [
      "お金{かね}"
     ],
     "answer": 0,
-    "explain": "円{えん} = 엔 · 일본 돈 단위"
+    "explain": "円{えん} = 엔 · 일본 돈 단위",
+    "say": "円{えん}"
    },
    {
     "type": "order",
@@ -84,7 +87,8 @@ export const LESSONS = [
      "ひゃ",
      "く"
     ],
-    "explain": "百{ひゃく} = 백"
+    "explain": "百{ひゃく} = 백",
+    "say": "百{ひゃく}"
    },
    {
     "type": "choice",
@@ -97,7 +101,9 @@ export const LESSONS = [
      "만"
     ],
     "answer": 0,
-    "explain": "千{せん} = 천"
+    "explain": "千{せん} = 천",
+    "say": "千{せん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -110,7 +116,8 @@ export const LESSONS = [
      "千{せん}"
     ],
     "answer": 0,
-    "explain": "万{まん} = 만"
+    "explain": "万{まん} = 만",
+    "say": "万{まん}"
    },
    {
     "type": "order",
@@ -121,7 +128,8 @@ export const LESSONS = [
      "と",
      "つ"
     ],
-    "explain": "一{ひと}つ = 하나 (한 개)"
+    "explain": "一{ひと}つ = 하나 (한 개)",
+    "say": "一{ひと}つ"
    },
    {
     "type": "check",
@@ -134,7 +142,8 @@ export const LESSONS = [
      "万{まん}"
     ],
     "answer": 0,
-    "explain": "千{せん} = 천"
+    "explain": "千{せん} = 천",
+    "say": "千{せん}"
    }
   ]
  },
@@ -197,7 +206,9 @@ export const LESSONS = [
      "카드"
     ],
     "answer": 0,
-    "explain": "高{たか}い = 비싸요 · 「높아요」라는 뜻도 있어요"
+    "explain": "高{たか}い = 비싸요 · 「높아요」라는 뜻도 있어요",
+    "say": "高{たか}い",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -210,7 +221,8 @@ export const LESSONS = [
      "いくら"
     ],
     "answer": 0,
-    "explain": "安{やす}い = 싸요"
+    "explain": "安{やす}い = 싸요",
+    "say": "安{やす}い"
    },
    {
     "type": "order",
@@ -222,7 +234,8 @@ export const LESSONS = [
      "ま",
      "す"
     ],
-    "explain": "買{か}います = 삽니다"
+    "explain": "買{か}います = 삽니다",
+    "say": "買{か}います"
    },
    {
     "type": "choice",
@@ -235,7 +248,9 @@ export const LESSONS = [
      "카드"
     ],
     "answer": 0,
-    "explain": "店{みせ} = 가게"
+    "explain": "店{みせ} = 가게",
+    "say": "店{みせ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -248,7 +263,8 @@ export const LESSONS = [
      "店{みせ}"
     ],
     "answer": 0,
-    "explain": "お金{かね} = 돈"
+    "explain": "お金{かね} = 돈",
+    "say": "お金{かね}"
    },
    {
     "type": "order",
@@ -259,7 +275,8 @@ export const LESSONS = [
      "ー",
      "ド"
     ],
-    "explain": "カード = 카드"
+    "explain": "カード = 카드",
+    "say": "カード"
    },
    {
     "type": "check",
@@ -272,7 +289,8 @@ export const LESSONS = [
      "円{えん}"
     ],
     "answer": 0,
-    "explain": "店{みせ} = 가게"
+    "explain": "店{みせ} = 가게",
+    "say": "店{みせ}"
    }
   ]
  },
@@ -296,7 +314,9 @@ export const LESSONS = [
      "하나 (한 개)"
     ],
     "answer": 0,
-    "explain": "万{まん} = 만"
+    "explain": "万{まん} = 만",
+    "say": "万{まん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -309,7 +329,8 @@ export const LESSONS = [
      "店{みせ}"
     ],
     "answer": 0,
-    "explain": "お金{かね} = 돈"
+    "explain": "お金{かね} = 돈",
+    "say": "お金{かね}"
    },
    {
     "type": "order",
@@ -320,7 +341,8 @@ export const LESSONS = [
      "ー",
      "ド"
     ],
-    "explain": "カード = 카드"
+    "explain": "カード = 카드",
+    "say": "カード"
    },
    {
     "type": "choice",
@@ -333,7 +355,9 @@ export const LESSONS = [
      "만"
     ],
     "answer": 0,
-    "explain": "百{ひゃく} = 백"
+    "explain": "百{ひゃく} = 백",
+    "say": "百{ひゃく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -346,7 +370,8 @@ export const LESSONS = [
      "いくら"
     ],
     "answer": 0,
-    "explain": "安{やす}い = 싸요"
+    "explain": "安{やす}い = 싸요",
+    "say": "安{やす}い"
    },
    {
     "type": "order",
@@ -357,7 +382,8 @@ export const LESSONS = [
      "く",
      "ら"
     ],
-    "explain": "いくら = 얼마"
+    "explain": "いくら = 얼마",
+    "say": "いくら"
    },
    {
     "type": "choice",
@@ -370,7 +396,9 @@ export const LESSONS = [
      "만"
     ],
     "answer": 0,
-    "explain": "千{せん} = 천"
+    "explain": "千{せん} = 천",
+    "say": "千{せん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -383,7 +411,8 @@ export const LESSONS = [
      "お金{かね}"
     ],
     "answer": 0,
-    "explain": "買{か}います = 삽니다"
+    "explain": "買{か}います = 삽니다",
+    "say": "買{か}います"
    },
    {
     "type": "check",
@@ -396,7 +425,8 @@ export const LESSONS = [
      "万{まん}"
     ],
     "answer": 0,
-    "explain": "千{せん} = 천"
+    "explain": "千{せん} = 천",
+    "say": "千{せん}"
    }
   ]
  }

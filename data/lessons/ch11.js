@@ -61,7 +61,9 @@ export const LESSONS = [
      "저것"
     ],
     "answer": 0,
-    "explain": "これ = 이것"
+    "explain": "これ = 이것",
+    "say": "これ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -74,7 +76,8 @@ export const LESSONS = [
      "何{なん}"
     ],
     "answer": 0,
-    "explain": "それ = 그것"
+    "explain": "それ = 그것",
+    "say": "それ"
    },
    {
     "type": "order",
@@ -84,7 +87,8 @@ export const LESSONS = [
      "あ",
      "れ"
     ],
-    "explain": "あれ = 저것"
+    "explain": "あれ = 저것",
+    "say": "あれ"
    },
    {
     "type": "choice",
@@ -97,7 +101,9 @@ export const LESSONS = [
      "이것"
     ],
     "answer": 0,
-    "explain": "何{なん} = 무엇 · 「何ですか」처럼 「なん」으로 읽고, 「何を」처럼 뒤에 오는 말에 따라 「なに」로도 읽어요"
+    "explain": "何{なん} = 무엇 · 「何ですか」처럼 「なん」으로 읽고, 「何を」처럼 뒤에 오는 말에 따라 「なに」로도 읽어요",
+    "say": "何{なん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -110,7 +116,8 @@ export const LESSONS = [
      "傘{かさ}"
     ],
     "answer": 0,
-    "explain": "かばん = 가방"
+    "explain": "かばん = 가방",
+    "say": "かばん"
    },
    {
     "type": "order",
@@ -120,7 +127,8 @@ export const LESSONS = [
      "か",
      "さ"
     ],
-    "explain": "傘{かさ} = 우산"
+    "explain": "傘{かさ} = 우산",
+    "say": "傘{かさ}"
    },
    {
     "type": "check",
@@ -133,7 +141,9 @@ export const LESSONS = [
      "무엇"
     ],
     "answer": 0,
-    "explain": "あれ = 저것"
+    "explain": "あれ = 저것",
+    "say": "あれ",
+    "qSay": true
    }
   ]
  },
@@ -196,7 +206,9 @@ export const LESSONS = [
      "지갑"
     ],
     "answer": 0,
-    "explain": "時計{とけい} = 시계"
+    "explain": "時計{とけい} = 시계",
+    "say": "時計{とけい}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -209,7 +221,8 @@ export const LESSONS = [
      "時計{とけい}"
     ],
     "answer": 0,
-    "explain": "財布{さいふ} = 지갑"
+    "explain": "財布{さいふ} = 지갑",
+    "say": "財布{さいふ}"
    },
    {
     "type": "order",
@@ -221,7 +234,8 @@ export const LESSONS = [
      "た",
      "い"
     ],
-    "explain": "携帯{けいたい} = 휴대폰"
+    "explain": "携帯{けいたい} = 휴대폰",
+    "say": "携帯{けいたい}"
    },
    {
     "type": "choice",
@@ -234,7 +248,9 @@ export const LESSONS = [
      "카메라"
     ],
     "answer": 0,
-    "explain": "ペン = 펜"
+    "explain": "ペン = 펜",
+    "say": "ペン",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -247,7 +263,8 @@ export const LESSONS = [
      "時計{とけい}"
     ],
     "answer": 0,
-    "explain": "カメラ = 카메라"
+    "explain": "カメラ = 카메라",
+    "say": "カメラ"
    },
    {
     "type": "order",
@@ -259,7 +276,8 @@ export const LESSONS = [
      "や",
      "げ"
     ],
-    "explain": "お土産{みやげ} = 기념품"
+    "explain": "お土産{みやげ} = 기념품",
+    "say": "お土産{みやげ}"
    },
    {
     "type": "check",
@@ -272,7 +290,8 @@ export const LESSONS = [
      "ペン"
     ],
     "answer": 0,
-    "explain": "時計{とけい} = 시계"
+    "explain": "時計{とけい} = 시계",
+    "say": "時計{とけい}"
    }
   ]
  },
@@ -296,7 +315,9 @@ export const LESSONS = [
      "지갑"
     ],
     "answer": 0,
-    "explain": "時計{とけい} = 시계"
+    "explain": "時計{とけい} = 시계",
+    "say": "時計{とけい}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -309,7 +330,8 @@ export const LESSONS = [
      "傘{かさ}"
     ],
     "answer": 0,
-    "explain": "お土産{みやげ} = 기념품"
+    "explain": "お土産{みやげ} = 기념품",
+    "say": "お土産{みやげ}"
    },
    {
     "type": "order",
@@ -319,7 +341,8 @@ export const LESSONS = [
      "そ",
      "れ"
     ],
-    "explain": "それ = 그것"
+    "explain": "それ = 그것",
+    "say": "それ"
    },
    {
     "type": "choice",
@@ -332,7 +355,9 @@ export const LESSONS = [
      "휴대폰"
     ],
     "answer": 0,
-    "explain": "財布{さいふ} = 지갑"
+    "explain": "財布{さいふ} = 지갑",
+    "say": "財布{さいふ}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -345,7 +370,8 @@ export const LESSONS = [
      "時計{とけい}"
     ],
     "answer": 0,
-    "explain": "傘{かさ} = 우산"
+    "explain": "傘{かさ} = 우산",
+    "say": "傘{かさ}"
    },
    {
     "type": "order",
@@ -355,7 +381,8 @@ export const LESSONS = [
      "あ",
      "れ"
     ],
-    "explain": "あれ = 저것"
+    "explain": "あれ = 저것",
+    "say": "あれ"
    },
    {
     "type": "choice",
@@ -368,7 +395,9 @@ export const LESSONS = [
      "이것"
     ],
     "answer": 0,
-    "explain": "何{なん} = 무엇 · 「何ですか」처럼 「なん」으로 읽고, 「何を」처럼 뒤에 오는 말에 따라 「なに」로도 읽어요"
+    "explain": "何{なん} = 무엇 · 「何ですか」처럼 「なん」으로 읽고, 「何を」처럼 뒤에 오는 말에 따라 「なに」로도 읽어요",
+    "say": "何{なん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -381,7 +410,8 @@ export const LESSONS = [
      "傘{かさ}"
     ],
     "answer": 0,
-    "explain": "かばん = 가방"
+    "explain": "かばん = 가방",
+    "say": "かばん"
    },
    {
     "type": "check",
@@ -394,7 +424,9 @@ export const LESSONS = [
      "휴대폰"
     ],
     "answer": 0,
-    "explain": "かばん = 가방"
+    "explain": "かばん = 가방",
+    "say": "かばん",
+    "qSay": true
    }
   ]
  }

@@ -82,7 +82,8 @@ export const LESSONS = [
      "구"
     ],
     "answer": 0,
-    "explain": "ア = 아"
+    "explain": "ア = 아",
+    "say": "ア"
    },
    {
     "type": "choice",
@@ -95,7 +96,8 @@ export const LESSONS = [
      "ゲ"
     ],
     "answer": 0,
-    "explain": "イ = 이"
+    "explain": "イ = 이",
+    "say": "イ"
    },
    {
     "type": "choice",
@@ -108,7 +110,8 @@ export const LESSONS = [
      "에"
     ],
     "answer": 0,
-    "explain": "ウ = 우"
+    "explain": "ウ = 우",
+    "say": "ウ"
    },
    {
     "type": "choice",
@@ -121,7 +124,8 @@ export const LESSONS = [
      "ヒ"
     ],
     "answer": 0,
-    "explain": "エ = 에"
+    "explain": "エ = 에",
+    "say": "エ"
    },
    {
     "type": "choice",
@@ -134,7 +138,8 @@ export const LESSONS = [
      "가"
     ],
     "answer": 0,
-    "explain": "オ = 오"
+    "explain": "オ = 오",
+    "say": "オ"
    },
    {
     "type": "choice",
@@ -147,7 +152,8 @@ export const LESSONS = [
      "キ"
     ],
     "answer": 0,
-    "explain": "カ = 카"
+    "explain": "カ = 카",
+    "say": "カ"
    },
    {
     "type": "choice",
@@ -160,7 +166,8 @@ export const LESSONS = [
      "페"
     ],
     "answer": 0,
-    "explain": "キ = 키"
+    "explain": "キ = 키",
+    "say": "キ"
    },
    {
     "type": "choice",
@@ -173,7 +180,8 @@ export const LESSONS = [
      "ゼ"
     ],
     "answer": 0,
-    "explain": "ク = 쿠"
+    "explain": "ク = 쿠",
+    "say": "ク"
    },
    {
     "type": "choice",
@@ -186,7 +194,8 @@ export const LESSONS = [
      "헤"
     ],
     "answer": 0,
-    "explain": "ケ = 케"
+    "explain": "ケ = 케",
+    "say": "ケ"
    },
    {
     "type": "choice",
@@ -199,7 +208,8 @@ export const LESSONS = [
      "ク"
     ],
     "answer": 0,
-    "explain": "コ = 코"
+    "explain": "コ = 코",
+    "say": "コ"
    },
    {
     "type": "check",
@@ -212,7 +222,8 @@ export const LESSONS = [
      "나"
     ],
     "answer": 0,
-    "explain": "イ = 이"
+    "explain": "イ = 이",
+    "say": "イ"
    }
   ]
  },
@@ -296,7 +307,8 @@ export const LESSONS = [
      "키"
     ],
     "answer": 0,
-    "explain": "サ = 사"
+    "explain": "サ = 사",
+    "say": "サ"
    },
    {
     "type": "choice",
@@ -309,7 +321,8 @@ export const LESSONS = [
      "ア"
     ],
     "answer": 0,
-    "explain": "シ = 시"
+    "explain": "シ = 시",
+    "say": "シ"
    },
    {
     "type": "choice",
@@ -322,7 +335,8 @@ export const LESSONS = [
      "코"
     ],
     "answer": 0,
-    "explain": "ス = 스"
+    "explain": "ス = 스",
+    "say": "ス"
    },
    {
     "type": "choice",
@@ -335,7 +349,8 @@ export const LESSONS = [
      "レ"
     ],
     "answer": 0,
-    "explain": "セ = 세"
+    "explain": "セ = 세",
+    "say": "セ"
    },
    {
     "type": "choice",
@@ -348,7 +363,8 @@ export const LESSONS = [
      "치"
     ],
     "answer": 0,
-    "explain": "ソ = 소"
+    "explain": "ソ = 소",
+    "say": "ソ"
    },
    {
     "type": "choice",
@@ -361,7 +377,8 @@ export const LESSONS = [
      "ピ"
     ],
     "answer": 0,
-    "explain": "タ = 타"
+    "explain": "タ = 타",
+    "say": "タ"
    },
    {
     "type": "choice",
@@ -374,7 +391,8 @@ export const LESSONS = [
      "오 (조사)"
     ],
     "answer": 0,
-    "explain": "チ = 치"
+    "explain": "チ = 치",
+    "say": "チ"
    },
    {
     "type": "choice",
@@ -387,7 +405,8 @@ export const LESSONS = [
      "ヒ"
     ],
     "answer": 0,
-    "explain": "ツ = 츠 · 「쓰」와 「츠」 사이 소리"
+    "explain": "ツ = 츠 · 「쓰」와 「츠」 사이 소리",
+    "say": "ツ"
    },
    {
     "type": "choice",
@@ -400,7 +419,8 @@ export const LESSONS = [
      "이"
     ],
     "answer": 0,
-    "explain": "テ = 테"
+    "explain": "テ = 테",
+    "say": "テ"
    },
    {
     "type": "choice",
@@ -413,7 +433,8 @@ export const LESSONS = [
      "メ"
     ],
     "answer": 0,
-    "explain": "ト = 토"
+    "explain": "ト = 토",
+    "say": "ト"
    },
    {
     "type": "check",
@@ -426,7 +447,8 @@ export const LESSONS = [
      "カ"
     ],
     "answer": 0,
-    "explain": "サ = 사"
+    "explain": "サ = 사",
+    "say": "サ"
    }
   ]
  },
@@ -510,7 +532,8 @@ export const LESSONS = [
      "고"
     ],
     "answer": 0,
-    "explain": "ナ = 나"
+    "explain": "ナ = 나",
+    "say": "ナ"
    },
    {
     "type": "choice",
@@ -523,7 +546,8 @@ export const LESSONS = [
      "サ"
     ],
     "answer": 0,
-    "explain": "ニ = 니"
+    "explain": "ニ = 니",
+    "say": "ニ"
    },
    {
     "type": "choice",
@@ -536,7 +560,8 @@ export const LESSONS = [
      "푸"
     ],
     "answer": 0,
-    "explain": "ヌ = 누"
+    "explain": "ヌ = 누",
+    "say": "ヌ"
    },
    {
     "type": "choice",
@@ -549,7 +574,8 @@ export const LESSONS = [
      "ビ"
     ],
     "answer": 0,
-    "explain": "ネ = 네"
+    "explain": "ネ = 네",
+    "say": "ネ"
    },
    {
     "type": "choice",
@@ -562,7 +588,8 @@ export const LESSONS = [
      "비"
     ],
     "answer": 0,
-    "explain": "ノ = 노"
+    "explain": "ノ = 노",
+    "say": "ノ"
    },
    {
     "type": "choice",
@@ -575,7 +602,8 @@ export const LESSONS = [
      "ゴ"
     ],
     "answer": 0,
-    "explain": "ハ = 하"
+    "explain": "ハ = 하",
+    "say": "ハ"
    },
    {
     "type": "choice",
@@ -588,7 +616,8 @@ export const LESSONS = [
      "루"
     ],
     "answer": 0,
-    "explain": "ヒ = 히"
+    "explain": "ヒ = 히",
+    "say": "ヒ"
    },
    {
     "type": "choice",
@@ -601,7 +630,8 @@ export const LESSONS = [
      "ポ"
     ],
     "answer": 0,
-    "explain": "フ = 후 · 입술을 살짝 모아 가볍게 내는 「후」"
+    "explain": "フ = 후 · 입술을 살짝 모아 가볍게 내는 「후」",
+    "say": "フ"
    },
    {
     "type": "choice",
@@ -614,7 +644,8 @@ export const LESSONS = [
      "세"
     ],
     "answer": 0,
-    "explain": "ヘ = 헤"
+    "explain": "ヘ = 헤",
+    "say": "ヘ"
    },
    {
     "type": "choice",
@@ -627,7 +658,8 @@ export const LESSONS = [
      "フ"
     ],
     "answer": 0,
-    "explain": "ホ = 호"
+    "explain": "ホ = 호",
+    "say": "ホ"
    },
    {
     "type": "check",
@@ -640,7 +672,8 @@ export const LESSONS = [
      "피"
     ],
     "answer": 0,
-    "explain": "ハ = 하"
+    "explain": "ハ = 하",
+    "say": "ハ"
    }
   ]
  },
@@ -711,7 +744,8 @@ export const LESSONS = [
      "히"
     ],
     "answer": 0,
-    "explain": "マ = 마"
+    "explain": "マ = 마",
+    "say": "マ"
    },
    {
     "type": "choice",
@@ -724,7 +758,8 @@ export const LESSONS = [
      "ニ"
     ],
     "answer": 0,
-    "explain": "ミ = 미"
+    "explain": "ミ = 미",
+    "say": "ミ"
    },
    {
     "type": "choice",
@@ -737,7 +772,8 @@ export const LESSONS = [
      "부"
     ],
     "answer": 0,
-    "explain": "ム = 무"
+    "explain": "ム = 무",
+    "say": "ム"
    },
    {
     "type": "choice",
@@ -750,7 +786,8 @@ export const LESSONS = [
      "ゾ"
     ],
     "answer": 0,
-    "explain": "メ = 메"
+    "explain": "メ = 메",
+    "say": "メ"
    },
    {
     "type": "choice",
@@ -763,7 +800,8 @@ export const LESSONS = [
      "쿠"
     ],
     "answer": 0,
-    "explain": "モ = 모"
+    "explain": "モ = 모",
+    "say": "モ"
    },
    {
     "type": "choice",
@@ -776,7 +814,8 @@ export const LESSONS = [
      "ド"
     ],
     "answer": 0,
-    "explain": "ヤ = 야"
+    "explain": "ヤ = 야",
+    "say": "ヤ"
    },
    {
     "type": "choice",
@@ -789,7 +828,8 @@ export const LESSONS = [
      "레"
     ],
     "answer": 0,
-    "explain": "ユ = 유"
+    "explain": "ユ = 유",
+    "say": "ユ"
    },
    {
     "type": "choice",
@@ -802,7 +842,8 @@ export const LESSONS = [
      "セ"
     ],
     "answer": 0,
-    "explain": "ヨ = 요"
+    "explain": "ヨ = 요",
+    "say": "ヨ"
    },
    {
     "type": "check",
@@ -815,7 +856,8 @@ export const LESSONS = [
      "デ"
     ],
     "answer": 0,
-    "explain": "ユ = 유"
+    "explain": "ユ = 유",
+    "say": "ユ"
    }
   ]
  },
@@ -886,7 +928,8 @@ export const LESSONS = [
      "응"
     ],
     "answer": 0,
-    "explain": "ラ = 라"
+    "explain": "ラ = 라",
+    "say": "ラ"
    },
    {
     "type": "choice",
@@ -899,7 +942,8 @@ export const LESSONS = [
      "ゾ"
     ],
     "answer": 0,
-    "explain": "リ = 리"
+    "explain": "リ = 리",
+    "say": "リ"
    },
    {
     "type": "choice",
@@ -912,7 +956,8 @@ export const LESSONS = [
      "하"
     ],
     "answer": 0,
-    "explain": "ル = 루"
+    "explain": "ル = 루",
+    "say": "ル"
    },
    {
     "type": "choice",
@@ -925,7 +970,8 @@ export const LESSONS = [
      "カ"
     ],
     "answer": 0,
-    "explain": "レ = 레"
+    "explain": "レ = 레",
+    "say": "レ"
    },
    {
     "type": "choice",
@@ -938,7 +984,8 @@ export const LESSONS = [
      "카"
     ],
     "answer": 0,
-    "explain": "ロ = 로"
+    "explain": "ロ = 로",
+    "say": "ロ"
    },
    {
     "type": "choice",
@@ -951,7 +998,8 @@ export const LESSONS = [
      "ゼ"
     ],
     "answer": 0,
-    "explain": "ワ = 와"
+    "explain": "ワ = 와",
+    "say": "ワ"
    },
    {
     "type": "choice",
@@ -964,7 +1012,8 @@ export const LESSONS = [
      "구"
     ],
     "answer": 0,
-    "explain": "ヲ = 오 (조사)"
+    "explain": "ヲ = 오 (조사)",
+    "say": "ヲ"
    },
    {
     "type": "choice",
@@ -977,7 +1026,8 @@ export const LESSONS = [
      "ヒ"
     ],
     "answer": 0,
-    "explain": "ン = 응 · 뒤 소리에 따라 받침 ㄴ·ㅁ·ㅇ처럼 들려요"
+    "explain": "ン = 응 · 뒤 소리에 따라 받침 ㄴ·ㅁ·ㅇ처럼 들려요",
+    "say": "ン"
    },
    {
     "type": "check",
@@ -990,7 +1040,8 @@ export const LESSONS = [
      "ホ"
     ],
     "answer": 0,
-    "explain": "ロ = 로"
+    "explain": "ロ = 로",
+    "say": "ロ"
    }
   ]
  },
@@ -1074,7 +1125,8 @@ export const LESSONS = [
      "고"
     ],
     "answer": 0,
-    "explain": "ガ = 가"
+    "explain": "ガ = 가",
+    "say": "ガ"
    },
    {
     "type": "choice",
@@ -1087,7 +1139,8 @@ export const LESSONS = [
      "ア"
     ],
     "answer": 0,
-    "explain": "ギ = 기"
+    "explain": "ギ = 기",
+    "say": "ギ"
    },
    {
     "type": "choice",
@@ -1100,7 +1153,8 @@ export const LESSONS = [
      "피"
     ],
     "answer": 0,
-    "explain": "グ = 구"
+    "explain": "グ = 구",
+    "say": "グ"
    },
    {
     "type": "choice",
@@ -1113,7 +1167,8 @@ export const LESSONS = [
      "バ"
     ],
     "answer": 0,
-    "explain": "ゲ = 게"
+    "explain": "ゲ = 게",
+    "say": "ゲ"
    },
    {
     "type": "choice",
@@ -1126,7 +1181,8 @@ export const LESSONS = [
      "즈"
     ],
     "answer": 0,
-    "explain": "ゴ = 고"
+    "explain": "ゴ = 고",
+    "say": "ゴ"
    },
    {
     "type": "choice",
@@ -1139,7 +1195,8 @@ export const LESSONS = [
      "イ"
     ],
     "answer": 0,
-    "explain": "ザ = 자"
+    "explain": "ザ = 자",
+    "say": "ザ"
    },
    {
     "type": "choice",
@@ -1152,7 +1209,8 @@ export const LESSONS = [
      "타"
     ],
     "answer": 0,
-    "explain": "ジ = 지"
+    "explain": "ジ = 지",
+    "say": "ジ"
    },
    {
     "type": "choice",
@@ -1165,7 +1223,8 @@ export const LESSONS = [
      "サ"
     ],
     "answer": 0,
-    "explain": "ズ = 즈"
+    "explain": "ズ = 즈",
+    "say": "ズ"
    },
    {
     "type": "choice",
@@ -1178,7 +1237,8 @@ export const LESSONS = [
      "니"
     ],
     "answer": 0,
-    "explain": "ゼ = 제"
+    "explain": "ゼ = 제",
+    "say": "ゼ"
    },
    {
     "type": "choice",
@@ -1191,7 +1251,8 @@ export const LESSONS = [
      "ワ"
     ],
     "answer": 0,
-    "explain": "ゾ = 조"
+    "explain": "ゾ = 조",
+    "say": "ゾ"
    },
    {
     "type": "check",
@@ -1204,7 +1265,8 @@ export const LESSONS = [
      "보"
     ],
     "answer": 0,
-    "explain": "ゲ = 게"
+    "explain": "ゲ = 게",
+    "say": "ゲ"
    }
   ]
  },
@@ -1275,7 +1337,8 @@ export const LESSONS = [
      "데"
     ],
     "answer": 0,
-    "explain": "ダ = 다"
+    "explain": "ダ = 다",
+    "say": "ダ"
    },
    {
     "type": "choice",
@@ -1288,7 +1351,8 @@ export const LESSONS = [
      "ギ"
     ],
     "answer": 0,
-    "explain": "デ = 데"
+    "explain": "デ = 데",
+    "say": "デ"
    },
    {
     "type": "choice",
@@ -1301,7 +1365,8 @@ export const LESSONS = [
      "히"
     ],
     "answer": 0,
-    "explain": "ド = 도"
+    "explain": "ド = 도",
+    "say": "ド"
    },
    {
     "type": "choice",
@@ -1314,7 +1379,8 @@ export const LESSONS = [
      "ホ"
     ],
     "answer": 0,
-    "explain": "バ = 바"
+    "explain": "バ = 바",
+    "say": "バ"
    },
    {
     "type": "choice",
@@ -1327,7 +1393,8 @@ export const LESSONS = [
      "헤"
     ],
     "answer": 0,
-    "explain": "ビ = 비"
+    "explain": "ビ = 비",
+    "say": "ビ"
    },
    {
     "type": "choice",
@@ -1340,7 +1407,8 @@ export const LESSONS = [
      "フ"
     ],
     "answer": 0,
-    "explain": "ブ = 부"
+    "explain": "ブ = 부",
+    "say": "ブ"
    },
    {
     "type": "choice",
@@ -1353,7 +1421,8 @@ export const LESSONS = [
      "조"
     ],
     "answer": 0,
-    "explain": "ベ = 베"
+    "explain": "ベ = 베",
+    "say": "ベ"
    },
    {
     "type": "choice",
@@ -1366,7 +1435,8 @@ export const LESSONS = [
      "コ"
     ],
     "answer": 0,
-    "explain": "ボ = 보"
+    "explain": "ボ = 보",
+    "say": "ボ"
    },
    {
     "type": "check",
@@ -1379,7 +1449,8 @@ export const LESSONS = [
      "히"
     ],
     "answer": 0,
-    "explain": "バ = 바"
+    "explain": "バ = 바",
+    "say": "バ"
    }
   ]
  },
@@ -1438,7 +1509,8 @@ export const LESSONS = [
      "나"
     ],
     "answer": 0,
-    "explain": "パ = 파"
+    "explain": "パ = 파",
+    "say": "パ"
    },
    {
     "type": "choice",
@@ -1451,7 +1523,8 @@ export const LESSONS = [
      "セ"
     ],
     "answer": 0,
-    "explain": "ピ = 피"
+    "explain": "ピ = 피",
+    "say": "ピ"
    },
    {
     "type": "choice",
@@ -1464,7 +1537,8 @@ export const LESSONS = [
      "유"
     ],
     "answer": 0,
-    "explain": "プ = 푸"
+    "explain": "プ = 푸",
+    "say": "プ"
    },
    {
     "type": "choice",
@@ -1477,7 +1551,8 @@ export const LESSONS = [
      "ビ"
     ],
     "answer": 0,
-    "explain": "ペ = 페"
+    "explain": "ペ = 페",
+    "say": "ペ"
    },
    {
     "type": "choice",
@@ -1490,7 +1565,8 @@ export const LESSONS = [
      "헤"
     ],
     "answer": 0,
-    "explain": "ポ = 포"
+    "explain": "ポ = 포",
+    "say": "ポ"
    },
    {
     "type": "choice",
@@ -1503,7 +1579,8 @@ export const LESSONS = [
      "ワ"
     ],
     "answer": 0,
-    "explain": "パ = 파"
+    "explain": "パ = 파",
+    "say": "パ"
    },
    {
     "type": "check",
@@ -1516,7 +1593,8 @@ export const LESSONS = [
      "ジ"
     ],
     "answer": 0,
-    "explain": "プ = 푸"
+    "explain": "プ = 푸",
+    "say": "プ"
    }
   ]
  },
@@ -1540,7 +1618,8 @@ export const LESSONS = [
      "나"
     ],
     "answer": 0,
-    "explain": "イ = 이"
+    "explain": "イ = 이",
+    "say": "イ"
    },
    {
     "type": "choice",
@@ -1553,7 +1632,8 @@ export const LESSONS = [
      "ホ"
     ],
     "answer": 0,
-    "explain": "バ = 바"
+    "explain": "バ = 바",
+    "say": "バ"
    },
    {
     "type": "choice",
@@ -1566,7 +1646,8 @@ export const LESSONS = [
      "오"
     ],
     "answer": 0,
-    "explain": "ザ = 자"
+    "explain": "ザ = 자",
+    "say": "ザ"
    },
    {
     "type": "choice",
@@ -1579,7 +1660,8 @@ export const LESSONS = [
      "バ"
     ],
     "answer": 0,
-    "explain": "ゲ = 게"
+    "explain": "ゲ = 게",
+    "say": "ゲ"
    },
    {
     "type": "choice",
@@ -1592,7 +1674,8 @@ export const LESSONS = [
      "하"
     ],
     "answer": 0,
-    "explain": "ル = 루"
+    "explain": "ル = 루",
+    "say": "ル"
    },
    {
     "type": "choice",
@@ -1605,7 +1688,8 @@ export const LESSONS = [
      "ヌ"
     ],
     "answer": 0,
-    "explain": "ゼ = 제"
+    "explain": "ゼ = 제",
+    "say": "ゼ"
    },
    {
     "type": "choice",
@@ -1618,7 +1702,8 @@ export const LESSONS = [
      "포"
     ],
     "answer": 0,
-    "explain": "ヤ = 야"
+    "explain": "ヤ = 야",
+    "say": "ヤ"
    },
    {
     "type": "choice",
@@ -1631,7 +1716,8 @@ export const LESSONS = [
      "ゼ"
     ],
     "answer": 0,
-    "explain": "ワ = 와"
+    "explain": "ワ = 와",
+    "say": "ワ"
    },
    {
     "type": "check",
@@ -1644,7 +1730,8 @@ export const LESSONS = [
      "가"
     ],
     "answer": 0,
-    "explain": "ワ = 와"
+    "explain": "ワ = 와",
+    "say": "ワ"
    }
   ]
  }

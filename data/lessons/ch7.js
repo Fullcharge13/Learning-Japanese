@@ -61,7 +61,9 @@ export const LESSONS = [
      "내일"
     ],
     "answer": 0,
-    "explain": "昨日{きのう} = 어제"
+    "explain": "昨日{きのう} = 어제",
+    "say": "昨日{きのう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -74,7 +76,8 @@ export const LESSONS = [
      "ラジオ"
     ],
     "answer": 0,
-    "explain": "今日{きょう} = 오늘"
+    "explain": "今日{きょう} = 오늘",
+    "say": "今日{きょう}"
    },
    {
     "type": "order",
@@ -85,7 +88,8 @@ export const LESSONS = [
      "し",
      "た"
     ],
-    "explain": "明日{あした} = 내일"
+    "explain": "明日{あした} = 내일",
+    "say": "明日{あした}"
    },
    {
     "type": "choice",
@@ -98,7 +102,9 @@ export const LESSONS = [
      "오늘"
     ],
     "answer": 0,
-    "explain": "先週{せんしゅう} = 지난주"
+    "explain": "先週{せんしゅう} = 지난주",
+    "say": "先週{せんしゅう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -111,7 +117,8 @@ export const LESSONS = [
      "先週{せんしゅう}"
     ],
     "answer": 0,
-    "explain": "今週{こんしゅう} = 이번 주"
+    "explain": "今週{こんしゅう} = 이번 주",
+    "say": "今週{こんしゅう}"
    },
    {
     "type": "order",
@@ -122,7 +129,8 @@ export const LESSONS = [
      "ジ",
      "オ"
     ],
-    "explain": "ラジオ = 라디오"
+    "explain": "ラジオ = 라디오",
+    "say": "ラジオ"
    },
    {
     "type": "check",
@@ -135,7 +143,9 @@ export const LESSONS = [
      "지난주"
     ],
     "answer": 0,
-    "explain": "明日{あした} = 내일"
+    "explain": "明日{あした} = 내일",
+    "say": "明日{あした}",
+    "qSay": true
    }
   ]
  },
@@ -198,7 +208,9 @@ export const LESSONS = [
      "라디오"
     ],
     "answer": 0,
-    "explain": "テレビ = 텔레비전"
+    "explain": "テレビ = 텔레비전",
+    "say": "テレビ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -211,7 +223,8 @@ export const LESSONS = [
      "先週{せんしゅう}"
     ],
     "answer": 0,
-    "explain": "本{ほん} = 책"
+    "explain": "本{ほん} = 책",
+    "say": "本{ほん}"
    },
    {
     "type": "order",
@@ -224,7 +237,8 @@ export const LESSONS = [
      "し",
      "た"
     ],
-    "explain": "読{よ}みました = 읽었습니다"
+    "explain": "読{よ}みました = 읽었습니다",
+    "say": "読{よ}みました"
    },
    {
     "type": "choice",
@@ -237,7 +251,9 @@ export const LESSONS = [
      "읽었습니다"
     ],
     "answer": 0,
-    "explain": "見{み}ました = 봤습니다"
+    "explain": "見{み}ました = 봤습니다",
+    "say": "見{み}ました",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -250,7 +266,8 @@ export const LESSONS = [
      "しました"
     ],
     "answer": 0,
-    "explain": "聞{き}きました = 들었습니다"
+    "explain": "聞{き}きました = 들었습니다",
+    "say": "聞{き}きました"
    },
    {
     "type": "order",
@@ -262,7 +279,8 @@ export const LESSONS = [
      "し",
      "た"
     ],
-    "explain": "しました = 했습니다"
+    "explain": "しました = 했습니다",
+    "say": "しました"
    },
    {
     "type": "check",
@@ -275,7 +293,9 @@ export const LESSONS = [
      "들었습니다"
     ],
     "answer": 0,
-    "explain": "しました = 했습니다"
+    "explain": "しました = 했습니다",
+    "say": "しました",
+    "qSay": true
    }
   ]
  },
@@ -299,7 +319,9 @@ export const LESSONS = [
      "책"
     ],
     "answer": 0,
-    "explain": "今週{こんしゅう} = 이번 주"
+    "explain": "今週{こんしゅう} = 이번 주",
+    "say": "今週{こんしゅう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -312,7 +334,8 @@ export const LESSONS = [
      "読{よ}みました"
     ],
     "answer": 0,
-    "explain": "見{み}ました = 봤습니다"
+    "explain": "見{み}ました = 봤습니다",
+    "say": "見{み}ました"
    },
    {
     "type": "order",
@@ -323,7 +346,8 @@ export const LESSONS = [
      "の",
      "う"
     ],
-    "explain": "昨日{きのう} = 어제"
+    "explain": "昨日{きのう} = 어제",
+    "say": "昨日{きのう}"
    },
    {
     "type": "choice",
@@ -336,7 +360,9 @@ export const LESSONS = [
      "지난주"
     ],
     "answer": 0,
-    "explain": "明日{あした} = 내일"
+    "explain": "明日{あした} = 내일",
+    "say": "明日{あした}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -349,7 +375,8 @@ export const LESSONS = [
      "見{み}ました"
     ],
     "answer": 0,
-    "explain": "読{よ}みました = 읽었습니다"
+    "explain": "読{よ}みました = 읽었습니다",
+    "say": "読{よ}みました"
    },
    {
     "type": "order",
@@ -359,7 +386,8 @@ export const LESSONS = [
      "きょ",
      "う"
     ],
-    "explain": "今日{きょう} = 오늘"
+    "explain": "今日{きょう} = 오늘",
+    "say": "今日{きょう}"
    },
    {
     "type": "choice",
@@ -372,7 +400,9 @@ export const LESSONS = [
      "들었습니다"
     ],
     "answer": 0,
-    "explain": "しました = 했습니다"
+    "explain": "しました = 했습니다",
+    "say": "しました",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -385,7 +415,8 @@ export const LESSONS = [
      "先週{せんしゅう}"
     ],
     "answer": 0,
-    "explain": "ラジオ = 라디오"
+    "explain": "ラジオ = 라디오",
+    "say": "ラジオ"
    },
    {
     "type": "check",
@@ -398,7 +429,9 @@ export const LESSONS = [
      "내일"
     ],
     "answer": 0,
-    "explain": "昨日{きのう} = 어제"
+    "explain": "昨日{きのう} = 어제",
+    "say": "昨日{きのう}",
+    "qSay": true
    }
   ]
  }

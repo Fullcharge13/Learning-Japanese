@@ -1,4 +1,5 @@
 // 레슨 완료: 얻은 XP·바이트, 정확도, 연속 기록, 요약 3줄, 퀘스트·배지·이정표
+import { ruby } from "../ruby.js";
 import { QUESTS } from "../../data/quests.js";
 import { BADGES } from "../../data/badges.js";
 import { yukiImg } from "../yuki.js";
@@ -27,7 +28,7 @@ export function render(root, ctx, params = {}) {
       <div class="done-hero">
         <div class="ria-wrap big jump">${yukiImg({ face: "done", item: ctx.save.item, size: 150 })}<span class="sfx" aria-hidden="true">짠!</span></div>
         <h1>${review ? "복습 끝!" : finished ? "모두 끝!" : adv ? esc(`${lesson.id} 심화 끝!`) : esc(`${lesson.id} 끝!`)}</h1>
-        <p class="bubble center">${esc(line.text)}</p>
+        <p class="bubble center">${ruby(line.text)}</p>
       </div>
       ${r.milestone ? `<p class="milestone">${icon("flame")}<span>${esc(`${r.milestone}일 연속! ${MILESTONE_REWARD[r.milestone] || ""}`)}</span></p>` : ""}
       <ul class="tiles" aria-label="받은 보상">
@@ -39,8 +40,8 @@ export function render(root, ctx, params = {}) {
       ${parts.length > 1 ? `<p class="muted center">엔: ${parts.map(([k, v]) => `${k} ${v}`).join(" + ")}</p>` : ""}
       ${!r.firstTime && !review ? `<p class="muted center">다시 하기는 레슨 엔이 없지만, XP와 오늘의 퀘스트는 그대로 쳐요.</p>` : ""}
       ${r.firstTime && r.perfect ? `<p class="perk">${icon("star")}실수 없이 끝냄 (+5 XP, +5엔)</p>` : ""}
-      ${streakLine ? `<div class="ria-row small"><div class="ria-wrap">${yukiImg({ face: streakLine.face, size: 56 })}</div><p class="bubble">${esc(streakLine.text)}</p></div>` : ""}
-      ${lesson && lesson.summary && lesson.summary.length ? `<section class="panel summary"><h2>오늘 배운 것</h2><ol>${lesson.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></section>` : ""}
+      ${streakLine ? `<div class="ria-row small"><div class="ria-wrap">${yukiImg({ face: streakLine.face, size: 56 })}</div><p class="bubble">${ruby(streakLine.text)}</p></div>` : ""}
+      ${lesson && lesson.summary && lesson.summary.length ? `<section class="panel summary"><h2>오늘 배운 것</h2><ol>${lesson.summary.map((s) => `<li lang="ja">${ruby(s)}</li>`).join("")}</ol></section>` : ""}
       ${quests.length || r.chest ? `<section class="panel"><h2>끝낸 퀘스트</h2><ul class="plain">${quests.map((q) => `<li>${icon("check")}${esc(q.name)} <b class="sun-text">+${q.reward}</b></li>`).join("")}
         ${r.chest ? `<li>${icon("chestOpen")}보물 상자를 열었어요 <b class="sun-text">+10</b></li>` : ""}</ul></section>` : ""}
       ${badges.length ? `<section class="panel"><h2>새 배지</h2><ul class="new-badges">${badges.map((b) => `<li>${badgeArt(b.id, true, 56)}<span>${esc(b.name)}</span></li>`).join("")}</ul></section>` : ""}

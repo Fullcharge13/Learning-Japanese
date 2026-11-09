@@ -65,7 +65,9 @@ export const LESSONS = [
      "중국"
     ],
     "answer": 0,
-    "explain": "韓国{かんこく} = 한국"
+    "explain": "韓国{かんこく} = 한국",
+    "say": "韓国{かんこく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "日本人{にほんじん}"
     ],
     "answer": 0,
-    "explain": "日本{にほん} = 일본"
+    "explain": "日本{にほん} = 일본",
+    "say": "日本{にほん}"
    },
    {
     "type": "order",
@@ -90,7 +93,8 @@ export const LESSONS = [
      "ご",
      "く"
     ],
-    "explain": "中国{ちゅうごく} = 중국"
+    "explain": "中国{ちゅうごく} = 중국",
+    "say": "中国{ちゅうごく}"
    },
    {
     "type": "choice",
@@ -103,7 +107,9 @@ export const LESSONS = [
      "일본"
     ],
     "answer": 0,
-    "explain": "アメリカ = 미국"
+    "explain": "アメリカ = 미국",
+    "say": "アメリカ",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -116,7 +122,8 @@ export const LESSONS = [
      "韓国人{かんこくじん}"
     ],
     "answer": 0,
-    "explain": "ベトナム = 베트남"
+    "explain": "ベトナム = 베트남",
+    "say": "ベトナム"
    },
    {
     "type": "order",
@@ -126,7 +133,8 @@ export const LESSONS = [
      "く",
      "に"
     ],
-    "explain": "国{くに} = 나라"
+    "explain": "国{くに} = 나라",
+    "say": "国{くに}"
    },
    {
     "type": "choice",
@@ -139,7 +147,9 @@ export const LESSONS = [
      "한국"
     ],
     "answer": 0,
-    "explain": "出身{しゅっしん} = 출신"
+    "explain": "出身{しゅっしん} = 출신",
+    "say": "出身{しゅっしん}",
+    "qSay": true
    },
    {
     "type": "check",
@@ -152,7 +162,8 @@ export const LESSONS = [
      "中国{ちゅうごく}"
     ],
     "answer": 0,
-    "explain": "アメリカ = 미국"
+    "explain": "アメリカ = 미국",
+    "say": "アメリカ"
    }
   ]
  },
@@ -219,7 +230,9 @@ export const LESSONS = [
      "한국"
     ],
     "answer": 0,
-    "explain": "韓国人{かんこくじん} = 한국 사람"
+    "explain": "韓国人{かんこくじん} = 한국 사람",
+    "say": "韓国人{かんこくじん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -232,7 +245,8 @@ export const LESSONS = [
      "ベトナム"
     ],
     "answer": 0,
-    "explain": "日本人{にほんじん} = 일본 사람"
+    "explain": "日本人{にほんじん} = 일본 사람",
+    "say": "日本人{にほんじん}"
    },
    {
     "type": "order",
@@ -243,7 +257,8 @@ export const LESSONS = [
      "ウ",
      "ル"
     ],
-    "explain": "ソウル = 서울"
+    "explain": "ソウル = 서울",
+    "say": "ソウル"
    },
    {
     "type": "choice",
@@ -256,7 +271,9 @@ export const LESSONS = [
      "서울"
     ],
     "answer": 0,
-    "explain": "東京{とうきょう} = 도쿄"
+    "explain": "東京{とうきょう} = 도쿄",
+    "say": "東京{とうきょう}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -269,7 +286,8 @@ export const LESSONS = [
      "出身{しゅっしん}"
     ],
     "answer": 0,
-    "explain": "大阪{おおさか} = 오사카 · 유키 선생님 고향이에요"
+    "explain": "大阪{おおさか} = 오사카 · 유키 선생님 고향이에요",
+    "say": "大阪{おおさか}"
    },
    {
     "type": "order",
@@ -279,7 +297,8 @@ export const LESSONS = [
      "か",
      "ら"
     ],
-    "explain": "から = ~에서 (출발점)"
+    "explain": "から = ~에서 (출발점)",
+    "say": "から"
    },
    {
     "type": "choice",
@@ -292,7 +311,9 @@ export const LESSONS = [
      "미국"
     ],
     "answer": 0,
-    "explain": "来{き}ました = 왔습니다"
+    "explain": "来{き}ました = 왔습니다",
+    "say": "来{き}ました",
+    "qSay": true
    },
    {
     "type": "check",
@@ -305,7 +326,9 @@ export const LESSONS = [
      "한국"
     ],
     "answer": 0,
-    "explain": "ソウル = 서울"
+    "explain": "ソウル = 서울",
+    "say": "ソウル",
+    "qSay": true
    }
   ]
  },
@@ -329,7 +352,9 @@ export const LESSONS = [
      "중국"
     ],
     "answer": 0,
-    "explain": "韓国{かんこく} = 한국"
+    "explain": "韓国{かんこく} = 한국",
+    "say": "韓国{かんこく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -342,7 +367,8 @@ export const LESSONS = [
      "大阪{おおさか}"
     ],
     "answer": 0,
-    "explain": "中国{ちゅうごく} = 중국"
+    "explain": "中国{ちゅうごく} = 중국",
+    "say": "中国{ちゅうごく}"
    },
    {
     "type": "order",
@@ -354,7 +380,8 @@ export const LESSONS = [
      "さ",
      "か"
     ],
-    "explain": "大阪{おおさか} = 오사카 · 유키 선생님 고향이에요"
+    "explain": "大阪{おおさか} = 오사카 · 유키 선생님 고향이에요",
+    "say": "大阪{おおさか}"
    },
    {
     "type": "choice",
@@ -367,7 +394,9 @@ export const LESSONS = [
      "출신"
     ],
     "answer": 0,
-    "explain": "日本{にほん} = 일본"
+    "explain": "日本{にほん} = 일본",
+    "say": "日本{にほん}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -380,7 +409,8 @@ export const LESSONS = [
      "中国{ちゅうごく}"
     ],
     "answer": 0,
-    "explain": "韓国人{かんこくじん} = 한국 사람"
+    "explain": "韓国人{かんこくじん} = 한국 사람",
+    "say": "韓国人{かんこくじん}"
    },
    {
     "type": "order",
@@ -391,7 +421,8 @@ export const LESSONS = [
      "ウ",
      "ル"
     ],
-    "explain": "ソウル = 서울"
+    "explain": "ソウル = 서울",
+    "say": "ソウル"
    },
    {
     "type": "choice",
@@ -404,7 +435,9 @@ export const LESSONS = [
      "일본"
     ],
     "answer": 0,
-    "explain": "から = ~에서 (출발점)"
+    "explain": "から = ~에서 (출발점)",
+    "say": "から",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -417,7 +450,8 @@ export const LESSONS = [
      "中国{ちゅうごく}"
     ],
     "answer": 0,
-    "explain": "東京{とうきょう} = 도쿄"
+    "explain": "東京{とうきょう} = 도쿄",
+    "say": "東京{とうきょう}"
    },
    {
     "type": "check",
@@ -430,7 +464,8 @@ export const LESSONS = [
      "アメリカ"
     ],
     "answer": 0,
-    "explain": "から = ~에서 (출발점)"
+    "explain": "から = ~에서 (출발점)",
+    "say": "から"
    }
   ]
  }

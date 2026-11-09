@@ -65,7 +65,9 @@ export const LESSONS = [
      "그 (남자)"
     ],
     "answer": 0,
-    "explain": "こちら = 이쪽 (분) · 사람을 소개할 때 「이분」처럼 써요"
+    "explain": "こちら = 이쪽 (분) · 사람을 소개할 때 「이분」처럼 써요",
+    "say": "こちら",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -78,7 +80,8 @@ export const LESSONS = [
      "妹{いもうと}"
     ],
     "answer": 0,
-    "explain": "友達{ともだち} = 친구"
+    "explain": "友達{ともだち} = 친구",
+    "say": "友達{ともだち}"
    },
    {
     "type": "order",
@@ -88,7 +91,8 @@ export const LESSONS = [
      "だ",
      "れ"
     ],
-    "explain": "誰{だれ} = 누구"
+    "explain": "誰{だれ} = 누구",
+    "say": "誰{だれ}"
    },
    {
     "type": "choice",
@@ -101,7 +105,9 @@ export const LESSONS = [
      "누나·언니"
     ],
     "answer": 0,
-    "explain": "家族{かぞく} = 가족"
+    "explain": "家族{かぞく} = 가족",
+    "say": "家族{かぞく}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -114,7 +120,8 @@ export const LESSONS = [
      "姉{あね}"
     ],
     "answer": 0,
-    "explain": "医者{いしゃ} = 의사"
+    "explain": "医者{いしゃ} = 의사",
+    "say": "医者{いしゃ}"
    },
    {
     "type": "order",
@@ -124,7 +131,8 @@ export const LESSONS = [
      "か",
      "れ"
     ],
-    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요"
+    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요",
+    "say": "彼{かれ}"
    },
    {
     "type": "choice",
@@ -137,7 +145,9 @@ export const LESSONS = [
      "그 (남자)"
     ],
     "answer": 0,
-    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요"
+    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요",
+    "say": "彼女{かのじょ}",
+    "qSay": true
    },
    {
     "type": "check",
@@ -150,7 +160,8 @@ export const LESSONS = [
      "誰{だれ}"
     ],
     "answer": 0,
-    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요"
+    "explain": "彼女{かのじょ} = 그녀 · 「여자친구」라는 뜻도 있어요",
+    "say": "彼女{かのじょ}"
    }
   ]
  },
@@ -213,7 +224,9 @@ export const LESSONS = [
      "친구"
     ],
     "answer": 0,
-    "explain": "父{ちち} = 아버지 · 남에게 내 아버지를 말할 때"
+    "explain": "父{ちち} = 아버지 · 남에게 내 아버지를 말할 때",
+    "say": "父{ちち}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -226,7 +239,8 @@ export const LESSONS = [
      "友達{ともだち}"
     ],
     "answer": 0,
-    "explain": "母{はは} = 어머니 · 남에게 내 어머니를 말할 때"
+    "explain": "母{はは} = 어머니 · 남에게 내 어머니를 말할 때",
+    "say": "母{はは}"
    },
    {
     "type": "order",
@@ -236,7 +250,8 @@ export const LESSONS = [
      "あ",
      "に"
     ],
-    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때",
+    "say": "兄{あに}"
    },
    {
     "type": "choice",
@@ -249,7 +264,9 @@ export const LESSONS = [
      "아버지"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때",
+    "say": "姉{あね}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -262,7 +279,8 @@ export const LESSONS = [
      "母{はは}"
     ],
     "answer": 0,
-    "explain": "弟{おとうと} = 남동생"
+    "explain": "弟{おとうと} = 남동생",
+    "say": "弟{おとうと}"
    },
    {
     "type": "order",
@@ -274,7 +292,8 @@ export const LESSONS = [
      "う",
      "と"
     ],
-    "explain": "妹{いもうと} = 여동생"
+    "explain": "妹{いもうと} = 여동생",
+    "say": "妹{いもうと}"
    },
    {
     "type": "check",
@@ -287,7 +306,8 @@ export const LESSONS = [
      "兄{あに}"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때",
+    "say": "姉{あね}"
    }
   ]
  },
@@ -311,7 +331,9 @@ export const LESSONS = [
      "여동생"
     ],
     "answer": 0,
-    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때",
+    "say": "兄{あに}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -324,7 +346,8 @@ export const LESSONS = [
      "妹{いもうと}"
     ],
     "answer": 0,
-    "explain": "友達{ともだち} = 친구"
+    "explain": "友達{ともだち} = 친구",
+    "say": "友達{ともだち}"
    },
    {
     "type": "order",
@@ -334,7 +357,8 @@ export const LESSONS = [
      "か",
      "れ"
     ],
-    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요"
+    "explain": "彼{かれ} = 그 (남자) · 「남자친구」라는 뜻도 있어요",
+    "say": "彼{かれ}"
    },
    {
     "type": "choice",
@@ -347,7 +371,9 @@ export const LESSONS = [
      "의사"
     ],
     "answer": 0,
-    "explain": "弟{おとうと} = 남동생"
+    "explain": "弟{おとうと} = 남동생",
+    "say": "弟{おとうと}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -360,7 +386,8 @@ export const LESSONS = [
      "誰{だれ}"
     ],
     "answer": 0,
-    "explain": "こちら = 이쪽 (분) · 사람을 소개할 때 「이분」처럼 써요"
+    "explain": "こちら = 이쪽 (분) · 사람을 소개할 때 「이분」처럼 써요",
+    "say": "こちら"
    },
    {
     "type": "order",
@@ -370,7 +397,8 @@ export const LESSONS = [
      "は",
      "は"
     ],
-    "explain": "母{はは} = 어머니 · 남에게 내 어머니를 말할 때"
+    "explain": "母{はは} = 어머니 · 남에게 내 어머니를 말할 때",
+    "say": "母{はは}"
    },
    {
     "type": "choice",
@@ -383,7 +411,9 @@ export const LESSONS = [
      "아버지"
     ],
     "answer": 0,
-    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때"
+    "explain": "姉{あね} = 누나·언니 · 남에게 내 누나·언니를 말할 때",
+    "say": "姉{あね}",
+    "qSay": true
    },
    {
     "type": "choice",
@@ -396,7 +426,8 @@ export const LESSONS = [
      "家族{かぞく}"
     ],
     "answer": 0,
-    "explain": "父{ちち} = 아버지 · 남에게 내 아버지를 말할 때"
+    "explain": "父{ちち} = 아버지 · 남에게 내 아버지를 말할 때",
+    "say": "父{ちち}"
    },
    {
     "type": "check",
@@ -409,7 +440,8 @@ export const LESSONS = [
      "弟{おとうと}"
     ],
     "answer": 0,
-    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때"
+    "explain": "兄{あに} = 형·오빠 · 남에게 내 형·오빠를 말할 때",
+    "say": "兄{あに}"
    }
   ]
  }

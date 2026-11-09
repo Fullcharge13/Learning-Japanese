@@ -130,7 +130,7 @@ def _item(w, kind, pool, is_kana):
         if not 2 <= len(units) <= 6:
             return None
         return {"type": "order", "concept": w["id"], "q": "가나 카드를 순서대로: 「%s」" % w["ko"],
-                "lines": units, "explain": _explain(w)}
+                "lines": units, "explain": _explain(w), "say": w["jp"]}
     if kind == "j2k":
         field, q = "ko", ("「%s」 어떻게 읽을까요?" if is_kana else "「%s」 무슨 뜻일까요?") % w["jp"]
     else:
@@ -138,7 +138,10 @@ def _item(w, kind, pool, is_kana):
     opts = _options(w, pool, field, seed)
     if not opts:
         return None
-    return {"type": "choice", "concept": w["id"], "q": q, "options": opts, "answer": 0, "explain": _explain(w)}
+    it = {"type": "choice", "concept": w["id"], "q": q, "options": opts, "answer": 0, "explain": _explain(w), "say": w["jp"]}
+    if kind == "j2k" and not is_kana:
+        it["qSay"] = True  # 질문 옆 🔊: 뜻을 묻는 문제라 들어도 답이 드러나지 않음
+    return it
 
 
 def _items(words, pool, n, seed, is_kana):
