@@ -13,6 +13,12 @@ import { shortLessonId } from "../track.js";
 const GUARD_MS = 400;
 const WAIT_MS = 300;    // 장 파일이 이보다 늦으면 「준비 중」 (v0.3 작업 1)
 const LOAD_TIMEOUT_MS = 12000;  // 이보다 오래 걸리면 「준비 중」을 그만두고 안내
+/** 순서 문제 정답: 저장된 순서, 또는 accept에 적힌 다른 순서(일본어는 조사로 역할이 정해져 덩어리 순서가 자유로울 때가 있음). 글자로 비교해 같은 카드 둘도 괜찮음 */
+export function orderOk(it, lines) {
+  const key = (xs) => xs.join("\n");
+  return [it.lines, ...(it.accept || [])].some((a) => key(a) === key(lines));
+}
+
 export const OFFLINE_LINE = "이 레슨은 인터넷이 될 때 한 번 열어야 해요";
 export const STALE_LINE = "새 판이 나왔어요. 눌러서 새로 고쳐요";
 
@@ -353,8 +359,7 @@ function run(root, ctx, lesson, review, resumed = null, back = "home") {
     paint();
     act.addEventListener("click", () => {
       if (chosen.length !== it.lines.length) return;
-      // 순서 문제는 정답 순서가 하나뿐이라 저장된 순서와 비교한다(C23)
-      const ok = chosen.map((li) => it.lines[li]).join("\n") === it.lines.join("\n");
+      const ok = orderOk(it, chosen.map((li) => it.lines[li]));
       judged(cur, ok, `<p class="answer">정답: <span lang="ja">${ruby(it.lines.join(""))}</span></p>`);
     });
   }

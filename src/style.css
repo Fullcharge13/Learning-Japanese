@@ -694,3 +694,6 @@ rt { font-size: .5em; font-weight: 600; color: var(--ink-2); letter-spacing: 0; 
 .level.on { border-color: var(--teal-ink); color: var(--teal-ink); background: var(--teal-soft); }
 .level.soon { opacity: .55; }
 .ch-row.static { cursor: default; }
+/* 듣기 문제: 일본어 목소리가 없는 기기용 접힌 글자 */
+details.listen-text { text-align: center; margin: 4px 0 8px; }
+details.listen-text summary { cursor: pointer; opacity: .7; font-size: .9em; }

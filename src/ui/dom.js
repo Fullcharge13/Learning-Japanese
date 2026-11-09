@@ -112,10 +112,11 @@ export function sayBtn(jp, win = globalThis) {
   return `<button type="button" class="say-btn" data-say="${esc(jp)}" aria-label="발음 듣기">${icon("speaker")}</button>`;
 }
 
-/** 듣기 문제(모의고사 청해): 음성이 되면 🔊 단추만(글자를 숨겨 듣고 풀게), 음성이 안 되면 문장 글자를 보여 줘 풀 수는 있게 */
+/** 듣기 문제(모의고사 청해): 음성이 되면 🔊 단추 + 접힌 「글자로 보기」(일본어 목소리가 없는 기기도 풀 수 있게), 음성이 안 되면 문장 글자 */
 export function listenBox(jp, win = globalThis) {
   const b = sayBtn(jp, win);
-  return b ? `<p class="q-say listen">${b}</p>` : `<p class="sent-jp listen-text" lang="ja">${ruby(jp)}</p>`;
+  return b ? `<p class="q-say listen">${b}</p><details class="listen-text"><summary>글자로 보기</summary><p class="sent-jp" lang="ja">${ruby(jp)}</p></details>`
+    : `<p class="sent-jp listen-text" lang="ja">${ruby(jp)}</p>`;
 }
 
 /** 새 단어 카드: 「일본어(후리가나) 🔊 — 한국어」 줄 목록 */

@@ -135,3 +135,38 @@ def test_mock_listen_no_japanese_in_q(built):
                 n += 1
                 assert it["qSay"] and it["say"] and not ja.search(it["q"]) and "sentence" not in it, it
     assert n == 18
+
+
+def test_build_accepts_free_order(built):
+    """조사로 역할이 정해진 덩어리는 순서를 바꿔도 맞음: accept는 카드의 순열이고 생성물에 실림"""
+    from make_lessons import load_grammar
+    acc = {p["id"]: it.get("accept", []) for p in load_grammar(GRAMMAR) for it in p["items"] if it["type"] == "build"}
+    assert ["電車{でんしゃ}で", "毎日{まいにち}", "会社{かいしゃ}へ", "行{い}きます。"] in acc["g5-05"]
+    assert ["手紙{てがみ}を", "友達{ともだち}に", "書{か}きます。"] in acc["g5-04"]
+    for p in load_grammar(GRAMMAR):
+        for it in p["items"]:
+            for a in it.get("accept", []):
+                assert sorted(a) == sorted(it["lines"]) and a != it["lines"], (p["id"], a)
+    ls = _js_const(built / "ch115.js", "LESSONS")
+    assert any(it.get("accept") for l in ls for it in l["items"] if it["type"] == "order")
+
+
+def test_kanji_readings_handwritten(built):
+    """한자 카드 읽기는 손으로 고른 N5 읽기(음 가타카나, 훈 오쿠리가나 괄호). 음은 KANJIDIC에 있는 것만"""
+    import csv
+    rows = {r["kanji"]: r for r in csv.DictReader(open(os.path.join(ROOT, "data", "jlpt-n5-kanji.csv"), encoding="utf-8"))}
+    kd = json.load(open(os.path.join(ROOT, "vendor", "kanji", "n5.json"), encoding="utf-8"))
+    hira = lambda s: "".join(chr(ord(c) - 0x60) if "ァ" <= c <= "ヶ" else c for c in s)
+    assert len(rows) == 79
+    for k, r in rows.items():
+        on = [x for x in r["on"].split("·") if x != "-"]
+        kun = [x for x in r["kun"].split("·") if x != "-"]
+        assert on or kun, k
+        assert len(set(on)) == len(on) and len(set(kun)) == len(kun), k
+        assert all(re.fullmatch(r"[ァ-ヶー]+", x) for x in on), (k, on)
+        assert all(re.fullmatch(r"[ぁ-ゖ]+(\([ぁ-ゖ]+\))?", x) for x in kun), (k, kun)
+        assert all(hira(x) in [y.replace(".", "").replace("-", "") for y in kd[k]["on"]] for x in on), (k, on, kd[k]["on"])
+    assert rows["三"]["kun"] == "みっ(つ)" and "た(べる)" in rows["食"]["kun"] and "あと" in rows["後"]["kun"]
+    cards = [w for l in _js_const(built / "ch118.js", "LESSONS") for c in l["cards"] for w in c["words"]]
+    three = next(w for w in cards if w["jp"] == "三")
+    assert "음 サン · 훈 みっ(つ)" in three["ko"], three

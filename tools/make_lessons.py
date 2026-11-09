@@ -297,8 +297,11 @@ def _grammar_items(p):
                         "answer": 0, "explain": "%s · %s" % (full, p["title"]), "say": full})
         else:
             full = "".join(it["lines"])
-            out.append({"type": "order", "kind": "build", "concept": p["id"], "q": "카드를 순서대로 놓아 문장을 만들어요: 「%s」" % it["ko"],
-                        "lines": it["lines"], "explain": "%s = %s" % (full, it["ko"]), "say": full})
+            b = {"type": "order", "kind": "build", "concept": p["id"], "q": "카드를 순서대로 놓아 문장을 만들어요: 「%s」" % it["ko"],
+                 "lines": it["lines"], "explain": "%s = %s" % (full, it["ko"]), "say": full}
+            if it.get("accept"):
+                b["accept"] = it["accept"]  # 덩어리 순서를 바꿔도 맞는 문장(lesson.js orderOk)
+            out.append(b)
     return out
 
 
@@ -322,12 +325,12 @@ def build_grammar_chapter(points, chapter):
 
 # ---- N5 한자(118~119장, N5 완성 설계 §5): 훈음 data/jlpt-n5-kanji.csv, 읽기 vendor/kanji/n5.json(KANJIDIC) ----
 KANJI_FILE = os.path.join(ROOT, "data", "jlpt-n5-kanji.csv")
-KANJI_READINGS = os.path.join(ROOT, "vendor", "kanji", "n5.json")
 
 
 def load_kanji(path=KANJI_FILE):
     with open(path, encoding="utf-8", newline="") as f:
-        return [{"kanji": r["kanji"], "ko": r["ko"], "chapter": int(r["chapter"]), "unit": int(r["unit"])} for r in csv.DictReader(f)]
+        return [{"kanji": r["kanji"], "ko": r["ko"], "chapter": int(r["chapter"]), "unit": int(r["unit"]), "on": r["on"], "kun": r["kun"]}
+                for r in csv.DictReader(f)]
 
 
 def kanji_words(words=None):
@@ -352,10 +355,9 @@ def kanji_words(words=None):
 
 
 def _kanji_readings(k):
-    with open(KANJI_READINGS, encoding="utf-8") as f:
-        r = json.load(f)[k]
-    clean = lambda xs: [x.replace("-", "").replace(".", "") for x in xs[:2]]  # ひと.つ → ひとつ (보여 주기용)
-    return clean(r["on"]), clean(r["kun"])
+    """카드에 보일 N5 읽기: data/jlpt-n5-kanji.csv의 손으로 고른 칸(음 가타카나, 훈 오쿠리가나 괄호). KANJIDIC 앞 두 읽기는 드문 읽기가 섞여서"""
+    r = next(x for x in load_kanji() if x["kanji"] == k)
+    return [x for x in r["on"].split("·") if x != "-"], [x for x in r["kun"].split("·") if x != "-"]
 
 
 def _pick(answer, cands, seed):
