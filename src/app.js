@@ -295,7 +295,7 @@ async function boot() {
     const before = app.save.quests.date + "|" + app.save.streak.lastGoalDate;
     dayStart();
     const after = app.save.quests.date + "|" + app.save.streak.lastGoalDate;
-    if (app.screen === "home" && (before !== after || app.greetOverride)) show("home");
+    if (["home", "jlpt"].includes(app.screen) && (before !== after || app.greetOverride)) show(app.screen); // 상태 줄·인사를 새 날짜로
   });
   // 🔊 발음 단추(dom.js sayBtn): 어느 화면이든 data-say를 기기 음성으로 읽는다
   document.addEventListener("click", (e) => {

@@ -194,9 +194,9 @@ export function render(root, ctx) {
 }
 
 /** 복습 단추·학습 길 레슨 단추(홈과 JLPT 화면이 같이 씀) */
-export function bindPath(root, ctx) {
+export function bindPath(root, ctx, from = "home") {
   const rv = root.querySelector("#review");
-  if (rv) rv.addEventListener("click", () => ctx.show("lesson", { review: true }));
+  if (rv) rv.addEventListener("click", () => ctx.show("lesson", { review: true, from })); // 복습이 끝나면 시작한 화면으로
   root.querySelectorAll("[data-lesson]").forEach((b) => b.addEventListener("click", async () => {
     const id = b.dataset.lesson;
     const st = ctx.lessonState(id);

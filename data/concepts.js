@@ -896,7 +896,7 @@ export const CONCEPTS = [
   {"id": "c113-057", "name": "要{い}る · 필요하다", "chapter": 113},
   {"id": "c113-058", "name": "吸{す}う · 들이마시다·피우다", "chapter": 113},
   {"id": "c113-059", "name": "やる · 하다 (친한 말투)", "chapter": 113},
-  {"id": "c113-060", "name": "ない · 없다", "chapter": 113},
+  {"id": "c113-060", "name": "ない · 없어요", "chapter": 113},
   {"id": "c114-001", "name": "この · 이", "chapter": 114},
   {"id": "c114-002", "name": "その · 그", "chapter": 114},
   {"id": "c114-003", "name": "あの · 저", "chapter": 114},

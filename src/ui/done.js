@@ -52,7 +52,7 @@ export function render(root, ctx, params = {}) {
     </main>
     <footer class="lesson-foot"><button class="btn primary wide" id="home">계속</button></footer>
   </div>`;
-  root.querySelector("#home").addEventListener("click", () => ctx.show(jlptLesson ? "jlpt" : "home")); // JLPT 레슨은 JLPT 화면으로
+  root.querySelector("#home").addEventListener("click", () => ctx.show(params.from || (jlptLesson ? "jlpt" : "home"))); // 시작한 화면으로
   (async () => {
     if (r.milestone) {
       ctx.sound.play("levelup");

@@ -52,5 +52,5 @@ export function render(root, ctx) {
   bindTabs(root, ctx);
   const go = root.querySelector("#jlpt-continue");
   if (go) go.addEventListener("click", () => ctx.show("lesson", { id: currentId }));
-  bindPath(root, ctx);
+  bindPath(root, ctx, "jlpt");
 }

@@ -1183,6 +1183,35 @@ def test_jlpt_lesson_quit_returns_to_jlpt():
         assert not a.errors, a.errors
 
 
+def test_jlpt_review_returns_to_jlpt():
+    """JLPT 화면에서 시작한 복습은 나가면 JLPT 화면으로"""
+    seed = _kana_done_save()
+    seed["review_queue"] = ["c101-001", "c101-002", "c101-003"]
+    seed["completed_lessons"] = seed["completed_lessons"] + ["101-1"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click('[data-go="jlpt"]')
+        a.page.click("#review")
+        a.page.wait_for_selector(".screen.lesson")
+        a.page.click("#quit")
+        a.page.get_by_role("button", name="나가기", exact=True).click()
+        a.page.wait_for_selector(".screen.jlpt")
+        assert not a.errors, a.errors
+
+
+def test_badges_lessons_split():
+    """배지 화면 「끝낸 레슨」은 회화·JLPT를 따로"""
+    seed = _kana_done_save()
+    seed["completed_lessons"] = seed["completed_lessons"] + ["101-1"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click('[data-go="badges"]')
+        a.page.wait_for_selector(".screen.badges")
+        txt = a.page.inner_text(".screen.badges")
+        assert "회화" in txt and "JLPT 1/" in txt, txt
+        assert not a.errors, a.errors
+
+
 def _to_settings(a):
     a.page.click('[data-go="settings"]')
     a.page.wait_for_selector(".screen.settings")

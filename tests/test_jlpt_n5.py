@@ -105,3 +105,22 @@ def test_modern_okurigana():
     got = {plain(r["jp"]) for r in load_jlpt()}
     assert not got & {"終る", "曲る"}, got & {"終る", "曲る"}
     assert {"終わる", "曲がる"} <= got
+
+
+# ---- N5 완성 손질 (N5 완성 설계 §2) ----
+def _ex_plain():
+    import csv as _csv
+    rows = {r["id"]: r for r in _csv.DictReader(open(os.path.join(ROOT, "data", "examples.csv"), encoding="utf-8"))}
+    return {k: plain(v["sentence_jp"]).replace("[[", "").replace("]]", "") for k, v in rows.items()}
+
+
+def test_polished_examples():
+    ex = _ex_plain()
+    jp = {r["id"]: plain(r["jp"]) for r in load_jlpt()}
+    by_word = {jp[k]: v for k, v in ex.items() if k in jp}
+    assert by_word["住む"] == "来年から東京に住む。"
+    assert by_word["勤める"] == "兄は来月から銀行に勤める。"
+    assert by_word["まだ"] == "宿題はまだ終わっていません。"
+    assert by_word["そうして"] == "朝起きます。そうして顔を洗います。"
+    assert by_word["ええ"] == "「明日、行きますか。」「ええ、行きます。」"
+    assert next(r for r in load_jlpt() if plain(r["jp"]) == "ない")["ko"] == "없어요"

@@ -1501,7 +1501,7 @@ export const LESSONS = [
      },
      {
       "jp": "ない",
-      "ko": "없다"
+      "ko": "없어요"
      }
     ]
    }
@@ -1620,13 +1620,13 @@ export const LESSONS = [
     "concept": "c113-060",
     "q": "「ない」 무슨 뜻일까요?",
     "options": [
-     "없다",
+     "없어요",
      "앉다",
      "쓰다 (모자)",
      "누르다·밀다"
     ],
     "answer": 0,
-    "explain": "ない = 없다",
+    "explain": "ない = 없어요",
     "say": "ない",
     "qSay": true
    },

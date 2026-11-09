@@ -83,7 +83,8 @@ async function askResume(ctx, lesson, S0) {
 /** 레슨 화면: 장 파일을 받은 뒤 run()으로. 늦으면 「준비 중」(학습 길로 나갈 수 있음), 12초 넘거나 실패하면 안내와 다시 시도 */
 export function render(root, ctx, params = {}) {
   const review = !!params.review;
-  const back = !review && params.id && ctx.trackOfLesson(params.id) === "jlpt" ? "jlpt" : "home"; // 나가면 그 레슨의 길로
+  // 나가면 시작한 화면(복습) 또는 그 레슨의 길로
+  const back = params.from || (!review && params.id && ctx.trackOfLesson(params.id) === "jlpt" ? "jlpt" : "home");
   let alive = true, timers = [], inner = null, token = 0;
   const clear = () => { timers.forEach(clearTimeout); timers = []; };
   function fail(kind, err) {
@@ -142,7 +143,7 @@ export function render(root, ctx, params = {}) {
     }
     if (!live()) return;
     try {
-      inner = run(root, ctx, lesson, review, resumed);
+      inner = run(root, ctx, lesson, review, resumed, back);
     } catch (e) {
       // 반쯤 그린 화면을 남기지 않음
       if (typeof inner === "function") { try { inner(); } catch { /* 무시 */ } }
@@ -160,7 +161,7 @@ export function render(root, ctx, params = {}) {
   };
 }
 
-function run(root, ctx, lesson, review, resumed = null) {
+function run(root, ctx, lesson, review, resumed = null, back = "home") {
   // 누적 결과는 session.js 함수로만 바꾼다(이어 하기 기록과 보상이 같은 값을 봄). 나머지 칸은 화면 전용
   const S = {
     ...(resumed ? resumed.S : newSession(lesson)),
@@ -361,7 +362,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     if (!review && ctx.resume) ctx.resume.clear();
     const res = ctx.finish(finishInfo(S, lesson, review));
     ctx.sound.play("done");
-    ctx.show("done", { result: res, lesson: review ? null : lesson, sum });
+    ctx.show("done", { result: res, lesson: review ? null : lesson, sum, from: back });
   }
 
   function step() {
@@ -392,7 +393,7 @@ function run(root, ctx, lesson, review, resumed = null) {
     });
     if (ok) {
       if (!review && ctx.resume) ctx.resume.clear();
-      ctx.show(!review && ctx.trackOfLesson(lesson.id) === "jlpt" ? "jlpt" : "home");
+      ctx.show(back);
     }
   });
 
