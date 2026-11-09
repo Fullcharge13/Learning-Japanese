@@ -24,9 +24,11 @@ import * as done from "./ui/done.js";
 import * as badges from "./ui/badges.js";
 import * as closet from "./ui/closet.js";
 import * as settings from "./ui/settings.js";
+import * as shopScreen from "./ui/shop.js";
+import * as shopRules from "./shop/rules.js";
 
 export const VERSION = "v0.1.0";
-const SCREENS = { splash, home, lesson, done, badges, closet, settings };
+const SCREENS = { splash, home, lesson, done, badges, closet, settings, shop: shopScreen };
 
 // ---- 저장소 (사파리 사생활 보호 모드 등에서 localStorage 접근이 막혀도 앱은 돈다) ----
 function pickStorage() {
@@ -152,6 +154,11 @@ function say(situation, vars = {}) {
   return r;
 }
 
+/** 장 번호 → 그 장 평가 레슨 id */
+function examIds() {
+  return Object.fromEntries(app.chapters.map((c) => [c.id, (c.lessons.find((l) => l.isExam) || {}).id]).filter(([, id]) => id));
+}
+
 function finish(info) {
   const all = app.lessons;
   let nextLessonId = null, nextChapter = null;
@@ -163,7 +170,7 @@ function finish(info) {
   }
   const firstEver = info.mode !== "review" && app.save.completed_lessons.length === 0;
   const { save, result } = finishLesson(app.save, { ...info, nextLessonId, nextChapter, advancedIds: advancedIds(app.chapters),
-    examIds: Object.fromEntries(app.chapters.map((c) => [c.id, (c.lessons.find((l) => l.isExam) || {}).id]).filter(([, id]) => id)) }, new Date());
+    examIds: examIds() }, new Date());
   commit(save);
   if (firstEver) {
     requestPersist();
@@ -219,6 +226,8 @@ const ctx = {
   swChanged: () => app.swChanged,
   get chapterFiles() { return app.data ? app.data.fileList() : []; },
   lessonState, currentLessonId,
+  examIds,
+  shopRules, // 시험 도구가 가게 손님 정답을 계산할 때(window.__ria.ctx.shopRules)
   today: () => localDate(),
   dayStart,
   takeGreeting() { const g = app.greetOverride; app.greetOverride = null; return g; },

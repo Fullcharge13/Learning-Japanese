@@ -796,6 +796,18 @@ def test_third_party_notices():
     html = _read(os.path.join(DIST, "index.html"))
     assert "licenses.txt" in html, "settings must link to licenses.txt"
 
+def test_shop_images_precached():
+    """가게 그림 45컷이 배포 폴더에 있고 서비스 작업자 미리 받기 목록에 들어감(오프라인에서도 가게 그림)"""
+    _build()
+    sw = _read(os.path.join(DIST, "sw.js"))
+    names = ["flow-%02d" % i for i in range(1, 16)] + ["story-%02d" % i for i in range(1, 16)]
+    names += ["guest-" + g for g in ("ojisan", "obaachan", "kinder", "joshi", "salary", "tokyo", "youtuber", "tourist",
+                                     "family", "business", "mania", "dogwalk", "ensoku", "couple", "memory")]
+    for n in names:
+        assert os.path.isfile(os.path.join(DIST, "img", "shop", n + ".png")), n
+        assert '"img/shop/%s.png"' % n in sw, n
+
+
 def test_attribution():
     """출처: 앱 설정 줄·licenses.txt·데이터 라이선스에 JMdict(CC BY-SA 4.0)와 NHK 진도 참고(내용 안 옮김)"""
     _build()

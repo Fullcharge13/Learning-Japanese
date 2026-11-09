@@ -1,6 +1,6 @@
 // 보기·칩·줄 섞기 (판정 C23·C26)와 코드 조건(require) 이름의 한국어 표기. 순수 함수.
 
-function mulberry32(a) {
+export function mulberry32(a) {
   return function () {
     a |= 0; a = (a + 0x6d2b79f5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);

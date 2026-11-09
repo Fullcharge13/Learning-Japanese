@@ -28,6 +28,7 @@ const LEDGER_SHAPE = {
   badges: [], items: ["none"], item: "none",
   stats: { lessons: 0, perfect: 0, review_items: 0 },
   settings: { sound: true, dailyGoal: 20, name: "" },
+  shop: { v: 1, day: 0, money: 0, upgrades: [], stories: [], xpToday: { date: null, n: 0 }, run: null },
   seen_updates: {}, // v0.7.1: 「새 내용」 점 — 다시 본 판 { 레슨 id: "v0.7.1" } (saveVer 그대로)
 };
 
@@ -343,4 +344,12 @@ test("migrate drops review and weak entries for words this app does not have", (
   const s = migrate({ review_queue: ["v01-c01-u01-001", "c3-001"], weak_concepts: { "v01-c01-u01-001": 2, "c3-002": 1 } });
   assert.deepEqual(s.review_queue, ["c3-001"]);
   assert.deepEqual(Object.keys(s.weak_concepts), ["c3-002"]);
+});
+
+test("migrate fills or repairs the takoyaki shop", () => {
+  assert.deepEqual(migrate({}).shop, newSave().shop);
+  const s = migrate({ shop: { money: -9, upgrades: ["neko", "pirate"], day: 3 } });
+  assert.equal(s.shop.money, 0);
+  assert.deepEqual(s.shop.upgrades, ["neko"]);
+  assert.equal(s.shop.day, 3);
 });
