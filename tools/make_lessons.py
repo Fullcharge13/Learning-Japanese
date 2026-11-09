@@ -38,7 +38,9 @@ CHAPTER_TITLES = {
 JLPT_TITLES = {101: ("숫자·조수사", "숫자"), 102: ("날짜·요일·시간", "날짜"), 103: ("사람·가족", "가족"), 104: ("몸·건강", "몸"),
                105: ("집·물건", "물건"), 106: ("음식·식사", "음식"), 107: ("거리·교통·장소", "거리"), 108: ("학교·일", "학교"),
                109: ("날씨·계절·자연", "날씨"), 110: ("い형용사 반대말", "い형용사"), 111: ("な형용사·색", "な형용사"),
-               112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말")}
+               112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말"),
+               115: ("문법 1", "문법"), 116: ("문법 2", "문법"), 117: ("문법 3", "문법"),
+               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("모의고사", "모의고사")}
 for _n, (_long, _short) in JLPT_TITLES.items():
     CHAPTER_TITLES[_n] = "N5 · %d장 %s" % (_n - 100, _long)
 
@@ -276,6 +278,48 @@ def build_chapter(words, chapter, examples=None):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
+# ---- N5 문법(115~117장, N5 완성 설계 §4): 원본 data/jlpt-n5-grammar.json, 항목 하나 = 레슨 하나 ----
+GRAMMAR_FILE = os.path.join(ROOT, "data", "jlpt-n5-grammar.json")
+
+
+def load_grammar(path=GRAMMAR_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)["points"]
+
+
+def _grammar_items(p):
+    out = []
+    for it in p["items"]:
+        if it["type"] == "fill":
+            full = it["pre"] + it["answer"] + it["post"]
+            out.append({"type": "choice", "kind": "grammar", "concept": p["id"], "q": "빈칸에 들어갈 말을 골라요",
+                        "sentence": {"jp": it["pre"] + "＿＿" + it["post"], "ko": it["ko"]}, "options": [it["answer"]] + it["wrong"],
+                        "answer": 0, "explain": "%s · %s" % (full, p["title"]), "say": full})
+        else:
+            full = "".join(it["lines"])
+            out.append({"type": "order", "kind": "build", "concept": p["id"], "q": "카드를 순서대로 놓아 문장을 만들어요: 「%s」" % it["ko"],
+                        "lines": it["lines"], "explain": "%s = %s" % (full, it["ko"]), "say": full})
+    return out
+
+
+def build_grammar_chapter(points, chapter):
+    ps = [p for p in points if p["chapter"] == chapter]
+    title = CHAPTER_TITLES[chapter]
+    lessons, pool = [], []
+    for p in ps:
+        items = _grammar_items(p)
+        pool += items
+        ex = [i for i in items if i["type"] == "choice"][:3]
+        lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": p["title"],
+                        "goal": "문법: %s" % p["title"], "summary": [p["explain"]],
+                        "cards": [{"say": p["explain"], "words": [{"jp": i["say"], "ko": i["sentence"]["ko"]} for i in ex]}],
+                        "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 문법 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
 HEADER = "// 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)\n"
 
 
@@ -304,8 +348,10 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     examples = load_examples(examples_file, words) if examples_file and os.path.exists(examples_file) else {}
     os.makedirs(out_dir, exist_ok=True)
     total = 0
-    for ch in sorted({w["chapter"] for w in words}):
-        data = build_chapter(words, ch, examples)
+    grammar = load_grammar() if jlpt else []
+    extra = {ch: (lambda ch=ch: build_grammar_chapter(grammar, ch)) for ch in sorted({p["chapter"] for p in grammar})}
+    for ch in sorted({w["chapter"] for w in words} | set(extra)):
+        data = extra[ch]() if ch in extra else build_chapter(words, ch, examples)
         total += len(data["LESSONS"])
         with open(os.path.join(out_dir, "ch%d.js" % ch), "w", encoding="utf-8") as f:
             f.write(HEADER)
@@ -314,9 +360,10 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     # 복습·취약 단어 이름표(홈·배지 화면): concept id = 단어 id
     with open(concepts_file, "w", encoding="utf-8") as f:
         f.write(HEADER.replace("레슨", "단어 이름표"))
-        f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join(
-            "  " + json.dumps({"id": w["id"], "name": "%s · %s" % (w["jp"], w["ko"]), "chapter": w["chapter"]}, ensure_ascii=False)
-            for w in words if not w.get("shared")))  # 겹치는 단어는 회화 길의 원래 장으로 한 번만
+        names = [{"id": w["id"], "name": "%s · %s" % (w["jp"], w["ko"]), "chapter": w["chapter"]}
+                 for w in words if not w.get("shared")]  # 겹치는 단어는 회화 길의 원래 장으로 한 번만
+        names += [{"id": p["id"], "name": "문법 · %s" % p["title"], "chapter": p["chapter"]} for p in grammar]
+        f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join("  " + json.dumps(n, ensure_ascii=False) for n in names))
     if jlpt:
         with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:
             f.write(HEADER.replace("레슨", "JLPT 단어 목록"))

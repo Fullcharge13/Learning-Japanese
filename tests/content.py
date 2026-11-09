@@ -34,6 +34,9 @@ LESSON_KEYS = {"id", "chapter", "title", "goal", "summary", "cards", "items"}
 TYPES = {"choice", "order", "check"}
 ZH = re.compile(r"[课们这么吗吧呢没说认识单词语继续题错对关习个开时间样让进后门]")
 ROMAJI = re.compile(r"[A-Za-z]")
+BARE = re.compile(r"[\u3400-\u9fff々]")
+RUBY_RE = re.compile(r"([㐀-鿿々〆ヶ]+)\{([^{}]+)\}")
+JA = re.compile(r"[\u3040-\u30ff\u3400-\u9fff]")
 
 
 def load(lessons_dir):
@@ -41,6 +44,36 @@ def load(lessons_dir):
     if r.returncode != 0:
         raise SystemExit(r.stderr)
     return json.loads(r.stdout)
+
+
+def _bare(t):
+    return BARE.search(RUBY_RE.sub("", t or ""))
+
+
+def check_kind(it):
+    """kind가 있는 문제 하나의 규칙 위반 목록"""
+    k, errs = it["kind"], []
+    if it["type"] == "order":
+        ln = it.get("lines", [])
+        if not (2 <= len(ln) <= 6) or "".join(ln) != it.get("say"):
+            errs.append("build cards must join into the sentence: %r" % ln)
+        if any(_bare(x) for x in ln):
+            errs.append("kanji without furigana in cards %r" % ln)
+        return errs
+    o = it.get("options", [])
+    if len(o) != 4 or len({RUBY_RE.sub(r"\1", x) for x in o}) != 4:
+        errs.append("options must be 4 distinct: %r" % o)
+    if not (isinstance(it.get("answer"), int) and 0 <= it["answer"] < len(o)):
+        errs.append("bad answer %r" % it.get("answer"))
+    if k != "kanji-write" and any(_bare(x) for x in o):
+        errs.append("kanji without furigana in options %r" % o)
+    if k != "kanji-read" and _bare(it.get("q")):
+        errs.append("kanji without furigana in question %r" % it.get("q"))
+    if it.get("sentence") and _bare(it["sentence"].get("jp")):
+        errs.append("kanji without furigana in sentence %r" % it["sentence"])
+    if k == "listen" and (not it.get("qSay") or JA.search(it.get("q", "")) or it.get("sentence")):
+        errs.append("listen item must hide the Japanese and have the speaker button")
+    return errs
 
 
 def check(mods, words, all_ids, examples=None):
@@ -64,6 +97,11 @@ def check(mods, words, all_ids, examples=None):
                 t = it.get("type")
                 if t not in TYPES:
                     errs.append("%s: type %r not allowed" % (at, t))
+                    continue
+                if it.get("kind"):  # 문법·한자·모의고사 문제: 단어 규칙 대신 꼴마다 규칙(N5 완성 설계 §7)
+                    seen.add(it.get("concept"))
+                    texts.append(it.get("q", ""))
+                    errs += ["%s: %s" % (at, e) for e in check_kind(it)]
                     continue
                 w = by_id.get(it.get("concept"))
                 seen.add(it.get("concept"))

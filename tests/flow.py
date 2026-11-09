@@ -226,7 +226,7 @@ class App:
             lines = list(it["lines"]) if correct else list(it["lines"][1:]) + [it["lines"][0]]
             for line in lines:
                 for b in self.page.query_selector_all("#op .line:not([disabled])"):
-                    if b.inner_text().strip() == line.strip():
+                    if b.evaluate(SHOWN_JS).strip() == plain(line).strip():  # 문장 만들기 카드는 후리가나가 있음
                         b.click()
                         break
         self.page.click("#act")
@@ -1209,6 +1209,36 @@ def test_badges_lessons_split():
         a.page.wait_for_selector(".screen.badges")
         txt = a.page.inner_text(".screen.badges")
         assert "회화" in txt and "JLPT 1/" in txt, txt
+        assert not a.errors, a.errors
+
+
+def test_jlpt_grammar_lesson():
+    """문법 레슨(115-1): 설명 카드, 빈칸 문제, 문장 만들기 카드에 후리가나, 끝까지 풀림"""
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        a.js("() => window.__ria.ctx.show('lesson', { id: '115-1' })")
+        a.page.wait_for_selector(".screen.lesson")
+        items = a.lesson("115-1")["items"]
+        saw_build_ruby = False
+        for _ in range(40):
+            a.page.wait_for_timeout(80)
+            if a.page.query_selector(".screen.done"):
+                break
+            if a.page.query_selector(".card-view"):
+                a.page.click("#act")
+                continue
+            if not a.page.query_selector("article.item"):
+                continue
+            it = items[a.which_item(items)]
+            if it["type"] == "order":
+                saw_build_ruby = saw_build_ruby or bool(a.page.query_selector("#op .line ruby"))
+            a.answer_touch(it)
+            a.page.wait_for_selector("#result:not([hidden])")
+            assert a.cont()
+        assert a.page.query_selector(".screen.done")
+        assert saw_build_ruby, "build cards show furigana"
         assert not a.errors, a.errors
 
 
