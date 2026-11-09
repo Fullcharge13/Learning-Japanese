@@ -8,6 +8,7 @@ import { esc, icon, bar, riaSays, dialog, toast } from "./dom.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 import { pathEndText } from "../curriculum.js";
 import { hasNewContent } from "../newcontent.js";
+import { shortLessonId, chapterNo } from "../track.js";
 
 // 「새 내용」 점(v0.7.1): 노드 옆 작은 꼬리표. 누르기는 노드가 받는다(pointer-events: none, 노드 크기 그대로)
 const NEW_LABEL = "새 내용 있음";
@@ -97,7 +98,7 @@ function shopCard(ctx) {
   </section>`;
 }
 
-function reviewCard(save) {
+export function reviewCard(save) {
   const queue = save.review_queue || [];
   if (!queue.length) return "";
   const names = queue.slice(0, 3).map((c) => (CONCEPTS.find((x) => x.id === c) || { name: c }).name);
@@ -110,7 +111,7 @@ function reviewCard(save) {
   </section>`;
 }
 
-function pathSection(ctx, chapter, startIndex, currentId) {
+export function pathSection(ctx, chapter, startIndex, currentId) {
   const lessons = chapter.lessons;
   const hasAdv = (chapter.advanced || []).length > 0;
   const H = lessons.length * ROW + (hasAdv ? BR : 0);
@@ -130,12 +131,12 @@ function pathSection(ctx, chapter, startIndex, currentId) {
     const st = ctx.lessonState(l.id);
     const cur = l.id === currentId && st === "open";
     const p = pts[i];
-    const glyph = st === "locked" ? icon("lock") : st === "perfect" ? icon("star", "fill") : st === "done" ? icon("check") : `<b>${esc(l.id)}</b>`;
+    const glyph = st === "locked" ? icon("lock") : st === "perfect" ? icon("star", "fill") : st === "done" ? icon("check") : `<b>${esc(shortLessonId(l.id))}</b>`;
     const stateKo = { locked: "잠김", open: cur ? "지금 배울 레슨" : "열림", done: "끝냄", perfect: "실수 없이 끝냄" }[st];
     const side = p.x > W / 2 ? "left" : "right";
     const fresh = hasNewContent(l, ctx.save);
     return `<div class="node-wrap" style="left:${p.x - NODE / 2}px;top:${p.y - NODE / 2}px">
-      <button class="node ${st}${cur ? " current" : ""}" data-lesson="${esc(l.id)}" aria-label="${esc(`${l.id} ${l.title}, ${stateKo}${fresh ? `, ${NEW_LABEL}` : ""}`)}">${glyph}</button>
+      <button class="node ${st}${cur ? " current" : ""}" data-lesson="${esc(l.id)}" aria-label="${esc(`${shortLessonId(l.id)} ${l.title}, ${stateKo}${fresh ? `, ${NEW_LABEL}` : ""}`)}">${glyph}</button>
       ${fresh ? newDot(l.id) : ""}
       <span class="node-label">${l.isExam && !/평가/.test(l.title) ? '<em>평가</em>' : ""}${esc(l.title)}</span>
       ${cur ? `<span class="node-ria ${side}" aria-hidden="true">${yukiImg({ face: "cheer", size: 58 })}</span>` : ""}
@@ -145,7 +146,7 @@ function pathSection(ctx, chapter, startIndex, currentId) {
   const br = hasAdv ? advBranch(ctx, chapter, last.x, last.y) : { links: "", nodes: "" };
   const advAll = hasAdv && chapter.advanced.every((l) => ["done", "perfect"].includes(ctx.lessonState(l.id)));
   return `<section class="chapter" aria-label="${esc(chapter.title)}">
-    <h2 class="chapter-title"><span class="ch-no">${chapter.id}</span>${esc(chapter.title)}${advAll ? `<span class="ch-star" title="심화 모두 끝냄">${icon("star", "fill")}<span class="sr">심화 모두 끝냄</span></span>` : ""}</h2>
+    <h2 class="chapter-title"><span class="ch-no">${chapterNo(chapter.id)}</span>${esc(chapter.title)}${advAll ? `<span class="ch-star" title="심화 모두 끝냄">${icon("star", "fill")}<span class="sr">심화 모두 끝냄</span></span>` : ""}</h2>
     <div class="path" style="width:${W}px;height:${H}px">
       <svg class="snake" viewBox="0 ${-30} ${W} ${H + 30}" width="${W}" height="${H + 30}" aria-hidden="true">
         ${br.links}
@@ -189,6 +190,11 @@ export function render(root, ctx) {
   if (go) go.addEventListener("click", () => ctx.show("lesson", { id: currentId }));
   const sh = root.querySelector("#shop");
   if (sh) sh.addEventListener("click", () => ctx.show("shop"));
+  bindPath(root, ctx);
+}
+
+/** 복습 단추·학습 길 레슨 단추(홈과 JLPT 화면이 같이 씀) */
+export function bindPath(root, ctx) {
   const rv = root.querySelector("#review");
   if (rv) rv.addEventListener("click", () => ctx.show("lesson", { review: true }));
   root.querySelectorAll("[data-lesson]").forEach((b) => b.addEventListener("click", async () => {
@@ -198,7 +204,7 @@ export function render(root, ctx) {
     if (st === "done" || st === "perfect") {
       const l = ctx.lessonById(id);
       const ok = await dialog({
-        title: `다시 하기: ${id} ${l.title}`,
+        title: `다시 하기: ${shortLessonId(id)} ${l.title}`,
         body: `<p>끝낸 레슨도 다시 할 수 있어요. 다시 하면 XP는 조금만, 엔은 없어요.</p>`,
         buttons: [{ label: "취소", value: false }, { label: "다시 하기", value: true, kind: "primary" }],
       });

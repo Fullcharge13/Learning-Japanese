@@ -6,6 +6,7 @@ import { yukiImg } from "../yuki.js";
 import { esc, icon, celebrate, MILESTONE_REWARD } from "./dom.js";
 import { badgeArt } from "./badges.js";
 import { courseJustFinished } from "../curriculum.js";
+import { n5Finished, shortLessonId } from "../track.js";
 import { isAdvancedLesson } from "../advanced.js";
 
 export function render(root, ctx, params = {}) {
@@ -15,7 +16,9 @@ export function render(root, ctx, params = {}) {
   const review = r.mode === "review";
   const adv = !review && isAdvancedLesson(lesson);
   const finished = !review && courseJustFinished({ chapters: ctx.chapters, completed: ctx.save.completed_lessons, firstTime: r.firstTime, lessonId: r.lessonId });
-  const line = ctx.say(finished ? "course_done" : "lesson_done", { xp: r.xp });
+  const jlptLesson = !review && lesson && ctx.trackOfLesson(lesson.id) === "jlpt";
+  const n5Done = jlptLesson && n5Finished(ctx.jlptLessons, ctx.save.completed_lessons, r.firstTime, r.lessonId);
+  const line = ctx.say(finished ? "course_done" : "lesson_done", { xp: r.xp }); // course_done 대사는 회화 과정(24과) 완주용
   const streakLine = r.streakUp || r.milestone ? ctx.say("streak_up", { streak: r.streak }) : null;
   const bytes = r.totalBytes ?? (r.lessonBytes + r.questBytes + (r.milestoneBytes || 0));
   const parts = [["레슨", r.lessonBytes], ["퀘스트", r.questBytes], ["연속 기록", r.milestoneBytes || 0]].filter(([, v]) => v > 0);
@@ -27,7 +30,8 @@ export function render(root, ctx, params = {}) {
     <main>
       <div class="done-hero">
         <div class="ria-wrap big jump">${yukiImg({ face: "done", item: ctx.save.item, size: 150 })}<span class="sfx" aria-hidden="true">짠!</span></div>
-        <h1>${review ? "복습 끝!" : finished ? "모두 끝!" : adv ? esc(`${lesson.id} 심화 끝!`) : esc(`${lesson.id} 끝!`)}</h1>
+        <h1>${review ? "복습 끝!" : finished ? "모두 끝!" : n5Done ? "N5 단어 완주!" : adv ? esc(`${lesson.id} 심화 끝!`)
+          : jlptLesson ? esc(`N5 · ${shortLessonId(lesson.id)} 끝!`) : esc(`${lesson.id} 끝!`)}</h1>
         <p class="bubble center">${ruby(line.text)}</p>
       </div>
       ${r.milestone ? `<p class="milestone">${icon("flame")}<span>${esc(`${r.milestone}일 연속! ${MILESTONE_REWARD[r.milestone] || ""}`)}</span></p>` : ""}
@@ -48,7 +52,7 @@ export function render(root, ctx, params = {}) {
     </main>
     <footer class="lesson-foot"><button class="btn primary wide" id="home">계속</button></footer>
   </div>`;
-  root.querySelector("#home").addEventListener("click", () => ctx.show("home"));
+  root.querySelector("#home").addEventListener("click", () => ctx.show(jlptLesson ? "jlpt" : "home")); // JLPT 레슨은 JLPT 화면으로
   (async () => {
     if (r.milestone) {
       ctx.sound.play("levelup");

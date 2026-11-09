@@ -94,5 +94,6 @@ export function courseJustFinished({ chapters, completed, firstTime, lessonId = 
   if (!firstTime || isAdvancedId(lessonId) || upcomingChapters(chapters).length) return false;
   const doneSet = new Set(completed || []);
   const all = (chapters || []).flatMap((c) => c.lessons);
+  if (lessonId && !all.some((l) => l.id === lessonId)) return false; // 다른 길(JLPT) 레슨을 끝낸 것은 이 과정의 완주가 아님
   return all.length > 0 && all.every((l) => doneSet.has(l.id));
 }

@@ -9,6 +9,8 @@ import { finishLesson } from "./finish.js";
 import { createPersist } from "./persist.js";
 import { readResume, writeResume, clearResume } from "./resume.js";
 import { gateCompleted } from "./devgate.js";
+import { trackOf, trackOfLesson, trackChapters, jlptOpen, n5Learned, nextInTrack } from "./track.js";
+import { N5_IDS } from "../data/jlpt.js";
 import { readDevFlag, setDevMode, markDev, keysFor } from "./devmode.js";
 import { createLessonData, chaptersForConcepts } from "./lessondata.js";
 import { advancedState, advancedIds, isAdvancedId } from "./advanced.js";
@@ -27,10 +29,11 @@ import * as badges from "./ui/badges.js";
 import * as closet from "./ui/closet.js";
 import * as settings from "./ui/settings.js";
 import * as shopScreen from "./ui/shop.js";
+import * as jlpt from "./ui/jlpt.js";
 import * as shopRules from "./shop/rules.js";
 
 export const VERSION = "v0.1.0";
-const SCREENS = { splash, home, lesson, done, badges, closet, settings, shop: shopScreen };
+const SCREENS = { splash, home, lesson, done, badges, closet, settings, shop: shopScreen, jlpt };
 
 // ---- 저장소 (사파리 사생활 보호 모드 등에서 localStorage 접근이 막혀도 앱은 돈다) ----
 function pickStorage() {
@@ -132,26 +135,32 @@ function show(name, params = {}) {
 }
 
 // ---- 레슨 길 ----
-function lessonIndex(id) { return app.lessons.findIndex((l) => l.id === id); }
+/** 그 레슨이 속한 길의 레슨 목록(회화 1~26장 / JLPT 101장~). 열림 순서는 길 안에서만 따진다 */
+function trackLessons(track) { return app.lessons.filter((l) => trackOf(l.chapter) === track); }
 function lessonById(id) { return app.lessons.find((l) => l.id === id) || app.advanced.find((l) => l.id === id); }
 function lessonState(id) {
   const s = app.save;
   // 심화(v0.7): 장 평가를 끝내면 열림. 지금 레슨 계산(아래)은 본 과정 lessons만 본다
   if (isAdvancedId(id)) return advancedState(app.chapters, s, id) || "locked";
-  const i = lessonIndex(id);
+  const ls = trackLessons(trackOfLesson(id));
+  const i = ls.findIndex((l) => l.id === id);
   if (i < 0) return "locked";
   if (s.completed_lessons.includes(id)) return s.grading_results[id] && s.grading_results[id].perfect ? "perfect" : "done";
-  if (i === 0 || gateDone().includes(app.lessons[i - 1].id)) return "open";
+  if (i === 0 ? trackOfLesson(id) === "talk" || jlptIsOpen() : gateDone().includes(ls[i - 1].id)) return "open";
   return "locked";
 }
 /** 잠금 판정용 완료 목록(개발자 모드면 본 과정 전부) */
 function gateDone() { return gateCompleted(app.save, app.chapters); }
-function currentLessonId() {
+/** JLPT 탭 열림: 가나 두 장 평가(개발자 모드면 gateDone이 이미 모두 끝낸 것으로 봄) */
+function jlptIsOpen() { return jlptOpen(examIds(), gateDone()); }
+/** 길마다 「이어서 배우기」: 회화는 저장된 current_lesson, JLPT는 저장 없이 열려 있고 안 끝낸 첫 레슨 */
+function currentLessonId(track = "talk") {
   const s = app.save;
-  const cur = app.lessons.find((l) => l.id === s.current_lesson);
+  const ls = trackLessons(track);
+  const cur = track === "talk" && ls.find((l) => l.id === s.current_lesson);
   if (cur && lessonState(cur.id) === "open") return cur.id;
-  const next = app.lessons.find((l) => lessonState(l.id) === "open");
-  return next ? next.id : (app.lessons.length ? app.lessons[app.lessons.length - 1].id : null);
+  const next = ls.find((l) => lessonState(l.id) === "open");
+  return next ? next.id : (ls.length ? ls[ls.length - 1].id : null);
 }
 
 function itemName() {
@@ -169,17 +178,15 @@ function say(situation, vars = {}) {
 
 /** 장 번호 → 그 장 평가 레슨 id */
 function examIds() {
-  return Object.fromEntries(app.chapters.map((c) => [c.id, (c.lessons.find((l) => l.isExam) || {}).id]).filter(([, id]) => id));
+  // 회화 장만: 가게 열림·손님 대사 범위·JLPT 탭 열림(가나 1·2장)이 쓴다. JLPT 평가는 세지 않는다
+  return Object.fromEntries(trackChapters(app.chapters, "talk").map((c) => [c.id, (c.lessons.find((l) => l.isExam) || {}).id]).filter(([, id]) => id));
 }
 
 function finish(info) {
-  const all = app.lessons;
   let nextLessonId = null, nextChapter = null;
   if (info.mode !== "review") {
-    const doneSet = new Set([...app.save.completed_lessons, info.lesson.id]);
-    const next = all.find((l) => !doneSet.has(l.id)) || all[all.length - 1];
-    nextLessonId = next.id;
-    nextChapter = next.chapter;
+    // JLPT 레슨이면 null: 회화 「이어서 배우기」(current_lesson)는 그대로
+    ({ nextLessonId = null, nextChapter = null } = nextInTrack(trackLessons("talk"), app.save.completed_lessons, info.lesson.id) || {});
   }
   const firstEver = info.mode !== "review" && app.save.completed_lessons.length === 0;
   const { save, result } = finishLesson(app.save, { ...info, nextLessonId, nextChapter, advancedIds: advancedIds(app.chapters),
@@ -228,8 +235,15 @@ const ctx = {
   version: VERSION,
   get save() { return app.save; },
   commit, show, say, sound, toast, finish,
-  get chapters() { return app.chapters; },
-  get lessons() { return app.lessons; },
+  // chapters·lessons = 회화 길(홈·완료·설정·배지가 쓰던 그대로). JLPT 길은 jlpt*로 따로
+  get chapters() { return trackChapters(app.chapters, "talk"); },
+  get lessons() { return trackLessons("talk"); },
+  get jlptChapters() { return trackChapters(app.chapters, "jlpt"); },
+  get jlptLessons() { return trackLessons("jlpt"); },
+  jlptOpen: () => jlptIsOpen(),
+  n5Learned: () => n5Learned(N5_IDS, app.lessons, app.save.completed_lessons),
+  n5Total: N5_IDS.length,
+  trackOf, trackOfLesson,
   get advanced() { return app.advanced; },
   advancedIds: () => advancedIds(app.chapters),
   lessonById,

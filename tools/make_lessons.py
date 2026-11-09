@@ -4,6 +4,7 @@
     python3 tools/make_lessons.py
 
 - 장 = words.csv의 chapter. 1 히라가나, 2 가타카나, 3~26 = 1~24과(NHK 「일본말 첫걸음」 주제 순서만 참고).
+- 101~114 = JLPT N5 (data/jlpt-n5.csv, tools/jlpt_n5.py). 겹치는 단어는 같은 id로 JLPT 장에도 나온다. data/jlpt.js에 N5_IDS.
 - 레슨 = 단원(unit) 하나를 표 순서대로 8개씩(남는 4개 이하는 앞 레슨에 붙임), 장 끝에 장 평가.
 - 문제: 일→한·한→일(choice), 가나 카드 순서(order, 가나 장 제외), 예문 빈칸(choice + sentence, data/examples.csv에 예문 있는 단어). 일반 레슨 터치 max(6, 단어 수) + check 1, 장 평가 8 + check 1.
 - jp 칸은 「学生{がくせい}」처럼 한자 뒤 {읽기}. 화면이 <ruby>로 그린다(src/ruby.js).
@@ -15,8 +16,10 @@ import json
 import os
 import random
 import re
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # jlpt_n5
 CHUNK, TAIL = 8, 4
 TOUCH, EXAM_TOUCH, MIN_ITEMS = 6, 8, 4
 WORD_KINDS, KANA_KINDS = ("j2k", "k2j", "order"), ("j2k", "k2j")
@@ -31,6 +34,13 @@ CHAPTER_TITLES = {
     19: "17과 · 지금 하는 일", 20: "18과 · 여행 소감", 21: "19과 · 쇼핑하기", 22: "20과 · 음식 주문",
     23: "21과 · 위치 말하기", 24: "22과 · 같이 하자고 하기", 25: "23과 · 좋아하는 것", 26: "24과 · 못 하는 것",
 }
+# JLPT 길(장 번호 100 이상, JLPT 설계 §2-3): 장 = (긴 주제, 레슨 이름에 붙는 짧은 주제)
+JLPT_TITLES = {101: ("숫자·조수사", "숫자"), 102: ("날짜·요일·시간", "날짜"), 103: ("사람·가족", "가족"), 104: ("몸·건강", "몸"),
+               105: ("집·물건", "물건"), 106: ("음식·식사", "음식"), 107: ("거리·교통·장소", "거리"), 108: ("학교·일", "학교"),
+               109: ("날씨·계절·자연", "날씨"), 110: ("い형용사 반대말", "い형용사"), 111: ("な형용사·색", "な형용사"),
+               112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말")}
+for _n, (_long, _short) in JLPT_TITLES.items():
+    CHAPTER_TITLES[_n] = "N5 · %d장 %s" % (_n - 100, _long)
 
 RUBY = re.compile(r"([㐀-鿿々〆ヶ]+)\{([^{}]+)\}")
 KANA = re.compile(r"^[ぁ-ゟ゠-ヿー]+$")
@@ -254,7 +264,8 @@ def build_chapter(words, chapter, examples=None):
         parts = _chunks([w for w in pool if w["unit"] == u])
         for k, part in enumerate(parts, 1):
             lid = "%d-%d" % (chapter, len(lessons) + 1)
-            lessons.append({"id": lid, "chapter": chapter, "title": "%d단원" % u + (" (%d)" % k if len(parts) > 1 else ""),
+            name = "%s %d" % (JLPT_TITLES[chapter][1], u) if chapter in JLPT_TITLES else "%d단원" % u
+            lessons.append({"id": lid, "chapter": chapter, "title": name + (" (%d)" % k if len(parts) > 1 else ""),
                             "goal": "새 %s %d개 알기" % (noun, len(part)),
                             "summary": ["%s = %s" % (w["jp"], w["ko"]) for w in part[:4]],
                             "cards": _cards(part), "items": _items(part, pool, max(TOUCH, len(part)), lid, is_kana, examples)})
@@ -268,10 +279,25 @@ def build_chapter(words, chapter, examples=None):
 HEADER = "// 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)\n"
 
 
-def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None):
+def jlpt_words(base):
+    """JLPT 단어 표(data/jlpt-n5.csv) → 생성기 단어 목록. 회화 길과 겹치는 단어는 같은 id·표기·뜻을 JLPT 장에 한 번 더 둔다."""
+    from jlpt_n5 import load_jlpt
+    by = {w["id"]: w for w in base}
+    out = []
+    for n, r in enumerate(load_jlpt(), start=1):
+        w = dict(by[r["id"]]) if r["shared"] else {"id": r["id"], "jp": r["jp"], "ko": r["ko"], "pos": r["pos"], "note": r["note"], "twin": ""}
+        w.update(chapter=r["chapter"], unit=r["unit"], seq=100000 + n, shared=r["shared"])
+        out.append(w)
+    return out
+
+
+def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, jlpt_file=None):
     out_dir = out_dir or os.path.join(ROOT, "data", "lessons")
     concepts_file = concepts_file or os.path.join(ROOT, "data", "concepts.js")
     words = load_words(words_file or os.path.join(ROOT, "data", "words.csv"))
+    # 실제 단어 표일 때만 JLPT 장을 합친다(시험이 단어 표를 바꾸면 회화 장만)
+    jlpt = jlpt_words(words) if words_file is None else []
+    words = words + jlpt
     # 예문 표는 실제 단어 표와 짝. 시험이 단어 표만 바꾸면 예문 없이 만든다
     if examples_file is None and words_file is None:
         examples_file = os.path.join(ROOT, "data", "examples.csv")
@@ -290,7 +316,12 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None):
         f.write(HEADER.replace("레슨", "단어 이름표"))
         f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join(
             "  " + json.dumps({"id": w["id"], "name": "%s · %s" % (w["jp"], w["ko"]), "chapter": w["chapter"]}, ensure_ascii=False)
-            for w in words))
+            for w in words if not w.get("shared")))  # 겹치는 단어는 회화 길의 원래 장으로 한 번만
+    if jlpt:
+        with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:
+            f.write(HEADER.replace("레슨", "JLPT 단어 목록"))
+            f.write("// N5_IDS: JLPT N5 단어 표(data/jlpt-n5.csv)의 단어 id, 표 순서. 「N5 단어 N개 중 M개 배웠어요」의 기준\n")
+            f.write("export const N5_IDS = %s;\n" % json.dumps([w["id"] for w in jlpt], ensure_ascii=False))
     print("%d words, %d lessons" % (len(words), total))
 
 

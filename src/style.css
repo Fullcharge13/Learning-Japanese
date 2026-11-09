@@ -182,7 +182,7 @@ button { cursor: pointer; }
 .tabbar {
   position: fixed; z-index: 30; bottom: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: var(--maxw);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   padding: 6px calc(8px + var(--sar)) calc(6px + var(--sab)) calc(8px + var(--sal));
   background: var(--card); border-top: 2px solid var(--line);
 }
@@ -686,3 +686,11 @@ rt { font-size: .5em; font-weight: 600; color: var(--ink-2); letter-spacing: 0; 
 .panel.devmode { margin-top: 16px; }
 .panel.devmode .row { padding: 0; }
 .panel.devmode .row-label small { font-weight: 500; }
+
+/* JLPT 탭: 급수 고르기(N5만 열림) */
+.levels { list-style: none; display: flex; gap: 6px; padding: 0; margin: 0 0 12px; flex-wrap: wrap; }
+.level { display: flex; flex-direction: column; align-items: center; min-width: 52px; padding: 6px 10px; border-radius: 12px; border: 2px solid var(--line); font-weight: 800; color: var(--ink-2); background: var(--paper); }
+.level small { font-size: .62rem; font-weight: 700; }
+.level.on { border-color: var(--teal-ink); color: var(--teal-ink); background: var(--teal-soft); }
+.level.soon { opacity: .55; }
+.ch-row.static { cursor: default; }

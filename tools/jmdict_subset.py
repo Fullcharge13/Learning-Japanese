@@ -4,7 +4,7 @@
     python3 tools/jmdict_subset.py /path/to/jamdict.db
 
 - 사전: JMdict(EDRDG, CC BY-SA 4.0). jamdict-data(pip) 패키지의 jamdict.db(sqlite)를 쓴다.
-- 가나 장(pos=kana)은 빼고, 단어마다 (표기, 읽기) 후보를 만들어 사전에 있는 쌍만 vendor/jmdict/subset.json에 담는다.
+- 가나 장(pos=kana)은 빼고, JLPT 단어 표(data/jlpt-n5.csv)의 새 단어도 넣어, 단어마다 (표기, 읽기) 후보를 만들어 사전에 있는 쌍만 vendor/jmdict/subset.json에 담는다.
   「行{い}きます」처럼 ます꼴 동사는 사전형 후보(行く/いく, 行きる/いきる …)로 찾는다.
 - 사전에서 못 찾은 단어는 이름을 찍고 1로 끝난다.
 """
@@ -38,6 +38,10 @@ def candidates(jp):
             if sp.endswith("し") and len(sp) > 1:                    # 명사 + する
                 out.append((sp[:-1], sr[:-1]))
             break
+    if p.endswith("する") and len(p) > 2:                            # コピーする → コピー
+        out.append((p[:-2], r[:-2]))
+    if p.endswith("りと") and p == r:                                 # ゆっくりと → ゆっくり (부사 + と)
+        out.append((p[:-1], r[:-1]))
     return out
 
 
@@ -50,7 +54,9 @@ def found(db, p, r):
 def main(db_path):
     db = sqlite3.connect(db_path)
     pairs, missing = set(), []
-    for w in load_words(os.path.join(ROOT, "data", "words.csv")):
+    from jlpt_n5 import load_jlpt  # JLPT 단어 표의 새 단어도(조수사 말 pos=num은 사전 표제어가 아니라 뺌)
+    jlpt = [{"id": r["id"], "jp": r["jp"], "pos": r["pos"]} for r in load_jlpt() if not r["shared"] and r["pos"] != "num"]
+    for w in load_words(os.path.join(ROOT, "data", "words.csv")) + jlpt:
         if w["pos"] == "kana":
             continue
         hit = [c for c in candidates(w["jp"]) if found(db, *c)]
