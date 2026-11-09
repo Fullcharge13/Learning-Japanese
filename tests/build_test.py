@@ -819,6 +819,14 @@ def test_outfit_images_precached():
     assert "img/items/" not in sw
 
 
+
+def test_jlpt_credit():
+    """JLPT 급수 목록 출처가 오픈 소스 고지에"""
+    _build()
+    lic = _read(os.path.join(DIST, "licenses.txt"))
+    assert "open-anki-jlpt-decks" in lic and "tanos.co.uk" in lic and "Jonathan Waller" in lic and "CC BY" in lic
+
+
 def test_attribution():
     """출처: 앱 설정 줄·licenses.txt·데이터 라이선스에 JMdict(CC BY-SA 4.0)와 NHK 진도 참고(내용 안 옮김)"""
     _build()

@@ -4,6 +4,7 @@ import { localDate } from "../today.js";
 
 const TABS = [
   ["home", "학습", "path"],
+  ["jlpt", "JLPT", "target"],
   ["badges", "배지", "badge"],
   ["closet", "보관함", "hanger"],
   ["settings", "설정", "gear"],

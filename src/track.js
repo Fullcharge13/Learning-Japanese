@@ -37,3 +37,11 @@ export function nextInTrack(talkLessons, completed, lessonId) {
   const next = talkLessons.find((l) => !d.has(l.id)) || talkLessons[talkLessons.length - 1];
   return { nextLessonId: next.id, nextChapter: next.chapter };
 }
+
+/** 화면에 보이는 장 번호: JLPT 장은 급수 안 번호(101 → 1) */
+export const chapterNo = (chapterId) => (trackOf(chapterId) === "jlpt" ? Number(chapterId) - JLPT_FROM : Number(chapterId));
+/** 화면에 보이는 레슨 번호: "101-3" → "1-3" (회화 레슨은 그대로) */
+export function shortLessonId(id) {
+  const m = /^(\d+)-(.+)$/.exec(String(id));
+  return m && trackOf(+m[1]) === "jlpt" ? `${+m[1] - JLPT_FROM}-${m[2]}` : String(id);
+}

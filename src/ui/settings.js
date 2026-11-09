@@ -7,6 +7,7 @@ import { applyGoalChange } from "../finish.js";
 import { isOwnSave } from "../save.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 import { localDate } from "../today.js";
+import { chapterNo } from "../track.js";
 
 /** 이름: 앞뒤 빈칸을 빼고 8자까지 */
 export function cleanName(v) {
@@ -55,6 +56,23 @@ function courseCard(ctx) {
   </section>`;
 }
 
+/** JLPT 학습 내용(JLPT 설계 §3-4): 장마다 끝낸 레슨 수. 펼치기 없이 한 줄씩 */
+function jlptCard(ctx) {
+  const chs = ctx.jlptChapters;
+  if (!chs.length) return "";
+  const d = new Set(ctx.save.completed_lessons);
+  return `<section class="panel course jlpt-course" aria-labelledby="jlpt-course-title">
+    <h2 id="jlpt-course-title">JLPT N5</h2>
+    <p class="course-sum">N5 단어 ${ctx.n5Total}개 중 <b>${ctx.n5Learned()}</b>개 배움</p>
+    <ul class="course-chapters">${chs.map((ch) => {
+      const done = ch.lessons.filter((l) => d.has(l.id)).length;
+      return `<li><div class="ch-row static"><span class="ch-no">${chapterNo(ch.id)}</span>
+        <span class="ch-main"><b>${esc(ch.title.replace(/^N5 · \d+장 /, ""))}</b></span>
+        <span class="ch-side"><span class="ch-count${done === ch.lessons.length ? " full" : ""}">${done}/${ch.lessons.length} 끝냄</span></span></div></li>`;
+    }).join("")}</ul>
+  </section>`;
+}
+
 export function render(root, ctx) {
   const s = ctx.save;
   const goal = DAILY_GOALS.includes(s.settings.dailyGoal) ? s.settings.dailyGoal : 20;
@@ -63,6 +81,7 @@ export function render(root, ctx) {
     <main>
       <h1 class="page-title">설정</h1>
       ${courseCard(ctx)}
+      ${jlptCard(ctx)}
       <section class="panel">
         <div class="row">
           <label for="snd" class="row-label">소리<small>정답·오답 효과음 (🔊 발음은 늘 들을 수 있어요)</small></label>
@@ -94,7 +113,7 @@ export function render(root, ctx) {
         <button class="btn ghost wide" id="install">홈 화면에 추가하는 방법</button>
       </section>
       <p class="ver center">사나다 일본어 ${esc(ctx.version)} · <a class="lic-link" href="licenses.txt" target="_blank" rel="noopener">오픈 소스</a></p>
-      <p class="muted center credit">진도 참고: NHK WORLD-JAPAN 『일본말 첫걸음』 1~24과 순서(교재 내용은 옮기지 않았어요)<br>읽기 대조: <a class="lic-link" href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noopener">JMdict</a>(EDRDG, CC BY-SA 4.0) · 단어 표 CC BY-SA 4.0<br>이 앱은 NHK와 관련이 없어요.</p>
+      <p class="muted center credit">진도 참고: NHK WORLD-JAPAN 『일본말 첫걸음』 1~24과 순서(교재 내용은 옮기지 않았어요)<br>읽기 대조: <a class="lic-link" href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noopener">JMdict</a>(EDRDG, CC BY-SA 4.0) · 단어 표 CC BY-SA 4.0<br>JLPT 급수 목록: <a class="lic-link" href="https://github.com/jamsinclair/open-anki-jlpt-decks" target="_blank" rel="noopener">open-anki-jlpt-decks</a>(MIT) · 원본 tanos.co.uk(Jonathan Waller, CC BY)<br>이 앱은 NHK와 관련이 없어요.</p>
       <section class="panel devmode" aria-labelledby="dev-label">
         <div class="row">
           <p class="row-label" id="dev-label">개발자 모드<small>잠긴 곳을 모두 열어 검수해요. 학습 기록과 따로 저장돼요.</small></p>

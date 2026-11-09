@@ -36,6 +36,7 @@ const P = {
   path: '<path d="M6 20c0-4 12-4 12-8S6 8 6 4"/><circle cx="6" cy="4" r="1.6"/><circle cx="18" cy="12" r="1.6"/><circle cx="6" cy="20" r="1.6"/>',
   badge: '<circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/>',
   hanger: '<path d="M12 7.5a2 2 0 1 1 2-2c0 1-2 1.5-2 3L3.5 15a1.3 1.3 0 0 0 .8 2.4h15.4a1.3 1.3 0 0 0 .8-2.4L12 8.5"/>',
+  target: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2"/>',
   gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1"/>',
   chest: '<rect x="3.5" y="9.5" width="17" height="10" rx="1.5"/><path d="M3.5 9.5c0-3 2-5 8.5-5s8.5 2 8.5 5M3.5 13h17M10.5 12v3h3v-3"/>',
   chestOpen: '<rect x="3.5" y="11" width="17" height="8.5" rx="1.5"/><path d="M3.5 11l2-6.5h13l2 6.5M10.5 13.5v3h3v-3M12 2v1.5M7.5 2.8l.8 1.2M16.5 2.8l-.8 1.2"/>',

@@ -60,3 +60,20 @@ test("finish keeps talk current: nextInTrack is null for a JLPT lesson", () => {
   assert.deepEqual(nextInTrack(lessonsOf("talk"), ["1-1"], "1-1"), { nextLessonId: "1-9", nextChapter: 1 });
   assert.deepEqual(nextInTrack(lessonsOf("talk"), ["1-1", "1-9", "2-1", "2-9", "3-1", "3-3"], "3-3"), { nextLessonId: "3-3", nextChapter: 3 });
 });
+
+import { shortLessonId, chapterNo } from "../../src/track.js";
+test("JLPT numbers are shown inside N5: 101 → 1, 101-3 → 1-3", () => {
+  assert.equal(chapterNo(101), 1);
+  assert.equal(chapterNo(14), 14);
+  assert.equal(shortLessonId("101-3"), "1-3");
+  assert.equal(shortLessonId("114-10"), "14-10");
+  assert.equal(shortLessonId("3-1"), "3-1");
+});
+
+import { courseJustFinished } from "../../src/curriculum.js";
+test("finishing a JLPT lesson is not the talk course finish", () => {
+  const talk = trackChapters(CH, "talk");
+  const all = talk.flatMap((c) => c.lessons.map((l) => l.id));
+  assert.equal(courseJustFinished({ chapters: talk, completed: all, firstTime: true, lessonId: "3-3" }), true);
+  assert.equal(courseJustFinished({ chapters: talk, completed: [...all, "101-1"], firstTime: true, lessonId: "101-1" }), false);
+});

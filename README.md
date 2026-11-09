@@ -8,6 +8,7 @@
 
 - 내용: 히라가나·가타카나(각 69자) + 1~24과 주제 단어 309개 · 26장 · 레슨 90개(장 평가 26개 포함)
 - 문제 5종: 일→한 뜻 고르기, 한→일 고르기, 가나 카드 순서 맞추기, 예문 빈칸(문맥이 필요한 단어 124개, 일본어 예문 + 한국어 뜻 힌트), (가나 장) 글자↔소리 고르기
+- **JLPT 탭**: 히라가나·가타카나를 끝내면 열리는 JLPT 전용 길. 지금은 N5 단어 673개(비공식 N5 목록 664개 전부 + 조수사 말) · 14장 · 레슨 104개(장 평가 14개 포함). 회화 길과 겹치는 단어는 같은 단어로 이어져 복습·약한 단어 기록을 같이 써요. N4~N1은 「준비 중」
 - 한자에는 후리가나가 붙고, 로마자는 쓰지 않아요
 - 게임 장치: XP, 하루 목표와 연속 기록, 일일 퀘스트, 배지 11개, 축제 의상 보관함(지역 축제 의상 15벌, 30일 보상 아오모리 네부타)
 - **유키의 오사카 다코야키 가게**: 히라가나·가타카나 평가를 통과하면 홈에 열리는 게임. 하루 손님 6명(최대 8명)을 인사·주문 카드로 맞이하고, 번 돈으로 메뉴·철판·장식을 들이고, 장사한 날이 쌓이면 「가게 일기」 이야기 컷이 풀려요. 손님 말은 끝낸 장의 말로만 나오고, 아직 배우지 않은 말은 한국어 힌트가 붙어요. 하루를 마치면 XP +10(하루 두 번까지)
@@ -31,7 +32,8 @@
 | 개발하면서 열어 보기 | `python3 tools/dev.py` → `http://127.0.0.1:8765/dev/` |
 | 배포 파일 만들기 | `python3 build.py` → `dist/` 폴더를 그대로 웹에 올림 |
 | 자동 배포 | `main`에 올리면 GitHub Actions가 시험·빌드 후 GitHub Pages에 배포(`.github/workflows/deploy.yml`). 처음 한 번 Settings → Pages → Source를 「GitHub Actions」로 |
-| 단어 표에서 레슨 다시 만들기 | `python3 tools/make_lessons.py` (`data/words.csv`를 고친 뒤) |
+| 단어 표에서 레슨 다시 만들기 | `python3 tools/make_lessons.py` (`data/words.csv`·`data/jlpt-n5.csv`·`data/examples.csv`를 고친 뒤) |
+| 예문 후리가나 달기(개발 도구) | `node tools/furigana.mjs "毎朝六時に起きる。"` → `毎朝{まいあさ}六{ろく}時{じ}に起{お}きる。` (kuroshiro, 읽기는 사람이 확인) |
 | 읽기 대조표 다시 만들기 | `pip download --no-deps jamdict-data`로 받은 `jamdict.db`로 `python3 tools/jmdict_subset.py jamdict.db` |
 | 그림 시트에서 그림 다시 자르기 | `python3 tools/cut_sheets.py` |
 
@@ -62,6 +64,8 @@ src/                화면·규칙 코드, src/img/ 유키·축제 의상·가�
 data/words.csv      단어 표(가나 + 1~24과)
 data/lessons/       1~26장 레슨 표(자동 생성)
 data/items.js       축제 의상 표 (data/old-items.js: 옛 물건 값, 돌려주기용)
+data/jlpt-n5.csv    JLPT N5 단어 표(장 101~114, 겹치는 단어는 id만) · data/jlpt.js: N5_IDS(생성물)
+vendor/jlpt/        JLPT N5 원본 목록(open-anki-jlpt-decks, MIT) · 정리 규칙 tools/jlpt_n5.py
 vendor/jmdict/      읽기 대조표(JMdict 부분집합)
 tools/              레슨 생성, 읽기 대조, 그림 자르기, 개발 서버, 아이콘
 docs/superpowers/   설계서와 작업 계획
@@ -73,6 +77,8 @@ docs/review/        단어 뜻 교차 검토 기록
 
 - **단어**: 이 앱을 위해 새로 쓴 단어 표(`data/words.csv`)와 생성물은 **CC BY-SA 4.0**(`data/LICENSE-data.md`).
 - **읽기 대조**: [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html)(EDRDG, CC BY-SA 4.0). 사전 뜻은 쓰지 않고 읽기 확인에만 써요(`vendor/jmdict/`).
+- **JLPT 급수 목록**: [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks)(MIT) · 원본 tanos.co.uk(Jonathan Waller, CC BY). 단어·읽기·급수만 쓰고 한국어 뜻·예문은 새로 썼어요. JLPT는 공식 단어 목록이 없어 비공식 추정 목록이에요.
+- **개발 도구**(앱에는 안 들어감): [kuroshiro](https://github.com/hexenq/kuroshiro)(MIT, 예문 후리가나), [yomiyasu](https://github.com/nanaism/yomiyasu)(MIT, 번역투 점검 목록 참고).
 - **진도 참고**: NHK WORLD-JAPAN 「일본말 첫걸음」 1~24과의 **순서와 주제만** 참고했어요. 교재의 단어 목록·대화·예문·제목은 옮기지 않았어요. 이 앱은 NHK와 관련이 없어요.
 - **코드**: MIT (`LICENSE`).
 - **유키·축제 의상 그림**: 사용자 제공 그림 시트(`docs/img/ref/`)를 잘라 썼어요(`tools/cut_sheets.py`).

@@ -47,7 +47,7 @@ RIA_KEY = "ria-python.save"
 GUARD_WAIT = 450          # 결과 창 입력 보호(400ms)보다 조금 길게
 
 DEVICES = ["iPhone 17", "iPhone 17e", "iPhone 17 Pro Max", "iPad Pro 11", "iPad Pro 11 landscape"]
-SCREENS = ["splash", "home", "lesson-card", "touch-item", "done", "badges", "closet", "settings"]
+SCREENS = ["splash", "home", "lesson-card", "touch-item", "done", "jlpt", "badges", "closet", "settings"]
 
 # 터치 영역 예외(근거가 있는 것만). 비어 있으면 예외 없음.
 TOUCH_EXCEPTIONS = {}
@@ -359,7 +359,7 @@ def traverse(device):
         if a.page.is_visible("#ins-ok"):
             at("install-sheet", a)
             a.dismiss()
-        for name in ("badges", "closet", "settings"):
+        for name in ("jlpt", "badges", "closet", "settings"):
             a.page.click('[data-go="%s"]' % name)
             a.page.wait_for_selector(".screen.%s" % name)
             at(name, a)
@@ -1107,6 +1107,64 @@ def test_import_old_save_refund():
         assert "물건 값 300엔" in a.page.inner_text("#toasts")
         sv = a.save()
         assert sv["bytes"] == 300 and "item_refund" not in sv, sv
+        assert not a.errors, a.errors
+
+
+def test_jlpt_locked_then_open():
+    """가나 전: JLPT 탭은 잠긴 안내 → 「가나 배우러 가기」는 학습 탭. 가나 뒤: N5 진행 요약과 「N5 · 1장」 이어서 배우기, 기기 5종 넘침 0"""
+    with App("iPhone 17") as a:
+        a.start()
+        a.page.click('[data-go="jlpt"]')
+        a.page.wait_for_selector(".screen.jlpt")
+        assert "히라가나·가타카나를 끝내면 JLPT 공부가 열려요" in a.page.inner_text(".screen.jlpt")
+        assert not a.page.query_selector("#jlpt-continue")
+        a.page.click("#to-kana")
+        a.page.wait_for_selector(".screen.home")
+    fails = []
+    for dev in DEVICES:
+        with App(dev, save=_kana_done_save()) as a:
+            a.start()
+            a.page.click('[data-go="jlpt"]')
+            a.page.wait_for_selector(".screen.jlpt")
+            txt = a.page.inner_text(".screen.jlpt")
+            assert "N5 단어" in txt and "개 중" in txt and "N4" in txt, txt
+            assert "N5 · 1장" in a.page.inner_text("#jlpt-continue")
+            r = measure(a, "jlpt-open")
+            fails += ["%s: %s" % (dev, p) for p in r["problems"]] + ["%s: small %s" % (dev, x) for x in r["small"]]
+            a.shot("jlpt-open-%s.png" % slug(dev))
+            assert not a.errors, a.errors
+    assert not fails, "\n".join(fails)
+
+
+def test_jlpt_first_lesson():
+    """JLPT 첫 레슨을 풀고 「계속」 → JLPT 화면으로. 회화 「이어서 배우기」는 그대로 3-1"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click('[data-go="jlpt"]')
+        a.page.click("#jlpt-continue")
+        a.play("101-1")
+        a.dismiss()
+        a.page.click("#home")
+        a.page.wait_for_selector(".screen.jlpt")
+        assert "101-1" in a.save()["completed_lessons"]
+        assert "N5 · 1장" in a.page.inner_text("#jlpt-continue")
+        a.page.click('[data-go="home"]')
+        a.page.wait_for_selector(".screen.home")
+        assert "3-1" in a.page.inner_text("#continue")
+        assert not a.errors, a.errors
+
+
+def test_jlpt_dev_mode():
+    """개발자 모드: 새 저장이어도 JLPT 탭과 N5 모든 레슨이 열림"""
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        a.page.click('[data-go="jlpt"]')
+        a.page.wait_for_selector(".screen.jlpt")
+        assert a.page.query_selector("#jlpt-continue")
+        last = _lesson_ids([114])[-1]
+        assert a.js("(id) => window.__ria.ctx.lessonState(id)", last) == "open"
         assert not a.errors, a.errors
 
 

@@ -29,10 +29,11 @@ import * as badges from "./ui/badges.js";
 import * as closet from "./ui/closet.js";
 import * as settings from "./ui/settings.js";
 import * as shopScreen from "./ui/shop.js";
+import * as jlpt from "./ui/jlpt.js";
 import * as shopRules from "./shop/rules.js";
 
 export const VERSION = "v0.1.0";
-const SCREENS = { splash, home, lesson, done, badges, closet, settings, shop: shopScreen };
+const SCREENS = { splash, home, lesson, done, badges, closet, settings, shop: shopScreen, jlpt };
 
 // ---- 저장소 (사파리 사생활 보호 모드 등에서 localStorage 접근이 막혀도 앱은 돈다) ----
 function pickStorage() {
