@@ -3,7 +3,7 @@ import { ITEMS } from "../../data/items.js";
 import { buy, place } from "../shop.js";
 import { buyFreeze, FREEZE_PRICE, FREEZE_MAX } from "../rules.js";
 import { checkBadges } from "../badges.js";
-import { haechiImg } from "../haechi.js";
+import { yukiImg } from "../yuki.js";
 import { esc, icon, toast } from "./dom.js";
 import { tabBar, bindTabs, statusBar } from "./nav.js";
 
@@ -29,7 +29,7 @@ export function render(root, ctx, params = {}) {
       <main>
         <h1 class="page-title">收藏室</h1>
         <section class="stage">
-          <div class="ria-wrap big">${haechiImg({ face: placed ? "smile" : "sparkle", item: o.id, size: 170 })}</div>
+          <div class="ria-wrap big">${yukiImg({ face: placed ? "smile" : "sparkle", item: o.id, size: 170 })}</div>
           <div class="stage-info">
             <h2><span lang="ko">${esc(o.ko)}</span> · ${esc(o.zh)}</h2>
             ${line ? `<p class="bubble">${esc(line)}</p>` : ""}
@@ -40,7 +40,7 @@ export function render(root, ctx, params = {}) {
           const owned = s.items.includes(x.id);
           const tag = s.item === x.id ? "身边" : owned ? "已拥有" : x.price == null ? "30 天奖励" : `${x.price} 字节`;
           return `<li><button class="outfit${x.id === sel ? " sel" : ""}${owned ? " owned" : ""}" data-o="${x.id}" aria-pressed="${x.id === sel}" aria-label="${esc(`${nameOf(x)}, ${tag}`)}">
-            ${x.id === "none" ? haechiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/items/${x.id}.png" width="74" height="74" alt="">`}
+            ${x.id === "none" ? yukiImg({ face: "smile", size: 74 }) : `<img class="item-thumb" src="img/items/${x.id}.png" width="74" height="74" alt="">`}
             <span class="o-name"><span lang="ko">${esc(x.ko)}</span><br>${esc(x.zh)}</span>
             <span class="o-tag${owned ? " own" : ""}">${!owned && x.price == null ? icon("lock") : ""}${esc(tag)}</span>
           </button></li>`;

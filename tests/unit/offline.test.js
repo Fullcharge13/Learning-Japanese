@@ -6,7 +6,7 @@ const ORIGIN = "https://x.test/app/";
 const CH = ["lessons/ch1-11111111.json", "lessons/ch2-22222222.json"];
 const GAME = GAME_CACHE_PREFIX + "v0.1-a";
 
-test("offline_prefix: 리아 앱과 같은 주소에서 저장본이 섞이지 않게 haechi- 접두", () => {
+test("offline_prefix: 해치·리아 앱과 같은 주소에서 저장본이 섞이지 않게 sanada- 접두", () => {
   assert.equal(GAME_CACHE_PREFIX, "sanada-game-");
 });
 

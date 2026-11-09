@@ -140,7 +140,7 @@ function currentLessonId() {
 
 function itemName() {
   const o = ITEMS.find((x) => x.id === app.save.item);
-  return o && o.id !== "none" ? `${o.ko} · ${o.zh}` : "";
+  return o && o.id !== "none" ? `${o.ko} · ${o.jp}` : "";
 }
 
 /** 대사 고르기: 상황별 직전 줄을 따로 기억(C17) */

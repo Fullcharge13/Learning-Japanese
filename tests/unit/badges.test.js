@@ -87,8 +87,8 @@ test("stat thresholds: perfect 10, review_items 30", () => {
 });
 
 test("collector: 3 items besides none", () => {
-  assert.deepEqual(checkBadges(mkSave({ items: ["none", "maetdol", "janggu"] }), { hour: 12 }), []);
-  assert.deepEqual(checkBadges(mkSave({ items: ["none", "maetdol", "janggu", "gat"] }), { hour: 12 }), ["collector"]);
+  assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono"] }), { hour: 12 }), []);
+  assert.deepEqual(checkBadges(mkSave({ items: ["none", "dango", "kimono", "geta"] }), { hour: 12 }), ["collector"]);
   assert.equal(BADGES.find((b) => b.id === "collector").name, "物品收藏家");
 });
 

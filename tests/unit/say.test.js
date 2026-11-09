@@ -9,7 +9,7 @@ const SITUATIONS = [
   "greet", "correct", "combo", "wrong", "running", "error", "hint",
   "lesson_done", "streak_up", "streak_broken", "item_bought", "welcome_back",
 ];
-import { FACE_IDS as FACES } from "../../src/haechi.js";
+import { FACE_IDS as FACES } from "../../src/yuki.js";
 
 // 씨앗 고정 난수(mulberry32) — 시험 결과가 매번 같도록
 function seeded(seed) {
@@ -111,12 +111,12 @@ test("placeholders: {streak}·{xp} 채움", () => {
   }
 });
 
-test("placeholders_item: 실제 물건 이름 10개 × {item} 줄 전부", () => {
+test("placeholders_item: 실제 물건 이름 전부 × {item} 줄 전부", () => {
   const s = "item_bought";
   const idx = LINES[s].map((l, i) => (l.text.includes("{item}") ? i : -1)).filter((i) => i >= 0);
   assert.ok(idx.length >= 1);
   for (const o of ITEMS) {
-    const name = `${o.ko} · ${o.zh}`;
+    const name = `${o.ko} · ${o.jp}`;
     for (const i of idx) {
       const r = say(s, { item: name }, () => (i + 0.5) / LINES[s].length, null);
       assert.equal(r.index, i);

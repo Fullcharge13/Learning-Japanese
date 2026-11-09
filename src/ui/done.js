@@ -1,7 +1,7 @@
 // 레슨 완료: 얻은 XP·바이트, 정확도, 연속 기록, 요약 3줄, 퀘스트·배지·이정표
 import { QUESTS } from "../../data/quests.js";
 import { BADGES } from "../../data/badges.js";
-import { haechiImg } from "../haechi.js";
+import { yukiImg } from "../yuki.js";
 import { esc, icon, celebrate, MILESTONE_REWARD } from "./dom.js";
 import { badgeArt } from "./badges.js";
 import { courseJustFinished } from "../curriculum.js";
@@ -25,7 +25,7 @@ export function render(root, ctx, params = {}) {
   root.innerHTML = `<div class="screen done">
     <main>
       <div class="done-hero">
-        <div class="ria-wrap big jump">${haechiImg({ face: "done", item: ctx.save.item, size: 150 })}<span class="sfx" aria-hidden="true">锵！</span></div>
+        <div class="ria-wrap big jump">${yukiImg({ face: "done", item: ctx.save.item, size: 150 })}<span class="sfx" aria-hidden="true">锵！</span></div>
         <h1>${review ? "复习完成！" : finished ? "全部完成！" : adv ? esc(`${lesson.id} 进阶完成！`) : esc(`${lesson.id} 完成！`)}</h1>
         <p class="bubble center">${esc(line.text)}</p>
       </div>
@@ -39,7 +39,7 @@ export function render(root, ctx, params = {}) {
       ${parts.length > 1 ? `<p class="muted center">字节：${parts.map(([k, v]) => `${k} ${v}`).join(" + ")}</p>` : ""}
       ${!r.firstTime && !review ? `<p class="muted center">重做没有课程字节，但 XP 和今日任务照样计算。</p>` : ""}
       ${r.firstTime && r.perfect ? `<p class="perk">${icon("star")}无失误完成（+5 XP，+5 字节）</p>` : ""}
-      ${streakLine ? `<div class="ria-row small"><div class="ria-wrap">${haechiImg({ face: streakLine.face, size: 56 })}</div><p class="bubble">${esc(streakLine.text)}</p></div>` : ""}
+      ${streakLine ? `<div class="ria-row small"><div class="ria-wrap">${yukiImg({ face: streakLine.face, size: 56 })}</div><p class="bubble">${esc(streakLine.text)}</p></div>` : ""}
       ${lesson && lesson.summary && lesson.summary.length ? `<section class="panel summary"><h2>今天学到的</h2><ol>${lesson.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ol></section>` : ""}
       ${quests.length || r.chest ? `<section class="panel"><h2>完成的任务</h2><ul class="plain">${quests.map((q) => `<li>${icon("check")}${esc(q.name)} <b class="sun-text">+${q.reward}</b></li>`).join("")}
         ${r.chest ? `<li>${icon("chestOpen")}打开了宝箱 <b class="sun-text">+10</b></li>` : ""}</ul></section>` : ""}

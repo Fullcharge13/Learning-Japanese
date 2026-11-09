@@ -263,12 +263,12 @@ test("M7_again: 끊긴 뒤 다시 7일 (best ≥ 7) → 보상 없음", () => {
   assert.equal(r.save.bytes, 0);
 });
 
-test("M30: 30일 → 북(buk), 중복 없음", () => {
+test("M30: 30일 → 가도마츠(kadomatsu), 중복 없음", () => {
   const r = earnXp(at(29, 29), 20, "2026-10-29");
   assert.equal(r.milestone, 30);
-  assert.deepEqual(r.save.items, ["none", "buk"]);
-  const r2 = applyMilestones(at(29, 29, { items: ["none", "buk"] }), { ...r.save });
-  assert.deepEqual(r2.save.items, ["none", "buk"]);
+  assert.deepEqual(r.save.items, ["none", "kadomatsu"]);
+  const r2 = applyMilestones(at(29, 29, { items: ["none", "kadomatsu"] }), { ...r.save });
+  assert.deepEqual(r2.save.items, ["none", "kadomatsu"]);
 });
 
 test("M100: 100일 → streak100 배지, 중복 없음", () => {

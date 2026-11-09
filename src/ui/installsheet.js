@@ -1,5 +1,5 @@
 // 「홈 화면에 추가」 안내 시트: 리아 + 그림 3단계 + 이유
-import { haechiImg } from "../haechi.js";
+import { yukiImg } from "../yuki.js";
 import { el, esc, icon } from "./dom.js";
 import { INSTALL_AFTER_TEXT } from "../install.js";
 
@@ -17,7 +17,7 @@ const WHY = "在 Safari 里 7 天不打开，记录可能会被清除。添加�
 
 function safariBody(item) {
   return `<div class="ria-row">
-          <div class="ria-wrap">${haechiImg({ face: "wink", item, size: 72 })}</div>
+          <div class="ria-wrap">${yukiImg({ face: "wink", item, size: 72 })}</div>
           <p class="bubble">把我带到主屏幕吧，可以像应用一样直接打开。</p>
         </div>
         <h2 id="ins-title">添加到主屏幕</h2>
@@ -29,7 +29,7 @@ function safariBody(item) {
 // 카카오톡 등 앱 안 브라우저: 홈 화면 추가가 안 되므로 사파리로 열라는 짧은 안내
 function inAppBody(item) {
   return `<div class="ria-row">
-          <div class="ria-wrap">${haechiImg({ face: "think", item, size: 72 })}</div>
+          <div class="ria-wrap">${yukiImg({ face: "think", item, size: 72 })}</div>
           <p class="bubble">你现在用的是应用内的浏览器。</p>
         </div>
         <h2 id="ins-title">需要在 Safari 里打开才能添加到主屏幕</h2>

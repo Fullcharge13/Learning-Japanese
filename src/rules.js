@@ -122,7 +122,7 @@ export function applyMilestones(prevSave, nextSave) {
   for (const n of MILESTONES) {
     if (days < n || prevBest >= n) continue;
     if (n === 7) out.bytes += 50;
-    if (n === 30 && !out.items.includes("buk")) out.items.push("buk");
+    if (n === 30 && !out.items.includes("kadomatsu")) out.items.push("kadomatsu");
     if (n === 100 && !out.badges.includes("streak100")) out.badges.push("streak100");
     milestone = n;
   }

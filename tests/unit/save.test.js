@@ -49,7 +49,7 @@ test("new: exactly the ledger Save shape", () => {
 
 test("new: returns independent objects", () => {
   const a = newSave();
-  a.items.push("janggu");
+  a.items.push("kimono");
   a.streak.days = 5;
   const b = newSave();
   assert.deepEqual(b.items, ["none"]);
@@ -130,7 +130,7 @@ test("cap", () => {
 test("store: round trip", () => {
   const st = fakeStorage();
   const s = newSave();
-  s.xp = 42; s.items.push("janggu");
+  s.xp = 42; s.items.push("kimono");
   store(st, s);
   assert.deepEqual(load(st), s);
 });
@@ -293,18 +293,18 @@ test("range: weak_concepts keeps only finite numbers >= 0", () => {
 // ---- 물건 칸 정리 ----
 import { ITEMS } from "../../data/items.js";
 
-test("new save has no item beside haechi", () => {
+test("new save has no item beside Yuki", () => {
   assert.equal(newSave().item, "none");
   assert.deepEqual(newSave().items, ["none"]);
 });
 
 test("items clean: unknown ids dropped, none always owned, placed falls back to none", () => {
   const ids = new Set(ITEMS.map((o) => o.id));
-  const s = migrate({ items: ["pirate", 7, null, "janggu", "janggu", "__proto__"], item: "pirate", bytes: 3 });
-  assert.deepEqual(s.items, ["none", "janggu"]);
+  const s = migrate({ items: ["pirate", 7, null, "kimono", "kimono", "__proto__"], item: "pirate", bytes: 3 });
+  assert.deepEqual(s.items, ["none", "kimono"]);
   assert.equal(s.item, "none");
   for (const id of s.items) assert.ok(ids.has(id), id);
-  assert.equal(migrate({ items: ["none", "janggu"], item: "janggu" }).item, "janggu");
+  assert.equal(migrate({ items: ["none", "kimono"], item: "kimono" }).item, "kimono");
 });
 
 test("save key is sanada-japanese.save", () => {

@@ -3,7 +3,7 @@
 import { current, nextCard, answer, summary } from "../lessonflow.js";
 import { newSession, mark as markConcept, touchResult, logSubmit, finishInfo } from "../session.js";
 import { packResume, restoreSession, hasProgress } from "../resume.js";
-import { haechiImg } from "../haechi.js";
+import { yukiImg } from "../yuki.js";
 import { esc, icon, bar, codeBlock, dialog, riaSays, cardExample } from "./dom.js";
 import { shuffleChoices, shuffleOrder, newSeed } from "../shuffle.js";
 import { reviewPool } from "../lessondata.js";
@@ -205,7 +205,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       ${answerHTML}
       ${text ? `<p class="result-explain">${esc(text)}</p>` : ""}
       <div class="ria-row small">
-        <div class="ria-wrap${ok ? " jump" : ""}">${haechiImg({ face: line.face, size: 64 })}<span class="sfx" aria-hidden="true">${esc(sfx)}</span></div>
+        <div class="ria-wrap${ok ? " jump" : ""}">${yukiImg({ face: line.face, size: 64 })}<span class="sfx" aria-hidden="true">${esc(sfx)}</span></div>
         <p class="bubble">${esc(line.text)}</p>
       </div>
     </div>
@@ -262,7 +262,7 @@ function run(root, ctx, lesson, review, resumed = null) {
       ${first && lesson.goal ? `<p class="goal-line">${icon("book")}<span>今天的目标：${esc(lesson.goal)}</span></p>` : ""}
       <h1 class="lesson-title">${esc(lesson.title)}</h1>
       <div class="ria-row">
-        <div class="ria-wrap">${haechiImg({ face: first ? "smile" : "think", size: 84 })}</div>
+        <div class="ria-wrap">${yukiImg({ face: first ? "smile" : "think", size: 84 })}</div>
         <p class="bubble">${esc(c.say)}</p>
       </div>
       ${cardExample(c)}
