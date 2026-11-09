@@ -213,3 +213,54 @@ def test_example_errors(tmp_path, row, msg):
     p.write_text("id,sentence_jp,ko,status,avoid\n" + row + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match=msg):
         load_examples(str(p), load_words(WORDS))
+
+
+# ---- JLPT 101~114장 (JLPT 설계 §2-4) ----
+def _js_const(path, name):
+    text = open(path, encoding="utf-8").read()
+    return json.loads(text.split("export const %s = " % name, 1)[1].split(";\n", 1)[0])
+
+
+@pytest.fixture(scope="module")
+def built(tmp_path_factory):
+    d = tmp_path_factory.mktemp("jlpt")
+    main(out_dir=str(d), concepts_file=str(d / "concepts.js"), jlpt_file=str(d / "jlpt.js"))
+    return d
+
+
+def test_jlpt_chapters_built(built):
+    for n in range(101, 115):
+        assert (built / ("ch%d.js" % n)).exists(), n
+    ch = _js_const(built / "ch101.js", "CHAPTER")
+    ls = _js_const(built / "ch101.js", "LESSONS")
+    assert ch["title"] == "N5 · 1장 숫자·조수사"
+    assert ls[0]["id"] == "101-1" and ls[0]["title"] == "숫자 1"
+    assert ls[-1].get("isExam") and ls[-1]["title"] == "N5 · 1장 숫자·조수사 평가"
+    titles = [l["title"] for n in range(101, 115) for l in _js_const(built / ("ch%d.js" % n), "LESSONS")]
+    assert not [t for t in titles if t.endswith("단원")]
+
+
+def test_shared_word_same_concept(built):
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    from jlpt_n5 import load_jlpt
+    sh = next(r for r in load_jlpt() if r["shared"])
+    ls = _js_const(built / ("ch%d.js" % sh["chapter"]), "LESSONS")
+    assert sh["id"] in {it["concept"] for l in ls for it in l["items"]}
+
+
+def test_concepts_unique(built):
+    cs = _js_const(built / "concepts.js", "CONCEPTS")
+    ids = [c["id"] for c in cs]
+    assert len(ids) == len(set(ids))
+    by = {c["id"]: c for c in cs}
+    assert by["c3-008"]["chapter"] == 3  # 역(駅): 회화 길 단어는 원래 장 그대로
+    assert by["c101-001"]["chapter"] == 101
+
+
+def test_jlpt_js(built):
+    sys.path.insert(0, os.path.join(ROOT, "tools"))
+    from jlpt_n5 import load_jlpt
+    ids = _js_const(built / "jlpt.js", "N5_IDS")
+    assert ids == [r["id"] for r in load_jlpt()]
+    cs = {c["id"] for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert set(ids) <= cs

@@ -26,7 +26,7 @@ def test_kana_chapters():
 
 def test_chapters_and_titles():
     chs = sorted({w["chapter"] for w in WORDS})
-    assert chs == list(range(1, 27)) and set(CHAPTER_TITLES) == set(chs)
+    assert chs == list(range(1, 27)) and {c for c in CHAPTER_TITLES if c < 100} == set(chs)  # 100 이상은 JLPT 장(test_jlpt_n5)
     for ch in range(3, 27):
         n = len([w for w in WORDS if w["chapter"] == ch])
         assert 10 <= n <= 15, (ch, n)

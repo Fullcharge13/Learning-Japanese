@@ -19,7 +19,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-from make_lessons import load_words, load_examples, kana, plain, KANA, _twins as twins  # noqa: E402
+from make_lessons import load_words, load_examples, jlpt_words, kana, plain, KANA, _twins as twins  # noqa: E402
 
 DUMP = r"""
 const fs = await import("node:fs"); const path = await import("node:path"); const url = await import("node:url");
@@ -95,7 +95,7 @@ def check(mods, words, all_ids, examples=None):
                     if not field:
                         errs.append("%s: answer %r is not the word %r" % (at, o[it["answer"]], w))
                         continue
-                    pool = {x[field]: x for x in by_ch[w["chapter"]]}
+                    pool = {x[field]: x for x in by_ch[m["CHAPTER"]["id"]]}  # 오답은 이 레슨의 장 단어(겹치는 단어는 두 장에 있음)
                     for d in o[:it["answer"]] + o[it["answer"] + 1:]:
                         x = pool.get(d)
                         if not x:
@@ -108,7 +108,7 @@ def check(mods, words, all_ids, examples=None):
                     ln = it.get("lines", [])
                     if not (2 <= len(ln) <= 6 and all(KANA.match(x) for x in ln) and "".join(ln) == kana(w["jp"])):
                         errs.append("%s: order lines must be 2-6 kana cards spelling %r: %r" % (at, kana(w["jp"]), ln))
-            bad = [x for x in texts if ZH.search(x) or ROMAJI.search(x.replace("XP", ""))]
+            bad = [x for x in texts if ZH.search(x) or ROMAJI.search(re.sub(r"XP|N[1-5]", "", x))]
             if bad:
                 errs.append("%s: romaji or Chinese in screen text: %r" % (where, bad[:3]))
     leaked = seen & (all_ids - set(by_id))
@@ -133,6 +133,7 @@ def main():
     with open(path, encoding="utf-8", newline="") as f:
         all_ids = {r["id"] for r in csv.DictReader(f)}
     words = load_words(path)
+    words = words + jlpt_words(words)  # JLPT 장(101~)의 단어도 함께 점검
     ex_path = os.path.join(ROOT, "data", "examples.csv")
     examples = load_examples(ex_path, words) if os.path.exists(ex_path) else {}
     errs = check(mods, words, all_ids, examples)
