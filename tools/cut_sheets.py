@@ -10,7 +10,8 @@
 - 칸 좌표는 이름표를 지운 시트에서 배경과 다른 덩어리를 찾아 정한 값(2576×1438). 정사각형 캔버스에 가운데 맞춰 256px.
 - 하치마키(시트 1의 1행 3칸)는 욱일 무늬라 자르지 않는다(설계서 §6).
 - 배경(흰색)에 가까운 픽셀은 투명하게(가장자리는 반투명).
-- 미리보기: docs/img/yuki-preview.png
+- docs/img/ref/shop-*-sheet.png → src/img/shop/flow-NN·story-NN·guest-<id>.png (가게 컷 45개)
+- 미리보기: docs/img/yuki-preview.png, docs/img/shop-preview.png
 """
 import os
 from PIL import Image, ImageDraw
@@ -85,6 +86,53 @@ def cut(sheet, box):
     return im
 
 
+# 가게 그림 시트(1024×572, 5×3 칸): 칸 = 흰 사이 띠로 나뉜 사각 그림. 흐름·이야기 컷은 이름표를 남기고(컷 제목),
+# 손님은 칸 아래 이름표 띠를 빼고(3행은 위쪽 이름표 띠도) 자른다. 배경이 그림의 일부라 투명하게 하지 않는다.
+SHOP_COLS = [(20, 217), (222, 415), (421, 614), (620, 813), (818, 1011)]
+SHOP_ROWS = [(5, 190), (193, 378), (383, 562)]
+GUEST_IDS = ["ojisan", "obaachan", "kinder", "joshi", "salary", "tokyo", "youtuber", "tourist", "family", "business",
+             "mania", "dogwalk", "ensoku", "couple", "memory"]
+
+
+# 흐름·이야기 컷은 2·3행 이름표가 칸 사이 띠에 걸쳐 있어 아래로 넓게 자른다
+LABEL_ROWS = [(0, 194), (190, 394), (380, 572)]
+
+
+def shop_cells(trim_labels=False):
+    for r, (y0, y1) in enumerate(SHOP_ROWS if trim_labels else LABEL_ROWS):
+        for x0, x1 in SHOP_COLS:
+            yield (x0, y0 + (30 if trim_labels and r == 2 else 0), x1, y1 - (32 if trim_labels else 0))
+
+
+def cut_panel(sheet, box):
+    part = sheet.crop(box)
+    side = max(part.size)
+    canvas = Image.new("RGB", (side, side), BG)
+    canvas.paste(part, ((side - part.width) // 2, (side - part.height) // 2))
+    return canvas.resize((SIZE, SIZE), Image.LANCZOS)
+
+
+def cut_shop():
+    out = []
+    folder = os.path.join(ROOT, "src", "img", "shop")
+    os.makedirs(folder, exist_ok=True)
+    jobs = [("shop-flow-sheet.png", ["flow-%02d" % i for i in range(1, 16)], False),
+            ("shop-story-sheet.png", ["story-%02d" % i for i in range(1, 16)], False),
+            ("shop-customers-sheet.png", ["guest-" + g for g in GUEST_IDS], True)]
+    for sheet_name, names, trim in jobs:
+        sheet = Image.open(os.path.join(ROOT, "docs", "img", "ref", sheet_name)).convert("RGB")
+        for name, box in zip(names, shop_cells(trim)):
+            im = cut_panel(sheet, box)
+            im.quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(folder, name + ".png"), optimize=True)
+            out.append(im)
+    cols = 10
+    prev = Image.new("RGB", (cols * SIZE, ((len(out) + cols - 1) // cols) * SIZE), (210, 225, 235))
+    for i, im in enumerate(out):
+        prev.paste(im, ((i % cols) * SIZE, (i // cols) * SIZE))
+    prev.save(os.path.join(ROOT, "docs", "img", "shop-preview.png"), optimize=True)
+    return len(out)
+
+
 def main():
     out = []
     jobs = [("yuki-sheet.jpg", YUKI, "yuki")] + [(n, t, "items") for n, t in ITEMS.items()]
@@ -101,7 +149,7 @@ def main():
     for i, im in enumerate(out):
         prev.paste(im, ((i % cols) * SIZE, (i // cols) * SIZE), im)
     prev.save(os.path.join(ROOT, "docs", "img", "yuki-preview.png"), optimize=True)
-    print("%d pictures" % len(out))
+    print("%d pictures, %d shop pictures" % (len(out), cut_shop()))
 
 
 if __name__ == "__main__":
