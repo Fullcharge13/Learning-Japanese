@@ -353,3 +353,58 @@ test("migrate fills or repairs the takoyaki shop", () => {
   assert.deepEqual(s.shop.upgrades, ["neko"]);
   assert.equal(s.shop.day, 3);
 });
+
+// ---- 옛 물건 → 엔 돌려주기 (축제 의상 설계 §4) ----
+import { takeRefund } from "../../src/save.js";
+import { OLD_ITEM_PRICES } from "../../data/old-items.js";
+import { OUTFIT_IDS } from "../../data/items.js";
+
+test("old item ids never collide with outfit ids", () => {
+  for (const id of OUTFIT_IDS) assert.ok(!(id in OLD_ITEM_PRICES) && id !== "kadomatsu", id);
+});
+
+test("old items refunded", () => {
+  const s = migrate({ bytes: 5, items: ["none", "dango", "kimono"], item: "kimono" });
+  assert.equal(s.bytes, 365);
+  assert.deepEqual(s.items, ["none"]);
+  assert.equal(s.item, "none");
+  assert.equal(s.item_refund, 360);
+});
+
+test("kadomatsu becomes nebuta", () => {
+  const s = migrate({ bytes: 7, items: ["none", "kadomatsu"], item: "kadomatsu" });
+  assert.deepEqual(s.items, ["none", "nebuta"]);
+  assert.equal(s.item, "none");
+  assert.equal(s.bytes, 7);
+  assert.ok(!("item_refund" in s));
+});
+
+test("refund once", () => {
+  const a = migrate({ bytes: 0, items: ["none", "dango", "dango", "kimono"] });
+  assert.equal(a.bytes, 360, "duplicate id counted once");
+  const b = migrate(JSON.parse(JSON.stringify(takeRefund(a).save)));
+  assert.equal(b.bytes, a.bytes);
+  assert.ok(!("item_refund" in b));
+  const c = migrate(JSON.parse(JSON.stringify(a)));
+  assert.equal(c.bytes, a.bytes, "reload before the notice: no second refund");
+  assert.equal(c.item_refund, 360, "notice still pending");
+});
+
+test("mixed save keeps outfits", () => {
+  const s = migrate({ bytes: 0, items: ["none", "gion", "dango"], item: "gion" });
+  assert.deepEqual(s.items, ["none", "gion"]);
+  assert.equal(s.item, "gion");
+  assert.equal(s.bytes, 60);
+});
+
+test("bad item_refund", () => {
+  for (const v of ["x", -5, 2.5, null, 1e12]) assert.ok(!("item_refund" in migrate({ item_refund: v })), String(v));
+});
+
+test("takeRefund", () => {
+  const s = { ...newSave(), item_refund: 360 };
+  const r = takeRefund(s);
+  assert.equal(r.refund, 360);
+  assert.ok(!("item_refund" in r.save));
+  assert.equal(takeRefund(newSave()).refund, 0);
+});

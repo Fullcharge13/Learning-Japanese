@@ -59,3 +59,11 @@ test("curriculum with open: every lesson is open, done stays real", () => {
   assert.notEqual(st["2-2"], "locked");
   assert.equal(c.done, 1);
 });
+
+test("dev slot refunds old items too", () => {
+  const st = mem();
+  st.setItem(DEV_SAVE_KEY, JSON.stringify({ app: "sanada-japanese", bytes: 0, items: ["none", "kimono"], item: "kimono" }));
+  const s = loadSlot(st, true).save;
+  assert.equal(s.item_refund, 300);
+  assert.equal(s.bytes, 300);
+});

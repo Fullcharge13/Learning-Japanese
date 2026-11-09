@@ -2,6 +2,7 @@
 // 리아와 파이썬·해치와 한국어와 같은 주소(github.io)에 올라가므로 저장 키를 따로 둔다(다른 앱 저장은 읽지도 지우지도 않음).
 // 해치 앱 저장 파일은 모양이 같아서, 가져오기는 app 표시로 가린다(isOwnSave).
 import { ITEMS } from "../data/items.js";
+import { OLD_ITEM_PRICES } from "../data/old-items.js";
 import { cleanSeenUpdates } from "./newcontent.js";
 import { CONCEPTS } from "../data/concepts.js";
 import { defaultShop, cleanShop } from "./shop/rules.js";
@@ -102,6 +103,25 @@ function clampRanges(s) {
 }
 
 const ITEM_ORDER = ITEMS.map((o) => o.id);
+const REFUND_MAX = 1e6; // 옛 물건을 다 사도 6,060엔. 이보다 큰 값은 깨진 값
+
+// 옛 물건(축제 의상 전) 처리: 산 값은 엔으로(같은 id는 한 번), 30일 보상 가도마츠는 네부타 의상으로.
+// 옛 id는 뒤의 cleanItems가 버리므로 다시 불러와도 또 돌려주지 않는다. 돌려준 엔은 item_refund에 쌓아 앱이 한 번 알린다.
+function refundOldItems(s) {
+  const prev = s.item_refund;
+  let refund = Number.isInteger(prev) && prev > 0 && prev <= REFUND_MAX ? prev : 0;
+  const owned = new Set(s.items.filter((x) => typeof x === "string"));
+  for (const id of owned) if (Object.hasOwn(OLD_ITEM_PRICES, id)) { refund += OLD_ITEM_PRICES[id]; s.bytes += OLD_ITEM_PRICES[id]; }
+  if (owned.has("kadomatsu")) s.items.push("nebuta");
+  if (refund > 0) s.item_refund = refund; else delete s.item_refund;
+  return s;
+}
+
+/** 돌려준 엔 안내를 한 번만: { save: item_refund를 뺀 저장, refund: 알릴 엔(없으면 0) } */
+export function takeRefund(save) {
+  const { item_refund: refund = 0, ...rest } = save;
+  return { save: rest, refund };
+}
 
 // 가진 의상·입은 의상 정리: 의상 표 순서, 중복 없음, none 항상 포함, 표에 없는 id는 버림. 입은 의상이 가진 것이 아니면 none.
 function cleanItems(s) {
@@ -116,6 +136,7 @@ export function migrate(raw) {
   const oldVer = raw.saveVer;
   const ver = typeof oldVer === "number" && Number.isFinite(oldVer) ? oldVer : 1; // saveVer 없음 = 첫 판(1)
   const s = clampRanges(fill(newSave(), structuredClone(raw)));
+  refundOldItems(s);
   cleanItems(s);
   s.app = "sanada-japanese";
   s.shop = cleanShop(raw.shop);
