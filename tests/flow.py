@@ -823,6 +823,26 @@ def test_shop_full_day():
         assert not a.errors, a.errors
 
 
+def test_shop_settle_rewards():
+    """정산 XP로 7일 연속이 되면 축하 창, 일일 퀘스트를 끝내면 「끝낸 퀘스트」 (레슨 완료와 같게)"""
+    seed = _kana_done_save()
+    seed["streak"] = {"days": 6, "best": 6, "lastGoalDate": today(1), "todayDate": today(), "todayXp": 10}
+    seed["quests"] = {"date": today(), "ids": ["q_xp20", "q_lessons2", "q_review3"], "progress": {"q_xp20": 10}, "done": [], "chest": False}
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        _shop_play_day(a)
+        a.page.wait_for_selector(".celebrate")
+        assert "7일 연속" in a.page.inner_text(".celebrate")
+        a.page.wait_for_timeout(GUARD_WAIT)
+        a.page.click("#cel-ok")
+        a.page.wait_for_selector(".celebrate", state="detached")
+        txt = a.page.inner_text(".shop-settle-quests")
+        assert "20 XP 얻기" in txt, txt
+        assert not a.errors, a.errors
+
+
 def test_shop_result_focus():
     """결과 창이 열리면 키보드 초점이 「계속」으로(레슨과 같게)"""
     with App("iPhone 17", save=_kana_done_save()) as a:

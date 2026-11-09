@@ -143,11 +143,16 @@ export function finishDay(save, today) {
   const xp = used < XP_RUNS_PER_DAY ? DAY_XP : 0;
   let s = { ...save, shop: { ...shop, day, money: Math.min(MONEY_MAX, shop.money + money),
     stories: st ? [...shop.stories, st.id] : shop.stories, xpToday: { date: today, n: used + (xp ? 1 : 0) }, run: null } };
+  let milestone = null, finished = [], chest = false;
   if (xp) {
-    s = earnXp(s, xp, today).save;
-    s = tick(ensureQuests(s, today), "xp", today, xp).save;
+    const e = earnXp(s, xp, today);
+    milestone = e.milestone;
+    const t = tick(ensureQuests(e.save, today), "xp", today, xp);
+    ({ save: s, finished, chest } = t);
   }
-  return { save: s, report: { money, right: res.filter((r) => r.greet && r.order && r.bye).length, total: res.length, xp, story: st ? st.id : null } };
+  // milestone·finished·chest: 정산 화면이 레슨 완료처럼 축하 창·끝낸 퀘스트를 보여 준다
+  return { save: s, report: { money, right: res.filter((r) => r.greet && r.order && r.bye).length, total: res.length, xp, story: st ? st.id : null,
+    milestone, finished, chest } };
 }
 
 export function buyUpgrade(shop, id) {

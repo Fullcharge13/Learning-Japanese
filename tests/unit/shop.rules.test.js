@@ -216,3 +216,15 @@ test("flowCut: every middle cut (flow-02..14) shows up over the days, with 6 gue
   assert.equal(flowCut({ dayNo: 1, ctx: { n: 6 } }, 6), null, "last guest goes to the closing cut");
   assert.equal(flowCut({ dayNo: 1, ctx: { n: 6 } }, 2), "flow-02");
 });
+
+test("finishDay reports the streak milestone and the quests the day's XP finished", () => {
+  const base = playDay({ ...newSave(), streak: { ...newSave().streak, days: 6, best: 6, lastGoalDate: "2026-11-08", todayDate: D, todayXp: 10 },
+    quests: { date: D, ids: ["q_xp20", "q_lessons2", "q_review3"], progress: { q_xp20: 10 }, done: [], chest: false } }, D);
+  const r = finishDay(base, D);
+  assert.equal(r.report.milestone, 7);
+  assert.deepEqual(r.report.finished, ["q_xp20"]);
+  assert.equal(typeof r.report.chest, "boolean");
+  const quiet = finishDay(playDay(newSave(), D), D);
+  assert.equal(quiet.report.milestone, null);
+  assert.deepEqual(quiet.report.finished, []);
+});
