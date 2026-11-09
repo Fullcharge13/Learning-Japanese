@@ -8,6 +8,8 @@ import { localDate, daysSince } from "./today.js";
 import { finishLesson } from "./finish.js";
 import { createPersist } from "./persist.js";
 import { readResume, writeResume, clearResume } from "./resume.js";
+import { gateCompleted } from "./devgate.js";
+import { readDevFlag, setDevMode, markDev, keysFor } from "./devmode.js";
 import { createLessonData, chaptersForConcepts } from "./lessondata.js";
 import { advancedState, advancedIds, isAdvancedId } from "./advanced.js";
 import { loadDevChapters } from "./lessondev.js";
@@ -86,8 +88,9 @@ function dayStart() {
 
 // ---- 저장 ----
 function commit(next) {
+  next = markDev(next, app.dev); // 가져온 저장에 개발자 표시가 섞이거나 빠지지 않게
   app.save = next;
-  const ok = store(storage, next);
+  const ok = store(storage, next, keysFor(app.dev).save);
   if (!ok && !app.storeFailedShown) {
     app.storeFailedShown = true;
     toast("저장하지 못했어요. 브라우저 저장 공간이 꽉 찼거나 막혀 있어요. 설정에서 저장 파일을 내보내 두면 안전해요.", "warn");
@@ -130,9 +133,11 @@ function lessonState(id) {
   const i = lessonIndex(id);
   if (i < 0) return "locked";
   if (s.completed_lessons.includes(id)) return s.grading_results[id] && s.grading_results[id].perfect ? "perfect" : "done";
-  if (i === 0 || s.completed_lessons.includes(app.lessons[i - 1].id)) return "open";
+  if (i === 0 || gateDone().includes(app.lessons[i - 1].id)) return "open";
   return "locked";
 }
+/** 잠금 판정용 완료 목록(개발자 모드면 본 과정 전부) */
+function gateDone() { return gateCompleted(app.save, app.chapters); }
 function currentLessonId() {
   const s = app.save;
   const cur = app.lessons.find((l) => l.id === s.current_lesson);
@@ -204,9 +209,9 @@ async function afterDone() {
 
 // 하던 레슨 기록(v0.6.2 다): 본 저장과 따로 한 칸. 없는 레슨·24시간 지난 기록은 읽을 때 지운다
 const resume = {
-  read: () => readResume(storage, { now: Date.now(), exists: (id) => !!lessonById(id) }),
-  write: (rec) => writeResume(storage, rec),
-  clear: () => clearResume(storage),
+  read: () => readResume(storage, { now: Date.now(), exists: (id) => !!lessonById(id) }, keysFor(app.dev).resume),
+  write: (rec) => writeResume(storage, rec, keysFor(app.dev).resume),
+  clear: () => clearResume(storage, keysFor(app.dev).resume),
 };
 
 const ctx = {
@@ -225,7 +230,10 @@ const ctx = {
   chaptersForConcepts: (concepts) => chaptersForConcepts(app.chapters, concepts, app.save.completed_lessons),
   swChanged: () => app.swChanged,
   get chapterFiles() { return app.data ? app.data.fileList() : []; },
-  lessonState, currentLessonId,
+  lessonState, currentLessonId, gateDone,
+  isDev: () => app.dev,
+  /** 개발자 모드 켜기·끄기: 저장 칸을 바꿔 읽고 오늘 기록을 맞춘다 */
+  setDev(on) { app.dev = !!on; app.save = setDevMode(storage, app.dev).save; dayStart(); },
   examIds,
   shopRules, // 시험 도구가 가게 손님 정답을 계산할 때(window.__ria.ctx.shopRules)
   today: () => localDate(),
@@ -236,8 +244,9 @@ const ctx = {
 
 async function boot() {
   const root = document.getElementById("app");
-  const { save, readFailed } = loadEx(storage);
-  app.save = save;
+  app.dev = readDevFlag(storage);
+  const { save, readFailed } = loadEx(storage, keysFor(app.dev).save);
+  app.save = markDev(save, app.dev);
   if (readFailed) toast("저장 기록을 읽지 못해 처음부터 시작해요. 브라우저 저장 설정을 확인해 주세요.", "warn");
   requestPersist();
   try {

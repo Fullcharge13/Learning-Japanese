@@ -18,13 +18,13 @@ export function upcomingChapters(chapters) {
  * 레슨마다 isNew: 「새 내용」 점(v0.7.1, newcontent.js)
  * 레슨 상태: done(완료) · current(지금) · open(열렸지만 지금이 아님) · locked(잠김). 앞 레슨을 끝내야 열림.
  */
-export function curriculum({ chapters, completed, currentId, seenUpdates = {} }) {
+export function curriculum({ chapters, completed, currentId, seenUpdates = {}, open: allOpen = false }) {
   const doneSet = new Set(completed || []);
   const seenSave = { completed_lessons: completed || [], seen_updates: seenUpdates };
   const all = (chapters || []).flatMap((c) => c.lessons);
   const statusOf = (l, i) => {
     if (doneSet.has(l.id)) return "done";
-    const unlocked = i === 0 || doneSet.has(all[i - 1].id);
+    const unlocked = allOpen || i === 0 || doneSet.has(all[i - 1].id);
     if (!unlocked) return "locked";
     return l.id === currentId ? "current" : "open";
   };

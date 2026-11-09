@@ -684,3 +684,6 @@ rt { font-size: .5em; font-weight: 600; color: var(--ink-2); letter-spacing: 0; 
 .diary .locked { display: grid; place-items: center; gap: 6px; min-height: 150px; color: var(--ink-2); }
 .story-new { text-align: center; display: grid; gap: 8px; }
 .shop-settle .tiles { grid-template-columns: repeat(3, 1fr); }
+.panel.devmode { margin-top: 16px; }
+.panel.devmode .row { padding: 0; }
+.panel.devmode .row-label small { font-weight: 500; }

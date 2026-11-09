@@ -21,7 +21,7 @@ const ST = {
 /** 학습 내용 카드 (C33): 요약 한 줄, 장마다 펼치기, 다음 업데이트 예정 */
 function courseCard(ctx) {
   const c = curriculum({ chapters: ctx.chapters, completed: ctx.save.completed_lessons, currentId: ctx.currentLessonId(),
-    seenUpdates: ctx.save.seen_updates });
+    seenUpdates: ctx.save.seen_updates, open: ctx.isDev() });
   const dot = (l) => (l.isNew ? '<span class="new-dot inline" role="img" aria-label="새 내용 있음">N</span>' : "");
   const first = c.upcoming.slice(0, 3);
   const rest = c.upcoming.slice(3);
@@ -95,6 +95,13 @@ export function render(root, ctx) {
       </section>
       <p class="ver center">사나다 일본어 ${esc(ctx.version)} · <a class="lic-link" href="licenses.txt" target="_blank" rel="noopener">오픈 소스</a></p>
       <p class="muted center credit">진도 참고: NHK WORLD-JAPAN 『일본말 첫걸음』 1~24과 순서(교재 내용은 옮기지 않았어요)<br>읽기 대조: <a class="lic-link" href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noopener">JMdict</a>(EDRDG, CC BY-SA 4.0) · 단어 표 CC BY-SA 4.0<br>이 앱은 NHK와 관련이 없어요.</p>
+      <section class="panel devmode" aria-labelledby="dev-label">
+        <div class="row">
+          <p class="row-label" id="dev-label">개발자 모드<small>잠긴 곳을 모두 열어 검수해요. 학습 기록과 따로 저장돼요.</small></p>
+          <button class="switch" id="dev" role="switch" aria-checked="${ctx.isDev()}" aria-labelledby="dev-label"><span></span></button>
+        </div>
+        ${ctx.isDev() ? '<p class="muted">켜져 있어요 · 끄면 학습 기록으로 돌아가요</p>' : ""}
+      </section>
     </main>
     ${tabBar("settings")}
   </div>`;
@@ -163,12 +170,19 @@ export function render(root, ctx) {
     toast(v ? `앞으로 「${v}」 씨라고 부를게요.` : "알겠어요, 이름 없이 부를게요.");
   });
 
+  root.querySelector("#dev").addEventListener("click", () => {
+    const on = !ctx.isDev();
+    ctx.setDev(on);
+    ctx.show("settings");
+    document.getElementById("dev")?.focus(); // 다시 그린 뒤에도 맨 아래 스위치에 머문다
+    toast(on ? "개발자 모드를 켰어요. 모든 레슨과 가게가 열려요." : "개발자 모드를 껐어요. 학습 기록으로 돌아왔어요.");
+  });
   root.querySelector("#install").addEventListener("click", () => ctx.showInstallSheet());
   root.querySelector("#export").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(ctx.save, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `sanada-japanese-save-${localDate()}.json`;
+    a.download = `sanada-japanese-${ctx.isDev() ? "dev-" : ""}save-${localDate()}.json`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);

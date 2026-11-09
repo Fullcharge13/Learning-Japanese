@@ -88,7 +88,7 @@ function questCard(save) {
 
 function shopCard(ctx) {
   const save = ctx.save;
-  const open = shopOpen(ctx.examIds(), save.completed_lessons);
+  const open = shopOpen(ctx.examIds(), ctx.gateDone());
   const s = save.shop;
   return `<section class="panel shop-card${open ? "" : " locked"}">
     <img src="img/shop/flow-01.png" width="72" height="72" alt="">
