@@ -30,7 +30,7 @@ export function render(root, ctx, params = {}) {
     <main>
       <div class="done-hero">
         <div class="ria-wrap big jump">${yukiImg({ face: "done", item: ctx.save.item, size: 150 })}<span class="sfx" aria-hidden="true">짠!</span></div>
-        <h1>${review ? "복습 끝!" : finished ? "모두 끝!" : n5Done ? "N5 단어 완주!" : adv ? esc(`${lesson.id} 심화 끝!`)
+        <h1>${review ? "복습 끝!" : finished ? "모두 끝!" : n5Done ? "N5 완주!" : adv ? esc(`${lesson.id} 심화 끝!`)
           : jlptLesson ? esc(`N5 · ${shortLessonId(lesson.id)} 끝!`) : esc(`${lesson.id} 끝!`)}</h1>
         <p class="bubble center">${ruby(line.text)}</p>
       </div>
