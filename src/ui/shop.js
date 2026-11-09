@@ -8,7 +8,8 @@ import {
 import { MENU, COUNTS, GREETINGS, GUESTS, UPGRADES, FLOW, STORIES } from "../../data/shop.js";
 import { yukiImg } from "../yuki.js";
 import { ruby, plain } from "../ruby.js";
-import { esc, icon, toast, sayBtn } from "./dom.js";
+import { esc, icon, toast, sayBtn, celebrate } from "./dom.js";
+import { QUESTS } from "../../data/quests.js";
 import { statusBar, tabBar, bindTabs } from "./nav.js";
 
 const GUARD_MS = 400;
@@ -164,6 +165,7 @@ function dayView(root, ctx, params) {
       <button class="btn ${ok ? "primary" : "coral"} wide" id="cont">계속</button>`;
     result.hidden = false;
     document.body.classList.add("result-open");
+    root.querySelector("#quit").disabled = true; // 「계속」 전에 나가면 이 손님 결과가 저장되지 않으므로
     const guard = performance.now() + GUARD_MS;
     const cont = result.querySelector("#cont");
     requestAnimationFrame(() => cont.focus({ preventScroll: true }));
@@ -176,7 +178,17 @@ function dayView(root, ctx, params) {
       ctx.show("shop", { view: "day", cut });
     });
   });
-  return () => document.body.classList.remove("result-open");
+  // 키보드(아이패드): 숫자 = 인사 카드·메뉴 고르기(개수는 누르기), Enter = 확인. 결과 창이 뜨면 초점이 「계속」에 있어 Enter가 그대로 눌린다
+  const result = root.querySelector("#result");
+  const onKey = (e) => {
+    if (!result.hidden || e.altKey || e.ctrlKey || e.metaKey) return;
+    const n = /^[1-9]$/.test(e.key) ? +e.key - 1 : -1;
+    const opts = root.querySelectorAll(run.step === "order" ? ".menu-card" : ".options .opt");
+    if (n >= 0 && opts[n]) { e.preventDefault(); opts[n].click(); return; }
+    if (e.key === "Enter" && !(document.activeElement instanceof HTMLButtonElement) && !act.disabled) { e.preventDefault(); act.click(); }
+  };
+  document.addEventListener("keydown", onKey);
+  return () => { document.removeEventListener("keydown", onKey); document.body.classList.remove("result-open"); };
 }
 
 function settle(ctx) {
@@ -202,9 +214,14 @@ function settleView(root, ctx, params) {
     </section>
     ${st ? `<section class="panel story-new"><h2>새 이야기: ${esc(st.title)}</h2>${pic(st.id, st.title, "shop-pic big")}
       <p lang="ja">${ruby(st.line.jp)} <span class="muted">(${esc(st.line.ko)})</span></p></section>` : ""}
+    ${(r.finished || []).length || r.chest ? `<section class="panel shop-settle-quests"><h2>끝낸 퀘스트</h2><ul class="plain">${(r.finished || [])
+      .map((id) => QUESTS.find((q) => q.id === id)).filter(Boolean).map((q) => `<li>${icon("check")}${esc(q.name)} <b class="sun-text">+${q.reward}</b></li>`).join("")}
+      ${r.chest ? `<li>${icon("chestOpen")}보물 상자를 열었어요 <b class="sun-text">+10</b></li>` : ""}</ul></section>` : ""}
     <div class="btn-row"><button class="btn ghost" id="up">가게 키우기</button><button class="btn primary" id="home">홈으로</button></div>`);
   root.querySelector("#up").addEventListener("click", () => ctx.show("shop", { view: "upgrades" }));
   root.querySelector("#home").addEventListener("click", () => ctx.show("home"));
+  // 정산 XP로 연속 기록 이정표를 넘었으면 레슨 완료처럼 축하 창(새로 고침으로 다시 뜨지 않게 report에서만)
+  if (r.milestone) celebrate({ item: ctx.save.item, milestone: r.milestone });
 }
 
 function upgradesView(root, ctx) {

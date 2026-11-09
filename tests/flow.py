@@ -823,6 +823,72 @@ def test_shop_full_day():
         assert not a.errors, a.errors
 
 
+def test_shop_settle_rewards():
+    """정산 XP로 7일 연속이 되면 축하 창, 일일 퀘스트를 끝내면 「끝낸 퀘스트」 (레슨 완료와 같게)"""
+    seed = _kana_done_save()
+    seed["streak"] = {"days": 6, "best": 6, "lastGoalDate": today(1), "todayDate": today(), "todayXp": 10}
+    seed["quests"] = {"date": today(), "ids": ["q_xp20", "q_lessons2", "q_review3"], "progress": {"q_xp20": 10}, "done": [], "chest": False}
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        _shop_play_day(a)
+        a.page.wait_for_selector(".celebrate")
+        assert "7일 연속" in a.page.inner_text(".celebrate")
+        a.page.wait_for_timeout(GUARD_WAIT)
+        a.page.click("#cel-ok")
+        a.page.wait_for_selector(".celebrate", state="detached")
+        txt = a.page.inner_text(".shop-settle-quests")
+        assert "20 XP 얻기" in txt, txt
+        assert not a.errors, a.errors
+
+
+def test_shop_quit_locked_during_result():
+    """결과 창이 떠 있는 동안 「가게 앞으로」(그만하기)는 누를 수 없음 — 「계속」 전에 나가 손님 결과를 잃지 않게"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.click("#start")
+        while a.page.query_selector(".shop-cut"):
+            a.page.click("#act")
+            a.page.wait_for_timeout(120)
+        assert not a.page.is_disabled("#quit")
+        ans = a.js(SHOP_ANSWER_JS)
+        a.page.click('.options .opt[data-i="%d"]' % ans["i"])
+        a.page.click("#act")
+        a.page.wait_for_selector("#result:not([hidden])")
+        assert a.page.is_disabled("#quit"), "quit must be locked while the result panel is open"
+        assert not a.errors, a.errors
+
+
+def test_shop_keyboard():
+    """아이패드 키보드: 화면 제목에 초점, 숫자로 카드 고르기, Enter로 확인"""
+    with App("iPad Pro 11", save=_kana_done_save()) as a:
+        a.start()
+        a.page.click("#shop")
+        a.page.wait_for_selector(".shop-front")
+        assert a.js("() => document.activeElement.matches('h1')"), "front screen heading gets focus"
+        a.page.click("#start")
+        while a.page.query_selector(".shop-cut"):
+            a.page.click("#act")
+            a.page.wait_for_timeout(120)
+        assert a.js("() => document.activeElement.matches('h1')"), "day screen heading gets focus"
+        ans = a.js(SHOP_ANSWER_JS)
+        a.page.keyboard.press(str(ans["i"] + 1))
+        assert a.page.get_attribute('.options .opt[data-i="%d"]' % ans["i"], "aria-checked") == "true"
+        a.page.keyboard.press("Enter")
+        a.page.wait_for_selector("#result:not([hidden])")
+        a.page.wait_for_timeout(GUARD_WAIT)
+        a.page.keyboard.press("Enter")
+        a.page.wait_for_selector("#result", state="hidden")
+        ans = a.js(SHOP_ANSWER_JS)
+        assert ans["step"] == "order"
+        menus = a.js("() => window.__ria.ctx.save.shop.run.ctx.menus")
+        a.page.keyboard.press(str(menus.index(ans["menu"]) + 1))
+        assert a.page.get_attribute('.menu-card[data-menu="%s"]' % ans["menu"], "aria-checked") == "true"
+        assert not a.errors, a.errors
+
+
 def test_shop_result_focus():
     """결과 창이 열리면 키보드 초점이 「계속」으로(레슨과 같게)"""
     with App("iPhone 17", save=_kana_done_save()) as a:
@@ -1015,11 +1081,32 @@ def test_old_items_refund_notice():
         assert "물건 값 360엔을 돌려드렸어요" in a.page.inner_text("#toasts"), a.page.inner_text("#toasts")
         sv = a.save()
         assert sv["bytes"] == 370 and "item_refund" not in sv and sv["items"] == ["none"], sv
+        a.page.wait_for_timeout(5500)
+        assert "돌려드렸어요" in a.js("() => document.getElementById('toasts').innerText"), "refund notice stays longer than ordinary toasts"
         a.page.reload()
         a.page.wait_for_selector(".screen.splash #go")
         a.page.wait_for_timeout(500)
         assert "돌려드렸어요" not in (a.js("() => document.getElementById('toasts')?.innerText || ''"))
         assert a.save()["bytes"] == 370
+        assert not a.errors, a.errors
+
+
+def test_import_old_save_refund():
+    """옛 물건이 든 저장 파일을 가져오면 그 자리에서 돌려준 엔 안내, 엔 증가"""
+    old = {"app": "sanada-japanese", "saveVer": 2, "bytes": 0, "items": ["none", "kimono"], "item": "kimono"}
+    path = os.path.join(OUT, "old-save.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(old, f)
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.set_input_files("#import", path)
+        a.page.get_by_role("button", name="바꾸기").click()
+        a.page.wait_for_selector(".screen.home")
+        a.page.wait_for_function("() => (document.getElementById('toasts') || {}).innerText?.includes('돌려드렸어요')")
+        assert "물건 값 300엔" in a.page.inner_text("#toasts")
+        sv = a.save()
+        assert sv["bytes"] == 300 and "item_refund" not in sv, sv
         assert not a.errors, a.errors
 
 
