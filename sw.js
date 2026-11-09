@@ -10,7 +10,7 @@
 //   저장본 접두는 GAME_PREFIX만 지운다(같은 주소의 리아와 파이썬 저장본, 다른 글자판 저장본을 지우지 않게).
 
 const VERSION = "__RIA_VERSION__";
-const GAME_PREFIX = "haechi-game-"; // 번체판(zh-hant/)은 빌드가 haechi-hant-game-으로 바꿈
+const GAME_PREFIX = "sanada-game-"; // 번체판(zh-hant/)은 빌드가 haechi-hant-game-으로 바꿈
 const GAME_CACHE = GAME_PREFIX + "__RIA_VERSION__-__RIA_HASH__";
 const GAME_FILES = __RIA_GAME_FILES__;
 const CHAPTER_FILES = __RIA_CHAPTER_FILES__;

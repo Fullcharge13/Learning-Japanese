@@ -31,7 +31,7 @@ const LEDGER_SHAPE = {
 };
 
 test("constants", () => {
-  assert.equal(SAVE_KEY, "haechi-korean.save");
+  assert.equal(SAVE_KEY, "sanada-japanese.save");
   assert.equal(SAVE_VER, 2);
 });
 
@@ -307,8 +307,8 @@ test("items clean: unknown ids dropped, none always owned, placed falls back to 
   assert.equal(migrate({ items: ["none", "janggu"], item: "janggu" }).item, "janggu");
 });
 
-test("save key is haechi-korean.save", () => {
-  assert.equal(SAVE_KEY, "haechi-korean.save");
+test("save key is sanada-japanese.save", () => {
+  assert.equal(SAVE_KEY, "sanada-japanese.save");
 });
 
 test("save keeps ria key untouched", () => {

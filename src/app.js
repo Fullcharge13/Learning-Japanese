@@ -31,7 +31,7 @@ const SCREENS = { splash, home, lesson, done, badges, closet, settings };
 function pickStorage() {
   try {
     const s = window.localStorage;
-    s.getItem("haechi-korean.probe");
+    s.getItem("sanada-japanese.probe");
     return s;
   } catch {
     const m = new Map();

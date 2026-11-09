@@ -1,7 +1,7 @@
 // 오프라인 준비 판정: 서비스 작업자가 다루고, 이 앱의 게임 저장본에 장 파일이 모두 있으면 준비.
 // 리아와 파이썬과 같은 주소(github.io)에 올라가므로 저장본 이름 접두를 따로 둔다.
 
-export const GAME_CACHE_PREFIX = "haechi-game-";
+export const GAME_CACHE_PREFIX = "sanada-game-";
 
 // 저장된 주소가 장 파일 이름(lessons/chN-xxxxxxxx.json)으로 끝나는지. 앞 글자가 /여야 같은 파일
 function endsWithFile(url, rel) {

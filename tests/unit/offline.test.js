@@ -7,7 +7,7 @@ const CH = ["lessons/ch1-11111111.json", "lessons/ch2-22222222.json"];
 const GAME = GAME_CACHE_PREFIX + "v0.1-a";
 
 test("offline_prefix: 리아 앱과 같은 주소에서 저장본이 섞이지 않게 haechi- 접두", () => {
-  assert.equal(GAME_CACHE_PREFIX, "haechi-game-");
+  assert.equal(GAME_CACHE_PREFIX, "sanada-game-");
 });
 
 test("offline_ready: 작업자가 다루고 게임 저장본에 장 파일이 모두 있으면 준비", () => {

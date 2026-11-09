@@ -3,7 +3,7 @@
 import { ITEMS } from "../data/items.js";
 import { cleanSeenUpdates } from "./newcontent.js";
 
-export const SAVE_KEY = "haechi-korean.save";
+export const SAVE_KEY = "sanada-japanese.save";
 export const SAVE_VER = 2;
 const LOG_CAP = 50;
 const BROKEN_SLOTS = 5; // .broken 다음 .broken.1 ~ .broken.5

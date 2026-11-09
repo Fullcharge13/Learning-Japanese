@@ -184,7 +184,7 @@ export function render(root, ctx) {
     const blob = new Blob([JSON.stringify(ctx.save, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `haechi-korean-save-${localDate()}.json`;
+    a.download = `sanada-japanese-save-${localDate()}.json`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
