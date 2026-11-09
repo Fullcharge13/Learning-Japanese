@@ -5,7 +5,7 @@
 
 - 장 = words.csv의 chapter. 1 히라가나, 2 가타카나, 3~26 = 1~24과(NHK 「일본말 첫걸음」 주제 순서만 참고).
 - 레슨 = 단원(unit) 하나를 표 순서대로 8개씩(남는 4개 이하는 앞 레슨에 붙임), 장 끝에 장 평가.
-- 문제: 일→한·한→일(choice), 가나 카드 순서(order, 가나 장 제외). 일반 레슨 터치 max(6, 단어 수) + check 1, 장 평가 8 + check 1.
+- 문제: 일→한·한→일(choice), 가나 카드 순서(order, 가나 장 제외), 예문 빈칸(choice + sentence, data/examples.csv에 예문 있는 단어). 일반 레슨 터치 max(6, 단어 수) + check 1, 장 평가 8 + check 1.
 - jp 칸은 「学生{がくせい}」처럼 한자 뒤 {읽기}. 화면이 <ruby>로 그린다(src/ruby.js).
 - 무작위는 random.Random(문자열 시드)만 써서 같은 입력이면 같은 출력.
 - 결과물은 CC BY-SA 4.0 (data/LICENSE-data.md).
@@ -101,6 +101,38 @@ def load_words(path):
     return out
 
 
+EX_STATUS = {"cross", "native", "hold"}
+
+
+def load_examples(path, words):
+    """예문 표(data/examples.csv) → {단어 id: {pre, post, ko, avoid}}. hold는 뺀다. 잘못된 줄은 줄 번호와 함께 ValueError.
+    빈칸 [[…]] 안은 그 단어의 jp와 똑같아야 한다(보기 카드 = 단어 카드)."""
+    by_id = {w["id"]: w for w in words}
+    out = {}
+    with open(path, encoding="utf-8", newline="") as f:
+        for n, r in enumerate(csv.DictReader(f), start=2):
+            at = "example line %d" % n
+            eid, s, ko, st = r["id"], r["sentence_jp"], (r.get("ko") or "").strip(), (r.get("status") or "").strip()
+            if st not in EX_STATUS:
+                raise ValueError("%s: unknown status %r" % (at, st))
+            if eid not in by_id:
+                raise ValueError("%s: no such word %s" % (at, eid))
+            parts = s.split("[[")
+            if len(parts) != 2 or parts[1].count("]]") != 1 or "]]" in parts[0]:
+                raise ValueError("%s: needs exactly one [[...]]" % at)
+            form, post = parts[1].split("]]")
+            if form != by_id[eid]["jp"]:
+                raise ValueError("%s: blank %r must be the word %r" % (at, form, by_id[eid]["jp"]))
+            if not ko:
+                raise ValueError("%s: empty ko" % at)
+            if BARE_KANJI.search(RUBY.sub("", parts[0] + post)):
+                raise ValueError("%s: kanji without furigana in %r" % (at, s))
+            if st == "hold":
+                continue
+            out[eid] = {"pre": parts[0], "post": post, "ko": ko, "avoid": [plain(x) for x in (r.get("avoid") or "").split("|") if x]}
+    return out
+
+
 def _chunks(words):
     parts = [words[i:i + CHUNK] for i in range(0, len(words), CHUNK)]
     if len(parts) > 1 and len(parts[-1]) <= TAIL:
@@ -119,9 +151,10 @@ def _twins(a, b):
             or (a["twin"] != "" and a["twin"] == b["twin"]))  # twin: 뜻은 달라도 학습자가 헷갈리는 짝(words.csv twin 칸)
 
 
-def _options(w, pool, field, seed):
-    """정답 + 같은 품사 오답 3개(모자라면 같은 장 아무 품사). 못 채우면 None"""
+def _options(w, pool, field, seed, avoid=()):
+    """정답 + 같은 품사 오답 3개(모자라면 같은 장 아무 품사). 못 채우면 None. avoid: 빼야 할 표기(plain)"""
     used, picked = {w[field]}, []
+    pool = [x for x in pool if plain(x["jp"]) not in avoid]
     rng = random.Random(seed)
     for same_pos in (True, False):
         cands = sorted({x[field] for x in pool if (not same_pos or x["pos"] == w["pos"]) and not _twins(x, w)} - used)
@@ -138,8 +171,17 @@ def _options(w, pool, field, seed):
     return [w[field]] + picked if len(picked) == 3 else None
 
 
-def _item(w, kind, pool, is_kana):
+def _item(w, kind, pool, is_kana, examples=None):
     seed = w["id"] + ":" + kind
+    if kind == "fill":
+        ex = (examples or {}).get(w["id"])
+        opts = ex and _options(w, pool, "jp", seed, avoid=ex["avoid"])
+        if not opts:
+            return None
+        full = ex["pre"] + w["jp"] + ex["post"]
+        return {"type": "choice", "concept": w["id"], "q": "빈칸에 들어갈 말을 골라요",
+                "sentence": {"jp": ex["pre"] + "＿＿" + ex["post"], "ko": ex["ko"]}, "options": opts, "answer": 0,
+                "explain": "%s · %s" % (full, _explain(w)), "say": full}
     if kind == "order":
         r = kana(w["jp"])
         units = kana_units(r) if KANA.match(r) else []
@@ -160,19 +202,23 @@ def _item(w, kind, pool, is_kana):
     return it
 
 
-def _items(words, pool, n, seed, is_kana):
-    """단어마다 문제 종류를 돌려 쓰고, 안 맞는 종류는 다음 종류로. 단어가 모자라면 다른 종류로 한 바퀴 더"""
+def _items(words, pool, n, seed, is_kana, examples=None):
+    """단어마다 문제 종류를 돌려 쓰고, 안 맞는 종류는 다음 종류로. 단어가 모자라면 다른 종류로 한 바퀴 더.
+    예문이 있는 단어는 첫 바퀴에서 빈칸 문제(fill)를 먼저 시도한다."""
+    examples = examples or {}
     kinds_all = KANA_KINDS if is_kana else WORD_KINDS
     items, done = [], set()
     for rnd in range(len(kinds_all)):
         for i, w in enumerate(words):
             if len(items) == n:
                 break
-            for k in range(len(kinds_all)):
-                kind = kinds_all[(i + rnd + k) % len(kinds_all)]
+            kinds = [kinds_all[(i + rnd + k) % len(kinds_all)] for k in range(len(kinds_all))]
+            if rnd == 0 and w["id"] in examples:
+                kinds.insert(0, "fill")
+            for kind in kinds:
                 if (w["id"], kind) in done:
                     continue
-                it = _item(w, kind, pool, is_kana)
+                it = _item(w, kind, pool, is_kana, examples)
                 if it:
                     done.add((w["id"], kind))
                     items.append(it)
@@ -198,7 +244,7 @@ def _cards(words):
             for i in range(0, len(words), 4)]
 
 
-def build_chapter(words, chapter):
+def build_chapter(words, chapter, examples=None):
     pool = sorted((w for w in words if w["chapter"] == chapter), key=lambda w: (w["unit"], w["seq"]))
     is_kana = all(w["pos"] == "kana" for w in pool)
     title = CHAPTER_TITLES.get(chapter, "%d장" % chapter)
@@ -211,25 +257,29 @@ def build_chapter(words, chapter):
             lessons.append({"id": lid, "chapter": chapter, "title": "%d단원" % u + (" (%d)" % k if len(parts) > 1 else ""),
                             "goal": "새 %s %d개 알기" % (noun, len(part)),
                             "summary": ["%s = %s" % (w["jp"], w["ko"]) for w in part[:4]],
-                            "cards": _cards(part), "items": _items(part, pool, max(TOUCH, len(part)), lid, is_kana)})
+                            "cards": _cards(part), "items": _items(part, pool, max(TOUCH, len(part)), lid, is_kana, examples)})
     eid = "%d-%d" % (chapter, len(lessons) + 1)
     exam_words = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
     lessons.append({"id": eid, "chapter": chapter, "title": title + " 평가", "goal": "이 장 %s 복습" % noun,
-                    "summary": [], "isExam": True, "cards": [], "items": _items(exam_words, pool, EXAM_TOUCH, eid, is_kana)})
+                    "summary": [], "isExam": True, "cards": [], "items": _items(exam_words, pool, EXAM_TOUCH, eid, is_kana, examples)})
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
 HEADER = "// 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)\n"
 
 
-def main(out_dir=None, words_file=None, concepts_file=None):
+def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None):
     out_dir = out_dir or os.path.join(ROOT, "data", "lessons")
     concepts_file = concepts_file or os.path.join(ROOT, "data", "concepts.js")
     words = load_words(words_file or os.path.join(ROOT, "data", "words.csv"))
+    # 예문 표는 실제 단어 표와 짝. 시험이 단어 표만 바꾸면 예문 없이 만든다
+    if examples_file is None and words_file is None:
+        examples_file = os.path.join(ROOT, "data", "examples.csv")
+    examples = load_examples(examples_file, words) if examples_file and os.path.exists(examples_file) else {}
     os.makedirs(out_dir, exist_ok=True)
     total = 0
     for ch in sorted({w["chapter"] for w in words}):
-        data = build_chapter(words, ch)
+        data = build_chapter(words, ch, examples)
         total += len(data["LESSONS"])
         with open(os.path.join(out_dir, "ch%d.js" % ch), "w", encoding="utf-8") as f:
             f.write(HEADER)

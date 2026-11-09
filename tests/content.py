@@ -7,6 +7,7 @@
 - order: 2~6장 가나 카드, 이으면 그 단어 읽기
 - 질문 옆 🔊(qSay)는 단어 장의 일→한에만
 - 보류(hold) 단어는 어디에도 없고, 보류 아닌 단어는 모두 한 번 이상 문제에 나옴(성공 기준 1)
+- 예문 빈칸: 빈칸 하나·한국어 힌트·정답이 그 단어, 빈칸 뒤 「avoid」 단어가 보기에 없음, 예문 있는(보류 아닌) 단어는 모두 빈칸으로 한 번 이상
 - 화면 글자에 로마자·중국어 간체 전용 글자가 없음
 """
 import argparse
@@ -18,7 +19,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
-from make_lessons import load_words, kana, plain, KANA, _twins as twins  # noqa: E402
+from make_lessons import load_words, load_examples, kana, plain, KANA, _twins as twins  # noqa: E402
 
 DUMP = r"""
 const fs = await import("node:fs"); const path = await import("node:path"); const url = await import("node:url");
@@ -42,8 +43,10 @@ def load(lessons_dir):
     return json.loads(r.stdout)
 
 
-def check(mods, words, all_ids):
+def check(mods, words, all_ids, examples=None):
     errs = []
+    examples = examples or {}
+    filled = set()
     by_id = {w["id"]: w for w in words}
     by_ch = {}
     for w in words:
@@ -66,7 +69,18 @@ def check(mods, words, all_ids):
                 seen.add(it.get("concept"))
                 if not w:
                     continue  # 보류·없는 단어는 아래에서 한꺼번에
-                if it.get("say") != w["jp"]:
+                sent = it.get("sentence")
+                if sent is not None:
+                    ex = examples.get(w["id"])
+                    filled.add(w["id"])
+                    if not ex or sent.get("jp", "").count("＿＿") != 1 or not sent.get("ko"):
+                        errs.append("%s: fill needs one blank, a Korean hint and an example row: %r" % (at, sent))
+                    elif it.get("say") != ex["pre"] + w["jp"] + ex["post"]:
+                        errs.append("%s: fill say %r is not the full sentence" % (at, it.get("say")))
+                    bad_avoid = [o for o in it.get("options", []) if ex and plain(o) in ex["avoid"]]
+                    if bad_avoid:
+                        errs.append("%s: option(s) %r also fit this sentence (examples.csv avoid)" % (at, bad_avoid))
+                elif it.get("say") != w["jp"]:
                     errs.append("%s: say %r is not the word %r" % (at, it.get("say"), w["jp"]))
                 texts.append(it.get("q", ""))
                 if t in ("choice", "check"):
@@ -100,6 +114,9 @@ def check(mods, words, all_ids):
     leaked = seen & (all_ids - set(by_id))
     if leaked:
         errs.append("hold words used: %s" % sorted(leaked))
+    no_fill = set(examples) - filled
+    if no_fill:
+        errs.append("%d example words never asked as fill, e.g. %s" % (len(no_fill), sorted(no_fill)[:5]))
     missing = set(by_id) - seen
     if missing:
         errs.append("%d words never asked (success criterion 1), e.g. %s" % (len(missing), sorted(missing)[:5]))
@@ -115,7 +132,10 @@ def main():
     import csv
     with open(path, encoding="utf-8", newline="") as f:
         all_ids = {r["id"] for r in csv.DictReader(f)}
-    errs = check(mods, load_words(path), all_ids)
+    words = load_words(path)
+    ex_path = os.path.join(ROOT, "data", "examples.csv")
+    examples = load_examples(ex_path, words) if os.path.exists(ex_path) else {}
+    errs = check(mods, words, all_ids, examples)
     n = sum(len(m["LESSONS"]) for m in mods.values())
     for e in errs:
         print("FAIL", e)

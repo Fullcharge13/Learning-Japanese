@@ -173,3 +173,43 @@ def test_twin_column_keeps_confusable_words_apart(tmp_path):
 def test_more_parse_errors(tmp_path, row, msg):
     with pytest.raises(ValueError, match=msg):
         load_words(_bad_csv(tmp_path, row))
+
+
+from make_lessons import load_examples  # noqa: E402
+
+EXAMPLES = os.path.join(FX, "examples-mini.csv")
+
+
+def _fill_items(ch):
+    return [it for it in _items(ch) if it.get("sentence")]
+
+
+def test_fill_items_from_examples():
+    words = load_words(WORDS)
+    ex = load_examples(EXAMPLES, words)
+    assert set(ex) == {"c3-002", "c3-007", "c3-010"}  # hold는 뺌
+    ch = build_chapter(words, 3, ex)
+    fills = {it["concept"]: it for it in _fill_items(ch)}
+    assert set(fills) == {"c3-002", "c3-007", "c3-010"}, "예문 있는 단어는 빈칸 문제로 한 번 이상"
+    it = fills["c3-007"]
+    assert it["sentence"] == {"jp": "駅{えき}に＿＿。", "ko": "역에 가요."}
+    assert it["options"][it["answer"]] == "行{い}きます" and it["q"] == "빈칸에 들어갈 말을 골라요"
+    assert it["say"] == "駅{えき}に行{い}きます。" and not it.get("qSay")
+    assert "駅{えき}に行{い}きます。" in it["explain"]
+    # avoid: 빈칸에 넣어도 말이 되는 단어는 오답 보기에서 뺌
+    assert not {"そこ", "あそこ"} & set(fills["c3-010"]["options"])
+
+
+@pytest.mark.parametrize("row, msg", [
+    ("c3-099,駅に[[行{い}きます]]。,x,cross,", "no such word"),
+    ("c3-007,駅{えき}に行{い}きます。,x,cross,", "exactly one"),
+    ("c3-007,駅{えき}に[[行{い}く]]。,x,cross,", "must be the word"),
+    ("c3-007,駅{えき}に[[行{い}きます]]。,,cross,", "empty ko"),
+    ("c3-007,駅{えき}に[[行{い}きます]]。,x,maybe,", "unknown status"),
+    ("c3-007,駅に[[行{い}きます]]。,x,cross,", "kanji without furigana"),
+])
+def test_example_errors(tmp_path, row, msg):
+    p = tmp_path / "e.csv"
+    p.write_text("id,sentence_jp,ko,status,avoid\n" + row + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match=msg):
+        load_examples(str(p), load_words(WORDS))
