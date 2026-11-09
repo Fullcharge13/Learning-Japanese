@@ -33,7 +33,7 @@ import threading
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
-from make_lessons import plain  # noqa: E402
+from make_lessons import plain, kana  # noqa: E402
 
 # 화면 글자에서 후리가나(rt)·🔊 단추를 뺀 것 = 데이터 표기의 plain()
 SHOWN_JS = "(e) => { const c = e.cloneNode(true); c.querySelectorAll('rt, .say-btn').forEach((r) => r.remove()); return c.textContent; }"
@@ -204,7 +204,10 @@ class App:
 
         def keyset(x):
             return sorted(plain(str(v)).strip() for v in (x.get("options") or x.get("chips") or x.get("lines") or []))
-        cands = [i for i, x in enumerate(items) if norm(plain(x.get("q"))) == norm(q) and keyset(x) == shown]
+        # 빈칸 문제는 질문·보기가 같을 수 있어 예문까지 본다
+        sent = self.page.eval_on_selector(".sent .sent-jp", SHOWN_JS) if self.page.query_selector(".sent .sent-jp") else None
+        cands = [i for i, x in enumerate(items) if norm(plain(x.get("q"))) == norm(q) and keyset(x) == shown
+                 and ((plain(x["sentence"]["jp"]) if x.get("sentence") else None) == sent)]
         if len(cands) > 1:
             cands = [i for i in cands if norm(items[i].get("code")) == norm(code)] or cands
         assert cands, "unknown item on screen: %r %r" % (q, shown)
@@ -571,14 +574,26 @@ def test_longest_meaning_fits():
         assert not a.errors, a.errors
 
 
+def _first_lesson_with(kind):
+    for n in range(3, 40):
+        path = os.path.join(ROOT, "data", "lessons", "ch%d.js" % n)
+        if not os.path.exists(path):
+            break
+        for l in json.loads(open(path, encoding="utf-8").read().split("export const LESSONS = ", 1)[1].rstrip().rstrip(";")):
+            if not l.get("isExam") and any(it["type"] == kind for it in l["items"]):
+                return l["id"]
+    raise AssertionError("no lesson with " + kind)
+
+
 def test_no_code_font():
-    """가나 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음 (가나 카드 문제가 있는 단어 레슨 3-1)"""
+    """가나 카드·보기에 코드(고정폭) 글꼴이 쓰이지 않음 (가나 카드 문제가 있는 첫 단어 레슨)"""
     q = "() => [...document.querySelectorAll('.mono')].filter(e => e.offsetParent).length"
+    lid = _first_lesson_with("order")
     with App("iPhone 17") as a:
         a.start()
-        a.js("(id) => window.__ria.ctx.show('lesson', { id })", "3-1")
+        a.js("(id) => window.__ria.ctx.show('lesson', { id })", lid)
         seen = []
-        items = a.lesson("3-1")["items"]
+        items = a.lesson(lid)["items"]
         for _ in range(40):
             a.page.wait_for_timeout(80)
             if a.page.query_selector(".screen.done"):
@@ -652,6 +667,80 @@ def test_lesson13_opens_after_lesson12():
         assert "15-1" in a.save()["completed_lessons"]
         a.dismiss()
         assert not a.errors, a.errors
+
+
+def _fill_lesson(longest=False):
+    """예문 빈칸 문제가 있는 일반 레슨 (lesson_id, 문제 번호). longest면 예문이 가장 긴 것"""
+    best = None
+    for f in sorted(os.listdir(os.path.join(ROOT, "data", "lessons"))):
+        text = open(os.path.join(ROOT, "data", "lessons", f), encoding="utf-8").read()
+        for l in json.loads(text.split("export const LESSONS = ", 1)[1].rstrip().rstrip(";")):
+            if l.get("isExam"):
+                continue
+            for i, it in enumerate(l["items"]):
+                if it.get("sentence") and it["type"] == "choice":
+                    n = len(plain(it["sentence"]["jp"])) + len(it["sentence"]["ko"])
+                    if not longest:
+                        return l["id"], i
+                    if best is None or n > best[2]:
+                        best = (l["id"], i, n)
+    return best[0], best[1]
+
+
+def _play_to_item(a, lid, idx):
+    a.js("(id) => window.__ria.ctx.show('lesson', { id })", lid)
+    items = a.lesson(lid)["items"]
+    for _ in range(60):
+        a.page.wait_for_timeout(80)
+        if a.page.query_selector(".card-view"):
+            a.page.click("#act")
+            continue
+        if not a.page.query_selector("article.item"):
+            continue
+        k = a.which_item(items)
+        if k == idx:
+            return items[k]
+        a.answer_touch(items[k])
+        a.page.wait_for_selector("#result:not([hidden])")
+        a.cont()
+    raise AssertionError("item %d of %s not reached" % (idx, lid))
+
+
+def test_fill_item_shows_sentence():
+    """예문 빈칸: 일본어 예문(후리가나·빈칸 하나)과 한국어 뜻 힌트가 보이고, 맞히면 결과 창 🔊가 예문 전체를 읽는다"""
+    lid, idx = _fill_lesson()
+    fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
+            "speak(u) { window.__said = u.text; } } }); window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
+    with App("iPhone 17", init=fake) as a:
+        a.start()
+        it = _play_to_item(a, lid, idx)
+        jp = a.page.eval_on_selector(".sent .sent-jp", SHOWN_JS)
+        hint = a.page.inner_text(".sent .sent-hint")
+        print("    %s #%d: %r / %r" % (lid, idx, jp, hint))
+        assert jp == plain(it["sentence"]["jp"]), jp
+        assert a.js("() => document.querySelectorAll('.sent .blank').length") == 1
+        assert it["sentence"]["ko"] in hint
+        if "{" in it["sentence"]["jp"]:
+            assert a.js("() => document.querySelectorAll('.sent rt').length") > 0
+        a.answer_touch(it)
+        a.page.wait_for_selector("#result:not([hidden])")
+        a.page.locator("#result .say-btn").click()
+        assert a.js("() => window.__said") == kana(it["say"]), a.js("() => window.__said")
+        assert not a.errors, a.errors
+
+
+def test_fill_sentence_fits():
+    """가장 긴 예문이 아이폰 작은 화면·아이패드에서 넘치지 않음"""
+    lid, idx = _fill_lesson(longest=True)
+    for dev in ("iPhone 17e", "iPad Pro 11"):
+        with App(dev) as a:
+            a.start()
+            _play_to_item(a, lid, idx)
+            m = a.js("""() => { const b = document.querySelector('.sent'); const r = b.getBoundingClientRect();
+                return { sw: b.scrollWidth, cw: b.clientWidth, right: r.right, vw: innerWidth, hsc: document.documentElement.scrollWidth }; }""")
+            print("    %s %s #%d: %s" % (dev, lid, idx, m))
+            a.shot("fill-longest-%s.png" % slug(dev))
+            assert m["sw"] <= m["cw"] + 1 and m["right"] <= m["vw"] + 1 and m["hsc"] <= m["vw"] + 1, m
 
 
 def test_other_saves_coexist():

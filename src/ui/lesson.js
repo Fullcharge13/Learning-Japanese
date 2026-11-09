@@ -273,10 +273,10 @@ function run(root, ctx, lesson, review, resumed = null) {
     b.addEventListener("click", () => { S.flow = nextCard(S.flow); step(); });
   }
 
-  // ---- 예문 빈칸 상자: 한국어 예문(빈칸 ＿＿) + 중국어 힌트 ----
+  // ---- 예문 빈칸 상자: 일본어 예문(빈칸 ＿＿, 후리가나) + 한국어 뜻 힌트 ----
   function sentenceBox(s) {
-    const ko = String(s.ko || "").split("＿＿").map(esc).join('<span class="blank">＿＿</span>');
-    return `<div class="sent"><p class="sent-ko" lang="ko">${ko}</p><p class="sent-zh">${esc(s.zh || "")}</p></div>`;
+    const jp = String(s.jp || "").split("＿＿").map(ruby).join('<span class="blank">＿＿</span>');
+    return `<div class="sent"><p class="sent-jp" lang="ja">${jp}</p><p class="sent-hint">${esc(s.ko || "")}</p></div>`;
   }
 
   // ---- 문제 머리 ----
