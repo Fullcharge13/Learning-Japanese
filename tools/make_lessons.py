@@ -438,6 +438,41 @@ def build_reading_chapter(d, chapter=122):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
+# ---- N5 청해(123장, N5 채우기 설계 §5): 원본 data/jlpt-n5-listening.json, 꼴 4가지 × 5문제 ----
+LISTENING_FILE = os.path.join(ROOT, "data", "jlpt-n5-listening.json")
+
+
+def load_listening(path=LISTENING_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def listening_concepts(d, chapter=123):
+    return [{"id": i["id"], "name": "청해 · %d" % n, "chapter": chapter} for n, i in enumerate(d["items"], 1)]
+
+
+def _listening_item(i):
+    if "say" not in i:  # 발화 표현: 듣는 문장 없이 상황 → 일본어 보기
+        return {"type": "choice", "kind": "speech", "concept": i["id"], "q": i["q"], "options": i["options"], "answer": 0,
+                "explain": i["ko"], "say": i["options"][0]}
+    return {"type": "choice", "kind": "listen", "concept": i["id"], "qSay": True, "q": i["q"], "options": i["options"], "answer": 0,
+            "explain": i["ko"], "say": i["say"]}
+
+
+def build_listening_chapter(d, chapter=123):
+    title = CHAPTER_TITLES[chapter]
+    lessons, pool = [], []
+    for l in d["lessons"]:
+        items = [_listening_item(i) for i in d["items"] if i["lesson"] == l["lesson"]]
+        pool += items
+        lessons.append({"id": "%d-%d" % (chapter, l["lesson"]), "chapter": chapter, "title": "청해 %d" % l["lesson"],
+                        "goal": "청해: " + l["name"], "summary": [l["tip"]], "cards": [{"say": l["tip"], "words": []}], "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 청해 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
 # ---- N5 모의고사(124장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
 MOCK_FILE = os.path.join(ROOT, "data", "jlpt-n5-mock.json")
 MOCK_MIX = (("kanji-read", 4), ("kanji-write", 3), ("context", 4), ("grammar", 4), ("build", 2))
@@ -523,6 +558,8 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     reading = load_reading() if jlpt else None
     if jlpt:
         extra[122] = lambda: build_reading_chapter(reading)
+        listening = load_listening()
+        extra[123] = lambda: build_listening_chapter(listening)
     if jlpt:
         extra[124] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
     made = {}
@@ -541,7 +578,7 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
         names += [{"id": p["id"], "name": "문법 · %s" % p["title"], "chapter": p["chapter"]} for p in grammar]
         if jlpt:
             names += [{"id": "k5-" + k["kanji"], "name": "한자 · %s %s" % (k["kanji"], k["ko"]), "chapter": k["chapter"]} for k in load_kanji()]
-            names += mock_concepts(mock) + reading_concepts(reading)
+            names += mock_concepts(mock) + reading_concepts(reading) + listening_concepts(listening)
         f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join("  " + json.dumps(n, ensure_ascii=False) for n in names))
     if jlpt:
         with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:

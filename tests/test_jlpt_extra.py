@@ -285,3 +285,43 @@ def test_reading_built(built):
     assert ls[-1]["isExam"] and len(ls[-1]["items"]) == 8
     cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
     assert cs["r5-01"]["chapter"] == 122 and cs["r5-01"]["name"].startswith("독해 · ")
+
+
+# ---- 청해(123장, N5 채우기 설계 §5) ----
+LISTENING = os.path.join(ROOT, "data", "jlpt-n5-listening.json")
+
+
+def test_listening_data():
+    from make_lessons import load_listening
+    d = load_listening(LISTENING)
+    assert [l["lesson"] for l in d["lessons"]] == [1, 2, 3, 4]
+    its = d["items"]
+    assert [i["id"] for i in its] == ["l5-%02d" % n for n in range(1, 21)]
+    assert [i["lesson"] for i in its] == [1] * 5 + [2] * 5 + [3] * 5 + [4] * 5
+    for i in its:
+        n = 3 if i["lesson"] in (3, 4) else 4
+        assert len(i["options"]) == n and len({plain(o) for o in i["options"]}) == n, i["id"]
+        assert i["ko"] and not any(_bare(o) for o in i["options"]), i["id"]
+        if i["lesson"] in (1, 2):
+            lines = i["say"].split("\n")
+            assert 2 <= len(lines) <= 4 and all(re.match(r"^[男女]：", l) for l in lines), i["id"]
+            assert not any(_bare(l[2:]) for l in lines), i["id"]  # 줄 앞 男：/女： 표시는 화면에 안 나옴(남:/여:)
+            assert not any(JA.search(o) for o in i["options"]), i["id"]  # 보기는 한국어
+        if i["lesson"] in (1, 2, 4):
+            assert not JA.search(i["q"]), i["id"]  # 질문에 일본어 없음
+        if i["lesson"] == 3:
+            assert "say" not in i and all(JA.search(o) for o in i["options"]), i["id"]
+        if i["lesson"] == 4:
+            assert "\n" not in i["say"] and not _bare(i["say"]) and all(JA.search(o) for o in i["options"]), i["id"]
+
+
+def test_listening_built(built):
+    ch = _js_const(built / "ch123.js", "CHAPTER")
+    ls = _js_const(built / "ch123.js", "LESSONS")
+    assert ch["title"] == "N5 · 23장 청해"
+    assert [l["title"] for l in ls] == ["청해 1", "청해 2", "청해 3", "청해 4", "N5 · 23장 청해 평가"]
+    kinds = [{it["kind"] for it in l["items"]} for l in ls[:4]]
+    assert kinds == [{"listen"}, {"listen"}, {"speech"}, {"listen"}]
+    assert all(len(l["items"]) == 5 for l in ls[:4]) and ls[-1]["isExam"]
+    cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert cs["l5-01"]["chapter"] == 123 and cs["l5-01"]["name"] == "청해 · 1"
