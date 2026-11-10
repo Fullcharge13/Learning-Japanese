@@ -28,8 +28,8 @@ def built(tmp_path_factory):
 def test_grammar_points():
     from make_lessons import load_grammar
     ps = load_grammar(GRAMMAR)
-    assert [p["id"] for p in ps] == ["g5-%02d" % i for i in range(1, 19)]
-    assert [p["chapter"] for p in ps] == [115] * 6 + [116] * 6 + [117] * 6
+    assert [p["id"] for p in ps] == ["g5-%02d" % i for i in range(1, 31)]
+    assert [p["chapter"] for p in ps] == [115] * 6 + [116] * 6 + [117] * 6 + [120] * 6 + [121] * 6
 
 
 def test_grammar_items():
@@ -50,10 +50,10 @@ def test_grammar_items():
 
 
 def test_grammar_built(built):
-    for n in (115, 116, 117):
+    for n, k in ((115, 1), (116, 2), (117, 3), (120, 4), (121, 5)):
         ch = _js_const(built / ("ch%d.js" % n), "CHAPTER")
         ls = _js_const(built / ("ch%d.js" % n), "LESSONS")
-        assert ch["title"] == "N5 · %d장 문법 %d" % (n - 100, n - 114)
+        assert ch["title"] == "N5 · %d장 문법 %d" % (n - 100, k)
         assert len(ls) == 7 and ls[-1].get("isExam")
         for l in ls:
             for it in l["items"]:
@@ -66,6 +66,10 @@ def test_grammar_built(built):
     assert ls[0]["id"] == "115-1" and ls[0]["title"] == "명사문 です" and ls[0]["cards"]
     cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
     assert cs["g5-01"]["chapter"] == 115 and cs["g5-01"]["name"].startswith("문법 · ")
+    assert cs["g5-30"]["chapter"] == 121
+    mock = {it["concept"] for l in _js_const(built / "ch124.js", "LESSONS") for it in l["items"] if it.get("kind") in ("grammar", "build")}
+    pool = {p["id"] for p in __import__("make_lessons").load_grammar(GRAMMAR)}
+    assert mock <= pool and any(int(c[3:]) >= 19 for c in mock)  # 문법 4·5도 모의고사 문법 칸 후보
 
 
 # ---- 한자 ----
