@@ -40,7 +40,8 @@ JLPT_TITLES = {101: ("숫자·조수사", "숫자"), 102: ("날짜·요일·시�
                109: ("날씨·계절·자연", "날씨"), 110: ("い형용사 반대말", "い형용사"), 111: ("な형용사·색", "な형용사"),
                112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말"),
                115: ("문법 1", "문법"), 116: ("문법 2", "문법"), 117: ("문법 3", "문법"),
-               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("모의고사", "모의고사")}
+               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("문법 4", "문법"),
+               121: ("문법 5", "문법"), 122: ("독해", "독해"), 123: ("청해", "청해"), 124: ("모의고사", "모의고사")}
 for _n, (_long, _short) in JLPT_TITLES.items():
     CHAPTER_TITLES[_n] = "N5 · %d장 %s" % (_n - 100, _long)
 
@@ -409,7 +410,70 @@ def build_kanji_chapter(chapter, words=None):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
-# ---- N5 모의고사(120장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
+# ---- N5 독해(122장, N5 채우기 설계 §4): 원본 data/jlpt-n5-reading.json, 글 꼴 레슨 4개 × 3편 × 2문제 ----
+READING_FILE = os.path.join(ROOT, "data", "jlpt-n5-reading.json")
+
+
+def load_reading(path=READING_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def reading_concepts(d, chapter=122):
+    return [{"id": p["id"], "name": "독해 · " + p["title"], "chapter": chapter} for p in d["passages"]]
+
+
+def build_reading_chapter(d, chapter=122):
+    title = CHAPTER_TITLES[chapter]
+    lessons, pool = [], []
+    for l in d["lessons"]:
+        ps = [p for p in d["passages"] if p["lesson"] == l["lesson"]]
+        items = [it for p in ps for it in _mock_reading(p)]
+        pool += items
+        lessons.append({"id": "%d-%d" % (chapter, l["lesson"]), "chapter": chapter, "title": "독해 %d" % l["lesson"],
+                        "goal": "독해: " + l["name"], "summary": [l["tip"]], "cards": [{"say": l["tip"], "words": []}], "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 독해 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
+# ---- N5 청해(123장, N5 채우기 설계 §5): 원본 data/jlpt-n5-listening.json, 꼴 4가지 × 5문제 ----
+LISTENING_FILE = os.path.join(ROOT, "data", "jlpt-n5-listening.json")
+
+
+def load_listening(path=LISTENING_FILE):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def listening_concepts(d, chapter=123):
+    return [{"id": i["id"], "name": "청해 · %d" % n, "chapter": chapter} for n, i in enumerate(d["items"], 1)]
+
+
+def _listening_item(i):
+    if "say" not in i:  # 발화 표현: 듣는 문장 없이 상황 → 일본어 보기
+        return {"type": "choice", "kind": "speech", "concept": i["id"], "q": i["q"], "options": i["options"], "answer": 0,
+                "explain": i["ko"], "say": i["options"][0]}
+    return {"type": "choice", "kind": "listen", "concept": i["id"], "qSay": True, "q": i["q"], "options": i["options"], "answer": 0,
+            "explain": i["ko"], "say": i["say"]}
+
+
+def build_listening_chapter(d, chapter=123):
+    title = CHAPTER_TITLES[chapter]
+    lessons, pool = [], []
+    for l in d["lessons"]:
+        items = [_listening_item(i) for i in d["items"] if i["lesson"] == l["lesson"]]
+        pool += items
+        lessons.append({"id": "%d-%d" % (chapter, l["lesson"]), "chapter": chapter, "title": "청해 %d" % l["lesson"],
+                        "goal": "청해: " + l["name"], "summary": [l["tip"]], "cards": [{"say": l["tip"], "words": []}], "items": items})
+    exam = random.Random("exam:%d" % chapter).sample(pool, min(len(pool), EXAM_TOUCH))
+    lessons.append({"id": "%d-%d" % (chapter, len(lessons) + 1), "chapter": chapter, "title": title + " 평가",
+                    "goal": "이 장 청해 복습", "summary": [], "isExam": True, "cards": [], "items": exam})
+    return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
+
+
+# ---- N5 모의고사(124장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
 MOCK_FILE = os.path.join(ROOT, "data", "jlpt-n5-mock.json")
 MOCK_MIX = (("kanji-read", 4), ("kanji-write", 3), ("context", 4), ("grammar", 4), ("build", 2))
 MOCK_ROUNDS = 3
@@ -433,11 +497,11 @@ def _mock_listen(n, it):
 
 
 def mock_concepts(mock):
-    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 120} for n, p in enumerate(mock["reading"], 1)]
-            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 120} for n in range(1, len(mock["listening"]) + 1)])
+    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 124} for n, p in enumerate(mock["reading"], 1)]
+            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 124} for n in range(1, len(mock["listening"]) + 1)])
 
 
-def build_mock_chapter(built, mock, chapter=120):
+def build_mock_chapter(built, mock, chapter=124):
     """built: 장 번호 → 만든 장(101~119). 꼴마다 문제를 한 번 섞어 회마다 다른 조각을 쓴다(겹침 없음)"""
     src = [it for ch, d in built.items() if 100 < ch < chapter for l in d["LESSONS"] if not l.get("isExam") for it in l["items"]]
     kind = lambda it: it.get("kind") or ("context" if it["type"] == "choice" and it.get("sentence") else None)
@@ -491,8 +555,13 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
     if jlpt:
         extra.update({ch: (lambda ch=ch: build_kanji_chapter(ch, words)) for ch in sorted({k["chapter"] for k in load_kanji()})})
     mock = load_mock() if jlpt else None
+    reading = load_reading() if jlpt else None
     if jlpt:
-        extra[120] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
+        extra[122] = lambda: build_reading_chapter(reading)
+        listening = load_listening()
+        extra[123] = lambda: build_listening_chapter(listening)
+    if jlpt:
+        extra[124] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
     made = {}
     for ch in sorted({w["chapter"] for w in words} | set(extra)):
         data = made[ch] = extra[ch]() if ch in extra else build_chapter(words, ch, examples)
@@ -509,7 +578,7 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
         names += [{"id": p["id"], "name": "문법 · %s" % p["title"], "chapter": p["chapter"]} for p in grammar]
         if jlpt:
             names += [{"id": "k5-" + k["kanji"], "name": "한자 · %s %s" % (k["kanji"], k["ko"]), "chapter": k["chapter"]} for k in load_kanji()]
-            names += mock_concepts(mock)
+            names += mock_concepts(mock) + reading_concepts(reading) + listening_concepts(listening)
         f.write("export const CONCEPTS = [\n%s\n];\n" % ",\n".join("  " + json.dumps(n, ensure_ascii=False) for n in names))
     if jlpt:
         with open(jlpt_file or os.path.join(ROOT, "data", "jlpt.js"), "w", encoding="utf-8") as f:

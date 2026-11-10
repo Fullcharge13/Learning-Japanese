@@ -334,7 +334,7 @@ main { padding: 16px calc(16px + var(--sar)) 0 calc(16px + var(--sal)); }
 .q { font-size: 1.2rem; margin: 2px 0 14px; white-space: pre-line; }
 .sent { background: var(--sun-soft); border-radius: 16px; padding: 12px 14px; margin: -4px 0 14px; display: grid; gap: 4px; min-width: 0; }
 .sent p { margin: 0; overflow-wrap: anywhere; }
-.sent-jp { font-size: 1.25rem; font-weight: 700; line-height: 2; line-break: strict; }
+.sent-jp { font-size: 1.25rem; font-weight: 700; line-height: 2; line-break: strict; white-space: pre-line; } /* 독해 안내문·시간표 줄바꿈 */
 .sent-hint::before { content: "뜻: "; font-weight: 700; }
 .sent-hint { font-size: .95rem; color: var(--ink-2); }
 .blank { color: var(--sun-ink); border-bottom: 3px solid var(--sun-deep); padding: 0 2px; }
@@ -695,5 +695,5 @@ rt { font-size: .5em; font-weight: 600; color: var(--ink-2); letter-spacing: 0; 
 .level.soon { opacity: .55; }
 .ch-row.static { cursor: default; }
 /* 듣기 문제: 일본어 목소리가 없는 기기용 접힌 글자 */
-details.listen-text { text-align: center; margin: 4px 0 8px; }
+.listen-text { text-align: center; margin: 4px 0 8px; }
 details.listen-text summary { cursor: pointer; opacity: .7; font-size: .9em; }

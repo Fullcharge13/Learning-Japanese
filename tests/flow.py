@@ -747,7 +747,7 @@ def test_fill_sentence_fits():
 # ---------------------------------------------------------------- 다코야키 가게
 
 def _kana_done_save(**shop):
-    seed = {"saveVer": 2, "completed_lessons": _lesson_ids(range(1, 3)), "current_lesson": "3-1", "current_chapter": 3}
+    seed = {"saveVer": 3, "completed_lessons": _lesson_ids(range(1, 3)), "current_lesson": "3-1", "current_chapter": 3}
     if shop:
         seed["shop"] = {"v": 1, "day": 0, "money": 0, "upgrades": [], "stories": [], "xpToday": {"date": None, "n": 0}, "run": None, **shop}
     return seed
@@ -1249,14 +1249,14 @@ def test_jlpt_listen_item():
     """모의고사 듣기 문제: 질문에 일본어 글자가 없고 🔊 단추만(음성 되는 기기)"""
     fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
             "speak(u) { window.__said = u.text; } } }); window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
-    items = json.loads(open(os.path.join(ROOT, "data", "lessons", "ch120.js"), encoding="utf-8").read()
+    items = json.loads(open(os.path.join(ROOT, "data", "lessons", "ch124.js"), encoding="utf-8").read()
                        .split("export const LESSONS = ", 1)[1].rstrip().rstrip(";"))[0]["items"]
     idx = next(i for i, it in enumerate(items) if it.get("kind") == "listen")
     with App("iPhone 17", init=fake) as a:
         a.start()
         _to_settings(a)
         a.page.click("#dev")
-        it = _play_to_item(a, "120-1", idx)
+        it = _play_to_item(a, "124-1", idx)
         assert it.get("kind") == "listen"
         q = a.page.inner_text("article.item h1.q")
         assert not re.search(r"[ぁ-ゟ゠-ヿ\u3400-\u9fff]", q), q
@@ -1268,16 +1268,75 @@ def test_jlpt_listen_item():
 def test_n5_complete_title_and_end():
     """JLPT 길 마지막(모의고사 3)을 처음 끝내면 「N5 완주!」, JLPT 화면 끝 문구 「N5를 모두 마쳤어요!」"""
     seed = _kana_done_save()
-    seed["completed_lessons"] = seed["completed_lessons"] + _lesson_ids(range(101, 121))
+    seed["completed_lessons"] = seed["completed_lessons"] + _lesson_ids(range(101, 125))
     with App("iPhone 17", save=seed) as a:
         a.start()
-        a.js("""() => { const c = window.__ria.ctx; c.show('done', { lesson: c.lessonById('120-3'), result: { mode: 'lesson',
-            lessonId: '120-3', firstTime: true, xp: 10, lessonBytes: 5, questBytes: 0, finished: [], newBadges: [], accuracy: 1 } }); }""")
+        a.js("""() => { const c = window.__ria.ctx; c.show('done', { lesson: c.lessonById('124-3'), result: { mode: 'lesson',
+            lessonId: '124-3', firstTime: true, xp: 10, lessonBytes: 5, questBytes: 0, finished: [], newBadges: [], accuracy: 1 } }); }""")
         a.page.wait_for_selector(".screen.done")
         assert a.page.inner_text(".done-hero h1") == "N5 완주!"
         a.page.click('#home')
         a.page.wait_for_selector(".screen.jlpt")
         assert "N5를 모두 마쳤어요!" in a.page.inner_text(".path-end")
+        assert not a.errors, a.errors
+
+
+def test_jlpt_dialog_item():
+    """청해 1(123-1) 대화 문제: 질문에 일본어 없음, 🔊, 「글자로 보기」에 남·여 줄"""
+    fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
+            "speak(u) { (window.__said = window.__said || []).push([u.text, u.pitch]); } } }); "
+            "window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
+    with App("iPhone 17", init=fake) as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        it = _play_to_item(a, "123-1", 0)
+        assert it.get("kind") == "listen" and "\n" in it["say"]
+        assert not re.search(r"[ぁ-ゟ゠-ヿ\u3400-\u9fff]", a.page.inner_text("article.item h1.q"))
+        a.page.click(".q-say.listen button")
+        said = a.js("() => window.__said")
+        assert len(said) >= 2 and {p for _, p in said} >= {0.8, 1.25}, said
+        a.page.click("details.listen-text summary")
+        t = a.page.inner_text("details.listen-text")
+        assert "남:" in t and "여:" in t and "男" not in t, t
+        assert not a.errors, a.errors
+
+
+def test_old_save_mock_moved():
+    """옛 저장(판 2)에서 모의고사(120-1~3)를 끝냈으면 24장 3/3, 20장 문법 4는 0"""
+    seed = _kana_done_save()
+    seed["saveVer"] = 2
+    seed["completed_lessons"] = seed["completed_lessons"] + ["120-1", "120-2", "120-3"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#jlpt-more")
+        rows = a.js("() => [...document.querySelectorAll('#jlpt-chapters li')].map((e) => e.innerText.replace(/\\s+/g, ' '))")
+        assert any(r.startswith("24 ") and "3/3" in r for r in rows), rows
+        assert any(r.startswith("20 ") and " 0/" in r for r in rows), rows
+        assert not a.errors, a.errors
+
+
+def test_old_save_written_at_once():
+    """옛 저장(판 2)은 처음 열 때 판 3으로 바로 저장(같은 날 다시 열어도 하던 레슨 기록을 또 옮기지 않게)"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()  # 오늘 이미 쓴 저장(날 넘김은 끝남)
+        a.js("(k) => { const s = JSON.parse(localStorage.getItem(k)); s.saveVer = 2; localStorage.setItem(k, JSON.stringify(s)); }", SAVE_KEY)
+        a.page.reload()  # 같은 날 업데이트 뒤 첫 실행
+        a.page.wait_for_selector(".screen")
+        assert a.save()["saveVer"] == 3, a.save()["saveVer"]
+        assert not a.errors, a.errors
+
+
+def test_reading_keeps_lines():
+    """독해 글(안내문·시간표)의 줄바꿈이 화면에서도 줄로 보임"""
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        _play_to_item(a, "122-4", 2)
+        t = a.page.inner_text("article.item .sent-jp")
+        assert t.count("\n") >= 2, repr(t)
         assert not a.errors, a.errors
 
 
@@ -1291,7 +1350,7 @@ def test_settings_jlpt_more():
         more = a.page.locator("#jlpt-more")
         assert more.get_attribute("aria-expanded") == "false" and "더보기" in more.inner_text()
         more.click()
-        assert rows() == 20 and more.get_attribute("aria-expanded") == "true" and "접기" in more.inner_text()
+        assert rows() == 24 and more.get_attribute("aria-expanded") == "true" and "접기" in more.inner_text()
         more.click()
         assert rows() == 3
         assert not a.errors, a.errors

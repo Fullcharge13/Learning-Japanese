@@ -1,5 +1,5 @@
 // 리아와 파이썬! — 앱 입구. 상태는 app = { save, screen, modal } 하나, 화면 전환은 show() 하나.
-import { loadEx, store, migrate, takeRefund } from "./save.js";
+import { loadEx, store, migrate, takeRefund, renumberLessonId, SAVE_VER } from "./save.js";
 import { rollDay } from "./rules.js";
 import { ensureQuests } from "./quests.js";
 import { say as pickLine } from "./say.js";
@@ -7,7 +7,7 @@ import { ITEMS } from "../data/items.js";
 import { localDate, daysSince } from "./today.js";
 import { finishLesson } from "./finish.js";
 import { createPersist } from "./persist.js";
-import { readResume, writeResume, clearResume } from "./resume.js";
+import { readResume, writeResume, clearResume, moveResumeId } from "./resume.js";
 import { gateCompleted } from "./devgate.js";
 import { trackOf, trackOfLesson, trackChapters, jlptOpen, n5Learned, nextInTrack } from "./track.js";
 import { N5_IDS } from "../data/jlpt.js";
@@ -268,8 +268,10 @@ const ctx = {
 async function boot() {
   const root = document.getElementById("app");
   app.dev = readDevFlag(storage);
-  const { save, readFailed } = loadEx(storage, keysFor(app.dev).save);
+  const { save, readFailed, oldVer } = loadEx(storage, keysFor(app.dev).save);
+  if (oldVer < 3) moveResumeId(storage, renumberLessonId, keysFor(app.dev).resume); // 저장과 같이 120-n → 124-n
   app.save = markDev(save, app.dev);
+  if (oldVer < SAVE_VER) commit(app.save); // 판 올림은 바로 저장 — 같은 날 다시 열 때 하던 레슨 기록을 또 옮기지 않게
   if (readFailed) toast("저장 기록을 읽지 못해 처음부터 시작해요. 브라우저 저장 설정을 확인해 주세요.", "warn");
   requestPersist();
   try {

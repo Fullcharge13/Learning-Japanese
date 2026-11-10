@@ -61,8 +61,9 @@ def check_kind(it):
             errs.append("kanji without furigana in cards %r" % ln)
         return errs
     o = it.get("options", [])
-    if len(o) != 4 or len({RUBY_RE.sub(r"\1", x) for x in o}) != 4:
-        errs.append("options must be 4 distinct: %r" % o)
+    n = (3, 4) if k in ("listen", "speech") else (4,)  # 청해 발화 표현·즉시 응답은 시험처럼 보기 3개
+    if len(o) not in n or len({RUBY_RE.sub(r"\1", x) for x in o}) != len(o):
+        errs.append("options must be %s distinct: %r" % (n, o))
     if not (isinstance(it.get("answer"), int) and 0 <= it["answer"] < len(o)):
         errs.append("bad answer %r" % it.get("answer"))
     if k != "kanji-write" and any(_bare(x) for x in o):

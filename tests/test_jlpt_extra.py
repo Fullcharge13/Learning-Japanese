@@ -28,8 +28,8 @@ def built(tmp_path_factory):
 def test_grammar_points():
     from make_lessons import load_grammar
     ps = load_grammar(GRAMMAR)
-    assert [p["id"] for p in ps] == ["g5-%02d" % i for i in range(1, 19)]
-    assert [p["chapter"] for p in ps] == [115] * 6 + [116] * 6 + [117] * 6
+    assert [p["id"] for p in ps] == ["g5-%02d" % i for i in range(1, 31)]
+    assert [p["chapter"] for p in ps] == [115] * 6 + [116] * 6 + [117] * 6 + [120] * 6 + [121] * 6
 
 
 def test_grammar_items():
@@ -50,10 +50,10 @@ def test_grammar_items():
 
 
 def test_grammar_built(built):
-    for n in (115, 116, 117):
+    for n, k in ((115, 1), (116, 2), (117, 3), (120, 4), (121, 5)):
         ch = _js_const(built / ("ch%d.js" % n), "CHAPTER")
         ls = _js_const(built / ("ch%d.js" % n), "LESSONS")
-        assert ch["title"] == "N5 · %d장 문법 %d" % (n - 100, n - 114)
+        assert ch["title"] == "N5 · %d장 문법 %d" % (n - 100, k)
         assert len(ls) == 7 and ls[-1].get("isExam")
         for l in ls:
             for it in l["items"]:
@@ -66,6 +66,10 @@ def test_grammar_built(built):
     assert ls[0]["id"] == "115-1" and ls[0]["title"] == "명사문 です" and ls[0]["cards"]
     cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
     assert cs["g5-01"]["chapter"] == 115 and cs["g5-01"]["name"].startswith("문법 · ")
+    assert cs["g5-30"]["chapter"] == 121
+    mock = {it["concept"] for l in _js_const(built / "ch124.js", "LESSONS") for it in l["items"] if it.get("kind") in ("grammar", "build")}
+    pool = {p["id"] for p in __import__("make_lessons").load_grammar(GRAMMAR)}
+    assert mock <= pool and any(int(c[3:]) >= 19 for c in mock)  # 문법 4·5도 모의고사 문법 칸 후보
 
 
 # ---- 한자 ----
@@ -107,9 +111,9 @@ MOCK_MIX = {"kanji-read": 4, "kanji-write": 3, None: 4, "grammar": 4, "build": 2
 
 
 def test_mock_three_25(built):
-    ch = _js_const(built / "ch120.js", "CHAPTER")
-    assert ch["title"] == "N5 · 20장 모의고사"
-    ls = _js_const(built / "ch120.js", "LESSONS")
+    ch = _js_const(built / "ch124.js", "CHAPTER")
+    assert ch["title"] == "N5 · 24장 모의고사"
+    ls = _js_const(built / "ch124.js", "LESSONS")
     assert [l["title"] for l in ls] == ["모의고사 1", "모의고사 2", "모의고사 3"]
     seen = []
     for l in ls:
@@ -129,7 +133,7 @@ def test_mock_three_25(built):
 def test_mock_listen_no_japanese_in_q(built):
     ja = re.compile(r"[ぁ-ゟ゠-ヿ㐀-鿿]")
     n = 0
-    for l in _js_const(built / "ch120.js", "LESSONS"):
+    for l in _js_const(built / "ch124.js", "LESSONS"):
         for it in l["items"]:
             if it.get("kind") == "listen":
                 n += 1
@@ -176,6 +180,13 @@ def test_kanji_readings_handwritten(built):
 # ---- 손질(N5 손질 2) ----
 def _lessons(built, n):
     return _js_const(built / ("ch%d.js" % n), "LESSONS")
+
+
+def test_grammar_no_second_answer_g5_28():
+    """「学生が一人＿います」에 で는 「혼자 있어요」로 맞는 문장이 돼서 오답으로 못 씀"""
+    from make_lessons import load_grammar
+    it = [i for p in load_grammar(GRAMMAR) if p["id"] == "g5-28" for i in p["items"] if i.get("pre", "").startswith("教室{きょうしつ}に学生")][0]
+    assert "で" not in it["wrong"], it["wrong"]
 
 
 def test_maitsuki_not_in_kanji_questions(built):
@@ -230,7 +241,7 @@ def test_kanji_summary_and_titles(built):
 
 
 def test_mock_listen_mixed(built):
-    for l in _lessons(built, 120):
+    for l in _lessons(built, 124):
         qs = [it["q"] for it in l["items"] if it.get("kind") == "listen"]
         assert sum("뜻" in q for q in qs) == 4 and sum("대답" in q for q in qs) == 2, qs
 
@@ -248,3 +259,76 @@ def test_polish_texts():
     assert all("兄{あに}は料理" not in k for k in fills("g5-08"))
     b14 = [it for it in ps["g5-14"]["items"] if it["type"] == "build"][0]
     assert b14["ko"] == "같이 공원을 산책합시다."
+
+
+# ---- 독해(122장, N5 채우기 설계 §4) ----
+READING = os.path.join(ROOT, "data", "jlpt-n5-reading.json")
+JA = re.compile(r"[ぁ-ゟ゠-ヿ㐀-鿿]")
+
+
+def test_reading_data():
+    from make_lessons import load_reading
+    d = load_reading(READING)
+    assert [l["lesson"] for l in d["lessons"]] == [1, 2, 3, 4] and all(l["tip"] and not _bare(l["tip"]) for l in d["lessons"])
+    ps = d["passages"]
+    assert [p["id"] for p in ps] == ["r5-%02d" % i for i in range(1, 13)]
+    assert [p["lesson"] for p in ps] == [1] * 3 + [2] * 3 + [3] * 3 + [4] * 3
+    for p in ps:
+        assert p["title"] and p["ko"] and not _bare(p["text"]) and len(p["questions"]) == 2, p["id"]
+        for q in p["questions"]:
+            assert JA.search(q["q"]) and not _bare(q["q"]), q
+            assert len(q["options"]) == 4 and len({plain(o) for o in q["options"]}) == 4, q
+            assert all(JA.search(o) and not _bare(o) for o in q["options"]), q
+    assert max(len(plain(p["text"])) for p in ps if p["lesson"] == 3) >= 150  # 조금 긴 글
+
+
+def test_reading_built(built):
+    ch = _js_const(built / "ch122.js", "CHAPTER")
+    ls = _js_const(built / "ch122.js", "LESSONS")
+    assert ch["title"] == "N5 · 22장 독해"
+    assert [l["title"] for l in ls] == ["독해 1", "독해 2", "독해 3", "독해 4", "N5 · 22장 독해 평가"]
+    for l in ls[:4]:
+        assert len(l["items"]) == 6 and l["cards"] and all(it["kind"] == "reading" for it in l["items"])
+    assert ls[-1]["isExam"] and len(ls[-1]["items"]) == 8
+    cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert cs["r5-01"]["chapter"] == 122 and cs["r5-01"]["name"].startswith("독해 · ")
+
+
+# ---- 청해(123장, N5 채우기 설계 §5) ----
+LISTENING = os.path.join(ROOT, "data", "jlpt-n5-listening.json")
+
+
+def test_listening_data():
+    from make_lessons import load_listening
+    d = load_listening(LISTENING)
+    assert [l["lesson"] for l in d["lessons"]] == [1, 2, 3, 4]
+    its = d["items"]
+    assert [i["id"] for i in its] == ["l5-%02d" % n for n in range(1, 21)]
+    assert [i["lesson"] for i in its] == [1] * 5 + [2] * 5 + [3] * 5 + [4] * 5
+    for i in its:
+        n = 3 if i["lesson"] in (3, 4) else 4
+        assert len(i["options"]) == n and len({plain(o) for o in i["options"]}) == n, i["id"]
+        assert i["ko"] and not any(_bare(o) for o in i["options"]), i["id"]
+        if i["lesson"] in (1, 2):
+            lines = i["say"].split("\n")
+            assert 2 <= len(lines) <= 4 and all(re.match(r"^[男女]：", l) for l in lines), i["id"]
+            assert not any(_bare(l[2:]) for l in lines), i["id"]  # 줄 앞 男：/女： 표시는 화면에 안 나옴(남:/여:)
+            assert not any(JA.search(o) for o in i["options"]), i["id"]  # 보기는 한국어
+        if i["lesson"] in (1, 2, 4):
+            assert not JA.search(i["q"]), i["id"]  # 질문에 일본어 없음
+        if i["lesson"] == 3:
+            assert "say" not in i and all(JA.search(o) for o in i["options"]), i["id"]
+        if i["lesson"] == 4:
+            assert "\n" not in i["say"] and not _bare(i["say"]) and all(JA.search(o) for o in i["options"]), i["id"]
+
+
+def test_listening_built(built):
+    ch = _js_const(built / "ch123.js", "CHAPTER")
+    ls = _js_const(built / "ch123.js", "LESSONS")
+    assert ch["title"] == "N5 · 23장 청해"
+    assert [l["title"] for l in ls] == ["청해 1", "청해 2", "청해 3", "청해 4", "N5 · 23장 청해 평가"]
+    kinds = [{it["kind"] for it in l["items"]} for l in ls[:4]]
+    assert kinds == [{"listen"}, {"listen"}, {"speech"}, {"listen"}]
+    assert all(len(l["items"]) == 5 for l in ls[:4]) and ls[-1]["isExam"]
+    cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert cs["l5-01"]["chapter"] == 123 and cs["l5-01"]["name"] == "청해 · 1"

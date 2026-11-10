@@ -158,3 +158,18 @@ test("resume: 기록 모양 — 칸 이름·초안·저장 시각", () => {
   assert.equal(rec.flow._lesson, undefined);   // 레슨 내용은 넣지 않음
   JSON.stringify(rec);
 });
+
+import { moveResumeId } from "../../src/resume.js";
+
+test("moveResumeId: 옛 모의고사(120-n)를 풀던 기록은 124-n으로, 다른 기록·깨진 기록은 그대로", () => {
+  const st = (v) => { const d = { [RESUME_KEY]: v }; return { d, getItem: (k) => d[k] ?? null, setItem: (k, x) => { d[k] = x; } }; };
+  const a = st(JSON.stringify({ v: 1, lessonId: "120-2", mode: "lesson" }));
+  moveResumeId(a, (id) => id.replace(/^120-/, "124-"));
+  assert.equal(JSON.parse(a.d[RESUME_KEY]).lessonId, "124-2");
+  const b = st(JSON.stringify({ v: 1, lessonId: "5-1", mode: "lesson" }));
+  moveResumeId(b, (id) => id.replace(/^120-/, "124-"));
+  assert.equal(JSON.parse(b.d[RESUME_KEY]).lessonId, "5-1");
+  const c = st("{broken");
+  moveResumeId(c, (id) => id);
+  assert.equal(c.d[RESUME_KEY], "{broken");
+});

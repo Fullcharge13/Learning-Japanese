@@ -10,7 +10,7 @@ import { defaultShop, cleanShop } from "./shop/rules.js";
 const WORD_IDS = new Set(CONCEPTS.map((c) => c.id));
 
 export const SAVE_KEY = "sanada-japanese.save";
-export const SAVE_VER = 2;
+export const SAVE_VER = 3; // 3: N5 모의고사 20장(120) → 24장(124)
 const LOG_CAP = 50;
 const BROKEN_SLOTS = 5; // .broken 다음 .broken.1 ~ .broken.5
 const BAD_KEYS = new Set(["__proto__", "constructor", "prototype"]);
@@ -131,6 +131,18 @@ function cleanItems(s) {
   return s;
 }
 
+/** 판 3: 모의고사 레슨 120-n → 124-n(120장은 문법 4가 씀) */
+export function renumberLessonId(id) {
+  return typeof id === "string" ? id.replace(/^120-(\d+)$/, "124-$1") : id;
+}
+
+function renumberLessons(s) {
+  s.completed_lessons = s.completed_lessons.map(renumberLessonId);
+  s.grading_results = Object.fromEntries(Object.entries(s.grading_results).map(([k, v]) => [renumberLessonId(k), v]));
+  s.seen_updates = Object.fromEntries(Object.entries(s.seen_updates).map(([k, v]) => [renumberLessonId(k), v]));
+  s.submission_logs = s.submission_logs.map((l) => (l && typeof l === "object" ? { ...l, lessonId: renumberLessonId(l.lessonId) } : l));
+}
+
 export function migrate(raw) {
   if (!isPlainObject(raw)) return newSave();
   const oldVer = raw.saveVer;
@@ -143,6 +155,7 @@ export function migrate(raw) {
   // 이 앱에 없는 단어(다른 앱 저장·지운 단어)는 복습·약한 단어에서 뺀다 — 복습 카드가 빈 채로 남지 않게
   s.review_queue = s.review_queue.filter((id) => WORD_IDS.has(id));
   s.weak_concepts = Object.fromEntries(Object.entries(s.weak_concepts).filter(([id]) => WORD_IDS.has(id)));
+  if (ver < 3) renumberLessons(s);
   s.saveVer = ver > SAVE_VER ? ver : SAVE_VER;
   return s;
 }
@@ -162,21 +175,22 @@ export function loadEx(storage, key = SAVE_KEY) {
   try {
     text = storage.getItem(key);
   } catch {
-    return { save: newSave(), readFailed: true };
+    return { save: newSave(), readFailed: true, oldVer: SAVE_VER };
   }
-  if (text === null || text === undefined) return { save: newSave(), readFailed: false };
+  if (text === null || text === undefined) return { save: newSave(), readFailed: false, oldVer: SAVE_VER };
   let raw;
   try {
     raw = JSON.parse(text);
   } catch {
     keepBroken(storage, text);
-    return { save: newSave(), readFailed: false };
+    return { save: newSave(), readFailed: false, oldVer: SAVE_VER };
   }
   if (!isPlainObject(raw)) {
     keepBroken(storage, text);
-    return { save: newSave(), readFailed: false };
+    return { save: newSave(), readFailed: false, oldVer: SAVE_VER };
   }
-  return { save: migrate(raw), readFailed: false };
+  const v = raw.saveVer;
+  return { save: migrate(raw), readFailed: false, oldVer: typeof v === "number" && Number.isFinite(v) ? v : 1 };
 }
 
 /** 가져온 파일이 이 앱의 저장인지: app 표시가 이 앱(해치 앱 저장은 모양이 같아 표시로 가림), 물건 칸이 있고 리아의 의상 칸이 없음 */

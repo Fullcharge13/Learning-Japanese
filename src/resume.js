@@ -38,6 +38,16 @@ export function writeResume(storage, rec, key = RESUME_KEY) {
   try { storage.setItem(key, JSON.stringify(rec)); return true; } catch { return false; }
 }
 
+/** 저장 판 올림에서 레슨 번호가 바뀌면 하던 레슨 기록도 옮긴다(move: 옛 id → 새 id). 깨진 기록은 그대로 둠 */
+export function moveResumeId(storage, move, key = RESUME_KEY) {
+  try {
+    const r = JSON.parse(storage.getItem(key));
+    if (!isObj(r) || typeof r.lessonId !== "string") return;
+    const id = move(r.lessonId);
+    if (id !== r.lessonId) storage.setItem(key, JSON.stringify({ ...r, lessonId: id }));
+  } catch { /* 없거나 깨짐: 그만 */ }
+}
+
 export function clearResume(storage, key = RESUME_KEY) {
   try { storage && storage.removeItem(key); } catch { /* 막혀도 그만 */ }
 }

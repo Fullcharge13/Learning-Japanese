@@ -1,7 +1,7 @@
 // 화면 공용 도우미: 글자 이스케이프, 요소 만들기, 리아 말풍선, 아이콘, 창(modal)
 import { yukiImg } from "../yuki.js";
 import { ruby } from "../ruby.js";
-import { canSpeak } from "../speak.js";
+import { canSpeak, dialogLines } from "../speak.js";
 
 export function esc(v) {
   return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -115,8 +115,10 @@ export function sayBtn(jp, win = globalThis) {
 /** 듣기 문제(모의고사 청해): 음성이 되면 🔊 단추 + 접힌 「글자로 보기」(일본어 목소리가 없는 기기도 풀 수 있게), 음성이 안 되면 문장 글자 */
 export function listenBox(jp, win = globalThis) {
   const b = sayBtn(jp, win);
-  return b ? `<p class="q-say listen">${b}</p><details class="listen-text"><summary>글자로 보기</summary><p class="sent-jp" lang="ja">${ruby(jp)}</p></details>`
-    : `<p class="sent-jp listen-text" lang="ja">${ruby(jp)}</p>`;
+  const who = { 男: "남: ", 女: "여: ", "": "" };
+  const text = dialogLines(jp).map((l) => `<p class="sent-jp" lang="ja">${who[l.who]}${ruby(l.text)}</p>`).join("");
+  return b ? `<p class="q-say listen">${b}</p><details class="listen-text"><summary>글자로 보기</summary>${text}</details>`
+    : `<div class="listen-text">${text}</div>`;
 }
 
 /** 새 단어 카드: 「일본어(후리가나) 🔊 — 한국어」 줄 목록 */
