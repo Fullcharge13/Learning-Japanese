@@ -107,9 +107,9 @@ MOCK_MIX = {"kanji-read": 4, "kanji-write": 3, None: 4, "grammar": 4, "build": 2
 
 
 def test_mock_three_25(built):
-    ch = _js_const(built / "ch120.js", "CHAPTER")
-    assert ch["title"] == "N5 · 20장 모의고사"
-    ls = _js_const(built / "ch120.js", "LESSONS")
+    ch = _js_const(built / "ch124.js", "CHAPTER")
+    assert ch["title"] == "N5 · 24장 모의고사"
+    ls = _js_const(built / "ch124.js", "LESSONS")
     assert [l["title"] for l in ls] == ["모의고사 1", "모의고사 2", "모의고사 3"]
     seen = []
     for l in ls:
@@ -129,7 +129,7 @@ def test_mock_three_25(built):
 def test_mock_listen_no_japanese_in_q(built):
     ja = re.compile(r"[ぁ-ゟ゠-ヿ㐀-鿿]")
     n = 0
-    for l in _js_const(built / "ch120.js", "LESSONS"):
+    for l in _js_const(built / "ch124.js", "LESSONS"):
         for it in l["items"]:
             if it.get("kind") == "listen":
                 n += 1
@@ -230,7 +230,7 @@ def test_kanji_summary_and_titles(built):
 
 
 def test_mock_listen_mixed(built):
-    for l in _lessons(built, 120):
+    for l in _lessons(built, 124):
         qs = [it["q"] for it in l["items"] if it.get("kind") == "listen"]
         assert sum("뜻" in q for q in qs) == 4 and sum("대답" in q for q in qs) == 2, qs
 

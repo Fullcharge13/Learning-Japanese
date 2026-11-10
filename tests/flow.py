@@ -1249,14 +1249,14 @@ def test_jlpt_listen_item():
     """모의고사 듣기 문제: 질문에 일본어 글자가 없고 🔊 단추만(음성 되는 기기)"""
     fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
             "speak(u) { window.__said = u.text; } } }); window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
-    items = json.loads(open(os.path.join(ROOT, "data", "lessons", "ch120.js"), encoding="utf-8").read()
+    items = json.loads(open(os.path.join(ROOT, "data", "lessons", "ch124.js"), encoding="utf-8").read()
                        .split("export const LESSONS = ", 1)[1].rstrip().rstrip(";"))[0]["items"]
     idx = next(i for i, it in enumerate(items) if it.get("kind") == "listen")
     with App("iPhone 17", init=fake) as a:
         a.start()
         _to_settings(a)
         a.page.click("#dev")
-        it = _play_to_item(a, "120-1", idx)
+        it = _play_to_item(a, "124-1", idx)
         assert it.get("kind") == "listen"
         q = a.page.inner_text("article.item h1.q")
         assert not re.search(r"[ぁ-ゟ゠-ヿ\u3400-\u9fff]", q), q
@@ -1268,11 +1268,11 @@ def test_jlpt_listen_item():
 def test_n5_complete_title_and_end():
     """JLPT 길 마지막(모의고사 3)을 처음 끝내면 「N5 완주!」, JLPT 화면 끝 문구 「N5를 모두 마쳤어요!」"""
     seed = _kana_done_save()
-    seed["completed_lessons"] = seed["completed_lessons"] + _lesson_ids(range(101, 121))
+    seed["completed_lessons"] = seed["completed_lessons"] + _lesson_ids(range(101, 125))
     with App("iPhone 17", save=seed) as a:
         a.start()
-        a.js("""() => { const c = window.__ria.ctx; c.show('done', { lesson: c.lessonById('120-3'), result: { mode: 'lesson',
-            lessonId: '120-3', firstTime: true, xp: 10, lessonBytes: 5, questBytes: 0, finished: [], newBadges: [], accuracy: 1 } }); }""")
+        a.js("""() => { const c = window.__ria.ctx; c.show('done', { lesson: c.lessonById('124-3'), result: { mode: 'lesson',
+            lessonId: '124-3', firstTime: true, xp: 10, lessonBytes: 5, questBytes: 0, finished: [], newBadges: [], accuracy: 1 } }); }""")
         a.page.wait_for_selector(".screen.done")
         assert a.page.inner_text(".done-hero h1") == "N5 완주!"
         a.page.click('#home')

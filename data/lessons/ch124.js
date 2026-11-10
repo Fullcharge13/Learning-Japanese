@@ -1,10 +1,10 @@
 // 자동 생성: tools/make_lessons.py — 고치지 말고 다시 만드세요. 데이터 라이선스 CC BY-SA 4.0 (data/LICENSE-data.md)
-export const CHAPTER = {"id": 120, "title": "N5 · 20장 모의고사"};
+export const CHAPTER = {"id": 124, "title": "N5 · 24장 모의고사"};
 
 export const LESSONS = [
  {
-  "id": "120-1",
-  "chapter": 120,
+  "id": "124-1",
+  "chapter": 124,
   "title": "모의고사 1",
   "goal": "N5 시험 꼴로 풀어 보기",
   "summary": [],
@@ -467,8 +467,8 @@ export const LESSONS = [
   ]
  },
  {
-  "id": "120-2",
-  "chapter": 120,
+  "id": "124-2",
+  "chapter": 124,
   "title": "모의고사 2",
   "goal": "N5 시험 꼴로 풀어 보기",
   "summary": [],
@@ -898,8 +898,8 @@ export const LESSONS = [
   ]
  },
  {
-  "id": "120-3",
-  "chapter": 120,
+  "id": "124-3",
+  "chapter": 124,
   "title": "모의고사 3",
   "goal": "N5 시험 꼴로 풀어 보기",
   "summary": [],

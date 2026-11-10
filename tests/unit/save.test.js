@@ -13,7 +13,7 @@ function fakeStorage(initial = {}) {
 
 const LEDGER_SHAPE = {
   app: "sanada-japanese",
-  saveVer: 2,
+  saveVer: 3,
   current_chapter: 1, current_lesson: "1-1",
   completed_lessons: [],
   submission_logs: [],
@@ -34,12 +34,12 @@ const LEDGER_SHAPE = {
 
 test("constants", () => {
   assert.equal(SAVE_KEY, "sanada-japanese.save");
-  assert.equal(SAVE_VER, 2);
+  assert.equal(SAVE_VER, 3);
 });
 
 test("new", () => {
   const s = newSave();
-  assert.equal(s.saveVer, 2);
+  assert.equal(s.saveVer, 3);
   assert.equal(s.xp, 0);
   assert.equal(s.bytes, 0);
   assert.equal(s.item, "none");
@@ -60,7 +60,7 @@ test("new: returns independent objects", () => {
 
 test("migrate", () => {
   const s = migrate({ xp: 30 });
-  assert.equal(s.saveVer, 2);
+  assert.equal(s.saveVer, 3);
   assert.equal(s.xp, 30);
   assert.equal(s.bytes, 0);
 });
@@ -73,7 +73,7 @@ test("migrate: fills missing nested fields, keeps existing values", () => {
     settings: { sound: false },
   };
   const s = migrate(old);
-  assert.equal(s.saveVer, 2);
+  assert.equal(s.saveVer, 3);
   assert.deepEqual(s.completed_lessons, ["1-1"]);
   assert.deepEqual(s.streak, { days: 3, best: 0, lastGoalDate: "2026-10-28", todayDate: null, todayXp: 0 });
   assert.deepEqual(s.settings, { sound: false, dailyGoal: 20, name: "" });
@@ -113,7 +113,7 @@ test("load: storage getItem throws gives new save", () => {
 test("load: valid old save is migrated", () => {
   const st = fakeStorage({ [SAVE_KEY]: JSON.stringify({ xp: 30 }) });
   const s = load(st);
-  assert.equal(s.saveVer, 2);
+  assert.equal(s.saveVer, 3);
   assert.equal(s.xp, 30);
   assert.equal(s.bytes, 0);
 });
@@ -212,7 +212,7 @@ test("I2: __proto__ / constructor / prototype keys are not copied", () => {
 
 test("M1: newer saveVer is not downgraded", () => {
   assert.equal(migrate({ saveVer: 3, xp: 1 }).saveVer, 3);
-  assert.equal(migrate({ saveVer: 0 }).saveVer, 2);
+  assert.equal(migrate({ saveVer: 0 }).saveVer, 3);
 });
 
 test("M2: successive corruptions keep every broken copy", () => {
@@ -407,4 +407,32 @@ test("takeRefund", () => {
   assert.equal(r.refund, 360);
   assert.ok(!("item_refund" in r.save));
   assert.equal(takeRefund(newSave()).refund, 0);
+});
+
+// N5 채우기(2026-11-10): 모의고사 20장(120) → 24장(124). 옛 판(< 3)만 한 번 옮긴다
+import { renumberLessonId } from "../../src/save.js";
+
+test("renumberLessonId: 120-n → 124-n, 그 밖은 그대로", () => {
+  assert.equal(renumberLessonId("120-12"), "124-12");
+  assert.equal(renumberLessonId("120-1"), "124-1");
+  for (const id of ["12-0", "1120-1", "119-1", "120", "124-1"]) assert.equal(renumberLessonId(id), id);
+});
+
+test("migrate: 옛 판(2) 모의고사 기록 120-n → 124-n, 새 판(3)은 그대로", () => {
+  const s = migrate({ saveVer: 2, completed_lessons: ["119-1", "120-1", "120-3"], grading_results: { "120-2": { ok: 1 }, "5-1": { ok: 2 } },
+    seen_updates: { "120-1": "v0.7.1" }, submission_logs: [{ lessonId: "120-1", at: 1 }, { lessonId: "3-1", at: 2 }] });
+  assert.equal(SAVE_VER, 3);
+  assert.equal(s.saveVer, 3);
+  assert.deepEqual(s.completed_lessons, ["119-1", "124-1", "124-3"]);
+  assert.deepEqual(Object.keys(s.grading_results).sort(), ["124-2", "5-1"]);
+  assert.deepEqual(Object.keys(s.seen_updates), ["124-1"]);
+  assert.deepEqual(s.submission_logs.map((l) => l.lessonId), ["124-1", "3-1"]);
+  const t = migrate({ saveVer: 3, completed_lessons: ["120-1"] });
+  assert.deepEqual(t.completed_lessons, ["120-1"]);
+});
+
+test("loadEx: oldVer = 저장의 옛 판(없으면 1), 저장이 없으면 SAVE_VER", () => {
+  assert.equal(loadEx(fakeStorage({ [SAVE_KEY]: JSON.stringify({ saveVer: 2 }) })).oldVer, 2);
+  assert.equal(loadEx(fakeStorage({ [SAVE_KEY]: JSON.stringify({ xp: 1 }) })).oldVer, 1);
+  assert.equal(loadEx(fakeStorage()).oldVer, SAVE_VER);
 });

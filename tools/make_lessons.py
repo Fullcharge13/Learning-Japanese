@@ -40,7 +40,8 @@ JLPT_TITLES = {101: ("숫자·조수사", "숫자"), 102: ("날짜·요일·시�
                109: ("날씨·계절·자연", "날씨"), 110: ("い형용사 반대말", "い형용사"), 111: ("な형용사·색", "な형용사"),
                112: ("동사 1", "동사"), 113: ("동사 2", "동사"), 114: ("지시어·의문사·부사·인사말", "기본 말"),
                115: ("문법 1", "문법"), 116: ("문법 2", "문법"), 117: ("문법 3", "문법"),
-               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("모의고사", "모의고사")}
+               118: ("한자 1", "한자"), 119: ("한자 2", "한자"), 120: ("문법 4", "문법"),
+               121: ("문법 5", "문법"), 122: ("독해", "독해"), 123: ("청해", "청해"), 124: ("모의고사", "모의고사")}
 for _n, (_long, _short) in JLPT_TITLES.items():
     CHAPTER_TITLES[_n] = "N5 · %d장 %s" % (_n - 100, _long)
 
@@ -409,7 +410,7 @@ def build_kanji_chapter(chapter, words=None):
     return {"CHAPTER": {"id": chapter, "title": title}, "LESSONS": lessons}
 
 
-# ---- N5 모의고사(120장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
+# ---- N5 모의고사(124장, N5 완성 설계 §6): 앞 장 문제에서 회마다 겹치지 않게 + 독해·청해 원본 data/jlpt-n5-mock.json ----
 MOCK_FILE = os.path.join(ROOT, "data", "jlpt-n5-mock.json")
 MOCK_MIX = (("kanji-read", 4), ("kanji-write", 3), ("context", 4), ("grammar", 4), ("build", 2))
 MOCK_ROUNDS = 3
@@ -433,11 +434,11 @@ def _mock_listen(n, it):
 
 
 def mock_concepts(mock):
-    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 120} for n, p in enumerate(mock["reading"], 1)]
-            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 120} for n in range(1, len(mock["listening"]) + 1)])
+    return ([{"id": p["id"], "name": "모의고사 · 독해 %d" % n, "chapter": 124} for n, p in enumerate(mock["reading"], 1)]
+            + [{"id": "m5-l%02d" % n, "name": "모의고사 · 청해 %d" % n, "chapter": 124} for n in range(1, len(mock["listening"]) + 1)])
 
 
-def build_mock_chapter(built, mock, chapter=120):
+def build_mock_chapter(built, mock, chapter=124):
     """built: 장 번호 → 만든 장(101~119). 꼴마다 문제를 한 번 섞어 회마다 다른 조각을 쓴다(겹침 없음)"""
     src = [it for ch, d in built.items() if 100 < ch < chapter for l in d["LESSONS"] if not l.get("isExam") for it in l["items"]]
     kind = lambda it: it.get("kind") or ("context" if it["type"] == "choice" and it.get("sentence") else None)
@@ -492,7 +493,7 @@ def main(out_dir=None, words_file=None, concepts_file=None, examples_file=None, 
         extra.update({ch: (lambda ch=ch: build_kanji_chapter(ch, words)) for ch in sorted({k["chapter"] for k in load_kanji()})})
     mock = load_mock() if jlpt else None
     if jlpt:
-        extra[120] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
+        extra[124] = lambda: build_mock_chapter(made, mock)  # 앞 장이 다 만들어진 뒤(정렬 순서상 마지막)
     made = {}
     for ch in sorted({w["chapter"] for w in words} | set(extra)):
         data = made[ch] = extra[ch]() if ch in extra else build_chapter(words, ch, examples)

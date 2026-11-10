@@ -61,13 +61,13 @@ test("markSeen: updated가 있으면 기록, 없으면 같은 저장", () => {
 // ── 저장 ─────────────────────────────────────────────────────────────
 test("save: 새 저장에 seen_updates {} — saveVer 그대로", () => {
   assert.deepEqual(newSave().seen_updates, {});
-  assert.equal(newSave().saveVer, 2);
+  assert.equal(newSave().saveVer, 3);
 });
 
 test("save: 옛 저장(칸 없음)은 {}로, 판 번호 그대로", () => {
   const m = migrate({ saveVer: 2, completed_lessons: ["1-1", "1-2"] });
   assert.deepEqual(m.seen_updates, {});
-  assert.equal(m.saveVer, 2);
+  assert.equal(m.saveVer, 3);
 });
 
 test("save: seen_updates 형 검사 — 객체가 아니면 {}, 글자가 아닌 값·위험한 키는 버림", () => {
