@@ -252,3 +252,36 @@ def test_polish_texts():
     assert all("兄{あに}は料理" not in k for k in fills("g5-08"))
     b14 = [it for it in ps["g5-14"]["items"] if it["type"] == "build"][0]
     assert b14["ko"] == "같이 공원을 산책합시다."
+
+
+# ---- 독해(122장, N5 채우기 설계 §4) ----
+READING = os.path.join(ROOT, "data", "jlpt-n5-reading.json")
+JA = re.compile(r"[ぁ-ゟ゠-ヿ㐀-鿿]")
+
+
+def test_reading_data():
+    from make_lessons import load_reading
+    d = load_reading(READING)
+    assert [l["lesson"] for l in d["lessons"]] == [1, 2, 3, 4] and all(l["tip"] and not _bare(l["tip"]) for l in d["lessons"])
+    ps = d["passages"]
+    assert [p["id"] for p in ps] == ["r5-%02d" % i for i in range(1, 13)]
+    assert [p["lesson"] for p in ps] == [1] * 3 + [2] * 3 + [3] * 3 + [4] * 3
+    for p in ps:
+        assert p["title"] and p["ko"] and not _bare(p["text"]) and len(p["questions"]) == 2, p["id"]
+        for q in p["questions"]:
+            assert JA.search(q["q"]) and not _bare(q["q"]), q
+            assert len(q["options"]) == 4 and len({plain(o) for o in q["options"]}) == 4, q
+            assert all(JA.search(o) and not _bare(o) for o in q["options"]), q
+    assert max(len(plain(p["text"])) for p in ps if p["lesson"] == 3) >= 150  # 조금 긴 글
+
+
+def test_reading_built(built):
+    ch = _js_const(built / "ch122.js", "CHAPTER")
+    ls = _js_const(built / "ch122.js", "LESSONS")
+    assert ch["title"] == "N5 · 22장 독해"
+    assert [l["title"] for l in ls] == ["독해 1", "독해 2", "독해 3", "독해 4", "N5 · 22장 독해 평가"]
+    for l in ls[:4]:
+        assert len(l["items"]) == 6 and l["cards"] and all(it["kind"] == "reading" for it in l["items"])
+    assert ls[-1]["isExam"] and len(ls[-1]["items"]) == 8
+    cs = {c["id"]: c for c in _js_const(built / "concepts.js", "CONCEPTS")}
+    assert cs["r5-01"]["chapter"] == 122 and cs["r5-01"]["name"].startswith("독해 · ")

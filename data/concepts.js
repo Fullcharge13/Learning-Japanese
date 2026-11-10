@@ -1078,5 +1078,17 @@ export const CONCEPTS = [
   {"id": "m5-l15", "name": "모의고사 · 청해 15", "chapter": 124},
   {"id": "m5-l16", "name": "모의고사 · 청해 16", "chapter": 124},
   {"id": "m5-l17", "name": "모의고사 · 청해 17", "chapter": 124},
-  {"id": "m5-l18", "name": "모의고사 · 청해 18", "chapter": 124}
+  {"id": "m5-l18", "name": "모의고사 · 청해 18", "chapter": 124},
+  {"id": "r5-01", "name": "독해 · 약속 시간 메모", "chapter": 122},
+  {"id": "r5-02", "name": "독해 · 엄마의 메모", "chapter": 122},
+  {"id": "r5-03", "name": "독해 · 선생님의 알림", "chapter": 122},
+  {"id": "r5-04", "name": "독해 · 주말 일기", "chapter": 122},
+  {"id": "r5-05", "name": "독해 · 새 가방", "chapter": 122},
+  {"id": "r5-06", "name": "독해 · 우리 집 고양이", "chapter": 122},
+  {"id": "r5-07", "name": "독해 · 자기소개", "chapter": 122},
+  {"id": "r5-08", "name": "독해 · 할머니 집", "chapter": 122},
+  {"id": "r5-09", "name": "독해 · 나의 하루", "chapter": 122},
+  {"id": "r5-10", "name": "독해 · 수영장 안내", "chapter": 122},
+  {"id": "r5-11", "name": "독해 · 버스 시간표", "chapter": 122},
+  {"id": "r5-12", "name": "독해 · 빵집 안내", "chapter": 122}
 ];
