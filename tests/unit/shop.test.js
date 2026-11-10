@@ -37,3 +37,11 @@ test("place: only an owned outfit can be worn", () => {
   assert.equal(place(mk({ items: ["none", "gion"] }), "gion").item, "gion");
   assert.equal(place(mk({ items: ["none", "gion"], item: "gion" }), "none").item, "none");
 });
+
+test("의상실 순서: 평소 옷 → 파는 옷은 값이 낮은 순서 → 30일 보상이 마지막", () => {
+  assert.equal(ITEMS[0].id, "none");
+  assert.equal(ITEMS[ITEMS.length - 1].unlock, "streak30");
+  const prices = ITEMS.slice(1, -1).map((x) => x.price);
+  assert.ok(prices.every((p) => typeof p === "number"), prices);
+  assert.deepEqual(prices, [...prices].sort((a, b) => a - b));
+});
