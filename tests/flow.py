@@ -747,7 +747,7 @@ def test_fill_sentence_fits():
 # ---------------------------------------------------------------- 다코야키 가게
 
 def _kana_done_save(**shop):
-    seed = {"saveVer": 2, "completed_lessons": _lesson_ids(range(1, 3)), "current_lesson": "3-1", "current_chapter": 3}
+    seed = {"saveVer": 3, "completed_lessons": _lesson_ids(range(1, 3)), "current_lesson": "3-1", "current_chapter": 3}
     if shop:
         seed["shop"] = {"v": 1, "day": 0, "money": 0, "upgrades": [], "stories": [], "xpToday": {"date": None, "n": 0}, "run": None, **shop}
     return seed
@@ -1281,6 +1281,42 @@ def test_n5_complete_title_and_end():
         assert not a.errors, a.errors
 
 
+def test_jlpt_dialog_item():
+    """청해 1(123-1) 대화 문제: 질문에 일본어 없음, 🔊, 「글자로 보기」에 남·여 줄"""
+    fake = ("Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: { cancel() {}, "
+            "speak(u) { (window.__said = window.__said || []).push([u.text, u.pitch]); } } }); "
+            "window.SpeechSynthesisUtterance = function (t) { this.text = t; };")
+    with App("iPhone 17", init=fake) as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        it = _play_to_item(a, "123-1", 0)
+        assert it.get("kind") == "listen" and "\n" in it["say"]
+        assert not re.search(r"[ぁ-ゟ゠-ヿ\u3400-\u9fff]", a.page.inner_text("article.item h1.q"))
+        a.page.click(".q-say.listen button")
+        said = a.js("() => window.__said")
+        assert len(said) >= 2 and {p for _, p in said} >= {0.8, 1.25}, said
+        a.page.click("details.listen-text summary")
+        t = a.page.inner_text("details.listen-text")
+        assert "남:" in t and "여:" in t and "男" not in t, t
+        assert not a.errors, a.errors
+
+
+def test_old_save_mock_moved():
+    """옛 저장(판 2)에서 모의고사(120-1~3)를 끝냈으면 24장 3/3, 20장 문법 4는 0"""
+    seed = _kana_done_save()
+    seed["saveVer"] = 2
+    seed["completed_lessons"] = seed["completed_lessons"] + ["120-1", "120-2", "120-3"]
+    with App("iPhone 17", save=seed) as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#jlpt-more")
+        rows = a.js("() => [...document.querySelectorAll('#jlpt-chapters li')].map((e) => e.innerText.replace(/\\s+/g, ' '))")
+        assert any(r.startswith("24 ") and "3/3" in r for r in rows), rows
+        assert any(r.startswith("20 ") and " 0/" in r for r in rows), rows
+        assert not a.errors, a.errors
+
+
 def test_settings_jlpt_more():
     """설정 「JLPT N5」 목록: 앞 3장만, 「더보기」로 20장 전체, 「접기」로 다시 3장"""
     with App("iPhone 17", save=_kana_done_save()) as a:
@@ -1291,7 +1327,7 @@ def test_settings_jlpt_more():
         more = a.page.locator("#jlpt-more")
         assert more.get_attribute("aria-expanded") == "false" and "더보기" in more.inner_text()
         more.click()
-        assert rows() == 20 and more.get_attribute("aria-expanded") == "true" and "접기" in more.inner_text()
+        assert rows() == 24 and more.get_attribute("aria-expanded") == "true" and "접기" in more.inner_text()
         more.click()
         assert rows() == 3
         assert not a.errors, a.errors
