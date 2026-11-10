@@ -182,6 +182,13 @@ def _lessons(built, n):
     return _js_const(built / ("ch%d.js" % n), "LESSONS")
 
 
+def test_grammar_no_second_answer_g5_28():
+    """「学生が一人＿います」에 で는 「혼자 있어요」로 맞는 문장이 돼서 오답으로 못 씀"""
+    from make_lessons import load_grammar
+    it = [i for p in load_grammar(GRAMMAR) if p["id"] == "g5-28" for i in p["items"] if i.get("pre", "").startswith("教室{きょうしつ}に学生")][0]
+    assert "で" not in it["wrong"], it["wrong"]
+
+
 def test_maitsuki_not_in_kanji_questions(built):
     """毎月은 まいつき·まいげつ 둘 다 흔해서 한자 문제 단어로 쓰지 않음(원본 목록은 まいげつ)"""
     for n in (118, 119):

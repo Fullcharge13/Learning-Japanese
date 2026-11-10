@@ -1317,6 +1317,29 @@ def test_old_save_mock_moved():
         assert not a.errors, a.errors
 
 
+def test_old_save_written_at_once():
+    """옛 저장(판 2)은 처음 열 때 판 3으로 바로 저장(같은 날 다시 열어도 하던 레슨 기록을 또 옮기지 않게)"""
+    with App("iPhone 17", save=_kana_done_save()) as a:
+        a.start()  # 오늘 이미 쓴 저장(날 넘김은 끝남)
+        a.js("(k) => { const s = JSON.parse(localStorage.getItem(k)); s.saveVer = 2; localStorage.setItem(k, JSON.stringify(s)); }", SAVE_KEY)
+        a.page.reload()  # 같은 날 업데이트 뒤 첫 실행
+        a.page.wait_for_selector(".screen")
+        assert a.save()["saveVer"] == 3, a.save()["saveVer"]
+        assert not a.errors, a.errors
+
+
+def test_reading_keeps_lines():
+    """독해 글(안내문·시간표)의 줄바꿈이 화면에서도 줄로 보임"""
+    with App("iPhone 17") as a:
+        a.start()
+        _to_settings(a)
+        a.page.click("#dev")
+        _play_to_item(a, "122-4", 2)
+        t = a.page.inner_text("article.item .sent-jp")
+        assert t.count("\n") >= 2, repr(t)
+        assert not a.errors, a.errors
+
+
 def test_settings_jlpt_more():
     """설정 「JLPT N5」 목록: 앞 3장만, 「더보기」로 20장 전체, 「접기」로 다시 3장"""
     with App("iPhone 17", save=_kana_done_save()) as a:
